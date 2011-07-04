@@ -1,0 +1,27 @@
+<FindBugsFilter>
+    <Match>
+        <Package name="au.org.intersect.dms.(core.(domain|service.dto)|service.domain)" />
+        <Or>
+            <Bug code="EI,EI2,Se,SnVI" />
+            <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+        </Or>
+    </Match>
+    <Match>
+        <Class name="~au\.org\.intersect\.dms\.webapp\.controller\..*Form"/>
+        <Bug code="Se,SnVI"/>
+    </Match>
+    <Match>
+    	<Class name="~au\.org\.intersect\.dms\.webapp\.controller\.TunnelController"/>
+    	<Bug pattern="HRS_REQUEST_PARAMETER_TO_HTTP_HEADER" />
+    </Match>
+
+    <!-- Exclude Booking Gateway generated classes -->
+    <Match>
+        <Package name="au.org.intersect.dms.bookinggw.domain"/>
+    </Match>
+    
+    <!-- Exclude tests -->
+    <Match>
+        <Class name="~au\.org\.intersect\.dms\..*Test" />
+    </Match>
+</FindBugsFilter>

@@ -1,0 +1,71 @@
+<div xmlns:spring="http://www.springframework.org/tags" 
+	 xmlns:jsp="http://java.sun.com/JSP/Page"
+	 xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" 
+	 version="2.0">
+	<jsp:output omit-xml-declaration="yes"/>
+    
+    <spring:url value="/resources/js/catalogue/view.js" var="catalogue_view_js"/>
+    <script src="${catalogue_view_js}" type="text/javascript" ><!-- //required for FF3 and Opera --></script>
+	
+    <c:set var="backPath"><jsp:expression>request.getParameter("back")</jsp:expression></c:set>
+	<a id="goBack" href="${backPath}">Back to catalogue</a><br/>
+    <h3>Metadata for <c:out value="${url}" /></h3>
+    <div>
+    <div>
+    <b>Record is: 
+    <c:if test="${visible}">Public <button id="change" onclick="makePrivate('${url}')">Make private</button></c:if>
+    <c:if test="${!visible}">Private <button id="change" onclick="makePublic('${url}')">Make public</button></c:if>
+    </b>
+    </div>
+    <div>
+    <b>Associated Project: ${projectTitle} <button id="changeProject" onclick="changeProject('${url}','${projectCode}')">Change</button></b>
+    </div>
+    <div>
+    <b>Owner: ${owner} <button id="changeOwner" onclick="changeOwner('${url}','${owner}')">Change</button></b>
+    </div>
+    </div>
+    
+    <c:forEach items="${metadata}" var="item">
+        <div id="${item.schema}" class="expandable">
+            <div class="ui-expandable-title">${item.schema}</div>
+            <c:if test="${item.isEditable}">
+            <button style="float: right; margin-top: 5px;" class="editMetadataButton" onclick="modifyMetadata('${url}', '${item.schema}')">Edit</button>
+            </c:if>
+        	<c:out value="${item.data}" escapeXml="false" />
+        </div>
+    </c:forEach>
+    
+    <div style="display:none;" id="dialogue" title="Change visibility">
+    <form id="form" name="visibility" action="visibility" method="POST">
+    <input id="url" type="hidden" value="${url}"/>
+    <div id="preview"><!-- ff3 --></div>
+    </form>
+    </div>
+        
+    <div style="display:none;" id="projectDialogue" title="Change project">
+    <form id="projectForm" name="projectForm" action="changeProject" method="POST">
+    <input name="url" type="hidden" value="${url}"/>
+    <div id="projectOptions"><!-- ff3 --></div>
+    </form>
+    </div>
+        
+    <div style="display:none;" id="ownerDialogue" title="Change owner">
+    <form id="ownerForm" name="ownerForm" action="changeOwner" method="POST">
+    <input name="url" type="hidden" value="${url}"/>
+    	<div class="input_group">
+            <label for="owner"><spring:message code="catalogue_owner"/></label>
+            <input id="owner" type='text' name='owner' style="width:150px"/>
+        </div>
+    </form>
+    </div>
+        
+    <div style="display:none;" id="editMetadataDialog" title="Edit metadata">
+        <form id="editMetadataForm" name="editMetadata" action="updateMetadata" method="POST">
+            <input id="url" type="hidden" name="url" value="${url}"/>
+            <input id="schema" type="hidden" name="schema"/>
+            <div id="metadata"><!-- ff3 --></div>
+        </form>
+    </div>
+    <div style="display:none;" id="messageDialog"><!-- ff3 --></div>
+</div>

@@ -1,0 +1,28 @@
+<div xmlns:spring="http://www.springframework.org/tags" 
+	 xmlns:jsp="http://java.sun.com/JSP/Page"
+	 xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" 
+	 version="2.0">
+	<jsp:output omit-xml-declaration="yes"/>
+	
+	
+	   	<style type="text/css">
+	   	
+			#adminTBA {
+			height:300px;
+			margin-top: 20px;
+			padding-top: 20px;
+			background-repeat: no-repeat;
+			background-position: center;
+			opacity: .28;
+			border-width: 2px;
+			border-style: solid;
+			border-color: #222222;
+		}
+        
+		</style>
+		
+			<div id="adminTBA" >
+			<h2 style="margin-left:20px;">Indexer was successfully scheduled to run in the background.</h2>
+			</div>
+</div>

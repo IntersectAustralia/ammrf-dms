@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div id="loading">
+<span xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:c="http://java.sun.com/jsp/jstl/core" version="2.0" id="spinner" style="display: none; position: relative; top: 5px;" alt="Spinner" title="Loading...">
+    <c:url var="spinnerImage" value="/resources/images/loading.gif"/>
+    <img src="${spinnerImage}" border="0" alt="Spinner"/>
+</span>
+</div>

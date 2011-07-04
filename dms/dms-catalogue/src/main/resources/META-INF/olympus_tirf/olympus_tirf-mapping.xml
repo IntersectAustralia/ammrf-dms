@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+	<property xml-field="Date/Time" index-field="tirf_date_time_dt" display-name="Date and Time" type="date" />
+    <property xml-field="X Resolution" index-field="tirf_x_resolution_t" display-name="X Resolution" type="text" />
+    <property xml-field="Y Resolution" index-field="tirf_y_resolution_t" display-name="Y Resolution" type="text" />
+</mapping>

@@ -1,0 +1,13 @@
+<div xmlns:spring="http://www.springframework.org/tags" 
+	 xmlns:jsp="http://java.sun.com/JSP/Page"
+	 xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" 
+	 version="2.0">
+	<jsp:output omit-xml-declaration="yes"/>
+	
+	<hr/>
+	<b>Metadata for <c:out value="${url}" /></b><br/>Record is <c:if test="${visible}">public</c:if><c:if test="${!visible}">private</c:if><br/>
+    <c:forEach items="${metadata}" var="item">
+        <c:out value="${item.data}" escapeXml="false" />
+    </c:forEach>
+</div>

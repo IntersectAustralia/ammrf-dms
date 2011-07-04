@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="  http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd  http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd  http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd  http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<context:property-placeholder  ignore-unresolvable="true"
+		properties-ref="bookinggwProperties" />
+
+	<util:properties id="bookinggwProperties"
+		location="file://${dms.config.home}/bookinggw.properties" />
+
+	<context:spring-configured />
+
+	<context:component-scan base-package="au.org.intersect.dms.bookinggw">
+		<context:exclude-filter expression=".*_Roo_.*" type="regex" />
+	</context:component-scan>
+
+	<tx:annotation-driven mode="aspectj"
+		transaction-manager="bookinggwTM" />
+
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
+		id="bookinggwTM">
+		<property name="entityManagerFactory" ref="bookinggwEMF" />
+		<qualifier value="bookinggw" />
+	</bean>
+
+	<bean
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		id="bookinggwEMF">
+		<property name="dataSource" ref="bookinggwDS" />
+		<property name="persistenceXmlLocation"
+			value="classpath*:META-INF/persistence-bookinggw.xml" />
+		<property name="persistenceUnitName" value="bookinggwPU" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="databasePlatform" value="${bookinggw.hibernate.dialect}" />
+				<property name="showSql" value="${bookinggw.hibernate.showSql}" />
+				<property name="generateDdl" value="true" />
+				<!-- set your properties here -->
+			</bean>
+		</property>
+
+		<!-- property name="jpaProperties"> <props> <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop> 
+			<prop key="hibernate.hbm2ddl.auto">validate</prop> </props> </property -->
+
+	</bean>
+
+	<bean class="com.mchange.v2.c3p0.ComboPooledDataSource" id="bookinggwDS">
+		<property name="driverClass" value="${bookinggw.database.driverClassName}" />
+		<property name="jdbcUrl" value="${bookinggw.database.url}" />
+		<property name="user" value="${bookinggw.database.username}" />
+		<property name="password" value="${bookinggw.database.password}" />
+        <property name="idleConnectionTestPeriod" value="${bookinggw.c3p0.idleConnectionTestPeriod}" />
+        <property name="maxIdleTime" value="${bookinggw.c3p0.maxIdleTime}" />
+        <property name="preferredTestQuery" value="SELECT 1"/>
+	</bean>
+
+	<bean name="bookingGW"
+		class="au.org.intersect.dms.bookinggw.impl.BookingGatewayServiceImpl" />
+        
+    <bean id="bookingGatewayMetadataService" class="au.org.intersect.dms.bookinggw.impl.BookingGatewayMetadataServiceImpl">
+		<property name="metadataTemplatePath" value="META-INF/rif-cs/rif-cs" />
+	</bean>
+
+</beans>

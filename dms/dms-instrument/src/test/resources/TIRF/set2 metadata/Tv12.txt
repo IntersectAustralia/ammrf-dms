@@ -1,0 +1,13 @@
+Camera Information
+Camera type: 	HamamatsuDCAM Monochrome
+Left margin: 	0 Pixel
+Top margin: 	0 Pixel
+Right margin: 	0 Pixel
+Bottom margin: 	0 Pixel
+Binning X: 	1 x
+Binning Y: 	1 x
+Exposure time: 	2 ms
+Gain corrected: 	No
+Offset corrected: 	No
+Bad pixel corrected: 	No
+Microscope: 	Olympus IX Simulator
