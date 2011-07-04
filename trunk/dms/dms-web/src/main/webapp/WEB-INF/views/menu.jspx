@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:menu="urn:jsptagdir:/WEB-INF/tags/menu" xmlns:tiles="http://tiles.apache.org/tags-tiles" id="menu" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <c:set value="admin" var="activeMenuId"/>
+<menu:menu id="_menu" z="nZaf43BjUg1iM0v70HJVEsXDopc=">
+        <menu:category id="c_locations" z="user-managed">
+            <menu:item activeMenuId="${activeMenuId}" id="i_locations_new" messageCode="global_menu_new" url="/admin/stockservers?form" z="user-managed"/>
+        <menu:item activeMenuId="${activeMenuId}" id="i_locations_list" messageCode="global_menu_list" url="/admin/stockservers?page=${empty param.page ? 1 : param.page}&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
+        
+        
+        </menu:category>
+    <menu:category id="c_atomprobeusermatching" z="ZrTX8OPNdzJEwrsaGvqAFCgOfUA=">
+            <menu:item activeMenuId="${activeMenuId}" id="i_atomprobeusermatching_new" messageCode="global_menu_new" url="/admin/atomprobeusermatchings?form" z="user-managed"/>
+            <menu:item activeMenuId="${activeMenuId}" id="i_atomprobeusermatching_list" messageCode="global_menu_list" url="/admin/atomprobeusermatchings?page=${empty param.page ? 1 : param.page}&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
+        </menu:category>
+        
+    <menu:category id="c_dmsuser" z="aQ9EMjnLuAByPgmgCEv2OO6A80Q=">
+        <menu:item activeMenuId="${activeMenuId}" id="i_dmsuser_list" messageCode="global_menu_list" url="/admin/dmsusers?page=${empty param.page ? 1 : param.page}&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
+    </menu:category>
+    
+    <menu:category id="c_catalogue" z="user-managed">
+        <menu:item activeMenuId="${activeMenuId}" id="i_catalogue_reindex" url="/admin/reindex" z="user-managed"/>
+    </menu:category>
+</menu:menu>
+</div>

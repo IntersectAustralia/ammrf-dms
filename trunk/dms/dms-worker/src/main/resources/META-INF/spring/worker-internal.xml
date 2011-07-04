@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+    ">
+    
+    <import resource="classpath:/META-INF/spring/applicationContext-harvester.xml"/>
+    <import resource="classpath:/META-INF/spring/applicationContext-microCT.xml"/>
+    <import resource="classpath:/META-INF/spring/applicationContext-atomProbe.xml"/>
+    <import resource="classpath:/META-INF/spring/applicationContext-olympus.xml"/>
+    
+    <util:map id="ingestorsMap">
+		<entry key="MICRO_CT" value-ref="microCTIngestor"/>
+        <entry key="ATOM_PROBE" value-ref="atomProbeIngestor"/>
+        <entry key="OLYMPUS_FV1000" value-ref="olympusFV1000Ingestor"/>
+        <entry key="OLYMPUS_CELL_R" value-ref="olympusCellRIngestor"/>
+        <entry key="OLYMPUS_TIRF" value-ref="olympusTIRFIngestor"/>
+    </util:map>
+
+</beans>

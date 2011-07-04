@@ -1,0 +1,13 @@
+Document Creation Date
+Image Dimension
+Z-Layers
+Time Frames
+X-Size
+Y-Size
+Bits per Pixel
+Binning
+Exposure Time
+Z-Step Width
+Markers
+Regions Of Interest (ROIs)
+File Size

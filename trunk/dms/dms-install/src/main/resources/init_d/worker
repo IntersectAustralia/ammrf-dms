@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# worker       Starts DMS worker.
+#
+# chkconfig: 345 88 12
+# description: DMS Worker is a back-end data service for the DMS
+### BEGIN INIT INFO
+# Provides: $worker
+### END INIT INFO
+
+cd _WORKER_HOME_/bin
+su -c "./worker $@" _DMS_USER_

@@ -1,0 +1,16 @@
+<dataset>
+	
+	<recordstatus RecordStatusID="1" RecordStatus="1" Description="Active"/>
+	<recordstatus RecordStatusID="2" RecordStatus="0" Description="Not Active"/>
+	
+	<operators OperatorID="1" Username="user1" RecordStatusID="2"/>
+	<operators OperatorID="2" Username="user2" RecordStatusID="1"/>
+	<operators OperatorID="3" Username="user3" RecordStatusID="1"/>
+	
+	<experiments ExperimentID="1" Name="test1" OperatorID="2" RecordStatusID="1"/>
+	<experiments ExperimentID="2" Name="test2" OperatorID="2" RecordStatusID="1"/>
+	<experiments ExperimentID="3" Name="test3" OperatorID="3" RecordStatusID="1"/>
+	<experiments ExperimentID="4" Name="test4" OperatorID="3" RecordStatusID="2"/>
+	
+	<atom_probe_job_settings id="1" instrument="2" last_processed_experiment="1" version="1"/>
+</dataset>

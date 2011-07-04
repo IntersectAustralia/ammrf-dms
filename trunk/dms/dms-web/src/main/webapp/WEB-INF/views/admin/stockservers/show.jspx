@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_au_org_intersect_dms_webapp_domain_StockServer" object="${stockserver}" path="/admin/stockservers" z="user-managed">
+        <field:display field="description" id="s_au_org_intersect_dms_webapp_domain_StockServer_description" object="${stockserver}" z="user-managed"/>
+        <field:display field="protocol" id="s_au_org_intersect_dms_webapp_domain_StockServer_protocol" object="${stockserver}" z="user-managed"/>
+        <field:display field="server" id="s_au_org_intersect_dms_webapp_domain_StockServer_server" object="${stockserver}" z="user-managed"/>
+        <field:display field="credentialsOption" id="s_au_org_intersect_dms_webapp_domain_StockServer_credentialsOption" object="${stockserver}" z="user-managed"/>
+        <field:display field="username" id="s_au_org_intersect_dms_webapp_domain_StockServer_username" object="${stockserver}" z="user-managed"/>
+        <field:display field="password" id="s_au_org_intersect_dms_webapp_domain_StockServer_password" object="${stockserver}" z="user-managed"/>
+        <field:display field="type" id="s_au_org_intersect_dms_webapp_domain_StockServer_type" object="${stockserver}" z="user-managed"/>
+        <field:display field="instrumentId" id="s_au_org_intersect_dms_webapp_domain_StockServer_instrumentId" object="${stockserver}" z="user-managed"/>
+        <field:display field="instrumentProfile" id="s_au_org_intersect_dms_webapp_domain_StockServer_instrumentProfile" object="${stockserver}" z="user-managed"/>
+    </page:show>
+</div>
