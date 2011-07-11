@@ -1,0 +1,19 @@
+#summary General aspects of DMS architecture
+
+= Introduction =
+
+The DMS is a multi-tier distributed system based on Java EE frameworks. It uses the Spring framework, particularly [http://www.springsource.org/roo Spring Roo] and [http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/mvc.html Spring MVC] on the web layer; application integration through [http://camel.apache.org/ Apache Camel] and [http://activemq.apache.org/ Apache ActiveMQ] as JMS messaging middle-ware; a custom built data transfer API -including HTTP tunneling to the browser via Java Applets-; and custom metadata ingestion API with a [http://lucene.apache.org/solr/ Apache Solr] indexing back-end.
+
+= Main components =
+
+Although it may be deployed in several ways, with minor or bigger changes, the overall picture of the DMS can be illustrated by the following diagram
+
+http://code.google.com/p/ammrf-dms/source/browse/wiki/images/generic_architecture.png
+
+
+
+= Authentication =
+
+= Implemented transport protocols =
+
+= Implemented instruments =
