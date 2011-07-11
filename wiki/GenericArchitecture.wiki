@@ -13,13 +13,46 @@ http://ammrf-dms.googlecode.com/svn/wiki/images/generic_architecture.png
 (It is worth noticing that the SVN repository code actually contains a particular instantiation of this configuration; names in italic will correspond to name maven modules in the source when appropriate;  hopefully this document will show developers how to change it to fit other requirements.)
 
 As shown, the main components of the DMS are:
-  # The web application _(dms-web)_ : contains the views, controllers and all classes that make up the web interface, including the authentication extension to Spring security.
+  # The web application _(dms-web)_ : contains the views, controllers and all classes that make up the web interface, including the authentication extension to Spring security. The web layer interacts with the DMS service and Catalogue to offer a unified feature set to the user.
+  ## Applet _(dms-applet)_ : to access a user's PC, the DMS uses Java, which requires the Java browser plugin installed. The applet interacts with the web application and the Http tunnel.
   # The dms service _(dms-service)_ : the component in charge of persisting jobs and handling worker routing. It could be run independently, but it is being deployed as a Spring bean in the web application, so it runs inside Tomcat.
-  # Solr _(dms-catalogue-)_: deployed by the installation script and used in catalogue module to provide high-performance indexing functionality. The catalogue _bean_ interacts with Solr via a REST interface.
+  # Solr _(dms-catalogue)_: deployed by the installation script and used in catalogue module to provide high-performance indexing functionality. The catalogue _bean_ interacts with Solr via a REST interface.
+  # Http tunnel _(dms-httptunnel)_ : a separate micro web application, run by the same Tomcat instance that provides data transfer to the user's PC using an applet and via http
+  # JMS Broker : The DMS uses ActiveMQ as JMS broker. It can run on the same machine as the web or in another one. The DMS links to it via Camel and makes use of several queues that are mentioned below.
+  # Worker _(dms-worker)_
+  ## Instruments _(dms-instrument)_
+  ## Data protocols
 
+= Integration =
+
+The DMS uses several protocols to communicate with other systems and services. When possible, links have been abstracted via Apache Camel and defined in the corresponding _application context_, facilitating re-wiring of the components if required.
+
+== JMS ==
+
+JMS is used to communicate between the DMS service and the Worker(s). As the DMS service is being deployed as part of the web layer, the link there is just a JVM java call (some may say that there is no need to link.) 
+
+It is worth saying that JMS is not used to transfer data. Although the messages between the Worker and the DMS service do contain metadata.
+
+== HTTP/HTTPS ==
+
+HTTP/HTTPS is used in a number of places. Of course, the web layer relies on it. But also Solr is accessed via its REST interface and the Applet uses the HTTP protocol to tunnel data from or to the user's PC.
+
+== Database access ==
+
+Todo
+
+== Data transport access ==
+
+Todo
 
 = Authentication =
 
+Todo
+
 = Implemented transport protocols =
 
+Todo
+
 = Implemented instruments =
+
+Todo
