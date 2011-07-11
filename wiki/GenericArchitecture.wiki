@@ -6,9 +6,16 @@ The DMS is a multi-tier distributed system based on Java EE frameworks. It uses 
 
 = Main components =
 
-Although it may be deployed in several ways, with minor or bigger changes, the overall picture of the DMS can be illustrated by the following diagram
+Although it may be deployed in several ways, with minor or major changes, the overall picture of the DMS can be illustrated by the following diagram
 
 http://ammrf-dms.googlecode.com/svn/wiki/images/generic_architecture.png
+
+(It is worth noticing that the SVN repository code actually contains a particular instantiation of this configuration; names in italic will correspond to name maven modules in the source when appropriate;  hopefully this document will show developers how to change it to fit other requirements.)
+
+As shown, the main components of the DMS are:
+  # The web application _(dms-web)_ : contains the views, controllers and all classes that make up the web interface, including the authentication extension to Spring security.
+  # The dms service _(dms-service)_ : the component in charge of persisting jobs and handling worker routing. It could be run independently, but it is being deployed as a Spring bean in the web application, so it runs inside Tomcat.
+  # Solr _(dms-catalogue-)_: deployed by the installation script and used in catalogue module to provide high-performance indexing functionality. The catalogue _bean_ interacts with Solr via a REST interface.
 
 
 = Authentication =
