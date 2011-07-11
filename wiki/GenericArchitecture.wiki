@@ -8,8 +8,7 @@ The DMS is a multi-tier distributed system based on Java EE frameworks. It uses 
 
 Although it may be deployed in several ways, with minor or bigger changes, the overall picture of the DMS can be illustrated by the following diagram
 
-http://code.google.com/p/ammrf-dms/source/browse/wiki/images/generic_architecture.png
-
+http://ammrf-dms.googlecode.com/svn/wiki/images/generic_architecture.png
 
 
 = Authentication =
