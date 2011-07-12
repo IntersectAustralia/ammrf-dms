@@ -55,7 +55,7 @@ Authentication is performed via [http://code.google.com/p/ammrf-dms/source/brows
 
 The dms-worker module implements access to data storage via custome [http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/TransportFactory.java TransportFactory] and [http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/TransportConnection.java TransportConnection].
 
-The _factory_ is just an extension to one of Apache object pool classes: the worker implements connection pooling. A _TransportConnection_ represents an actual connection, which should implement methods to listing a directory and getting resource information (_getList_ and _getInfo_); rename, delete and create directory (_createDir_); and opening IO streams for reading or writing (_openInputStream_ and _openOutputStream_). The DMS comes with three implementations which are explained below.
+The _factory_ is just an extension to one of Apache object pool classes: the worker implements connection pooling. A _!TransportConnection_ represents an actual connection, which should implement methods to listing a directory and getting resource information (_getList_ and _getInfo_); rename, delete and create directory (_createDir_); and opening IO streams for reading or writing (_openInputStream_ and _openOutputStream_). The DMS comes with three implementations which are explained below.
 
 == Local ==
 
