@@ -48,7 +48,7 @@ Running the DMS inside STS with a single worker architecture requires more steps
   # In STS, configure the !Tomcat instance
   # Download [http://lucene.apache.org/solr/ Apache Solr] and put the apache-solr-`<version>`.war in the STS's Tomcat temporary folder as outlined in reference [#R1 R1].
 
-  *Note:* !Tomcat, !ActiveMQ and !Solr are already in dms-install/src/main/resources/lib, but feel free to try latest if you want.
+  *Note*: !Tomcat, !ActiveMQ and !Solr are already in dms-install/src/main/resources/lib, but feel free to try latest if you want.
 
 == Configure your profile ==
 
