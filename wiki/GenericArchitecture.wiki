@@ -61,7 +61,17 @@ The _factory_ is just an extension to one of Apache object pool classes: the wor
 
 This _transport connection_ provides access to local resources in the file system where the worker is running. In the overall architecture diagram it is mentioned that instrument resources are accessed via SMB/CIFS protocol. This is achieved at the moment by mounting shared folders in the file system using Linux smbmount.
 
-A root directory is specified and folders inside this directory become _server names_ for the purpose of the protocol. For example: if the root is /var/dms and there is a subdirectory called 'instrument-a' then the open connection request will say protocol=local, server=instrument-a and username and password as configured in the local transport factory.
+A root directory is specified (see [http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/transports/impl/LocalConnection.java here])and folders inside this directory become _server names_ for the purpose of the protocol. For example: if the root is /var/dms and there is a subdirectory called 'instrument-a' then the open connection request will say protocol=local, server=instrument-a and username and password as configured in the local transport factory.
+
+== FTP ==
+
+This _transport connection_ provides access to an FTP server. It uses the Apache Commons net implementation. The username and password are passed through the server for authentication. Note how the [http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/transports/impl/FtpConnection.java implementation] is able to to handle _linked_ directories.
+
+== HDD ==
+
+This _transport connection_ is the back-ed of the tunnelling mechanism to the applet. This tunnelling is the most complex piece of the DMS as it requires three different components from the worker, the web server and the user interface to coordinate; effectively allowing data to travel from and to the user interface to the bottom tier of the system.
+
+The basic idea is that all the _TransportConnection_ methods are sent to an special web application (dms-httptunnel), flagged with a _jobId_. In there, requests are received from the applet -also marked with that _jobId_- and therefore the two byte streams are synchronised and copied from one socket to the other enabling the communication between the worker and the applet. The protocol actually works in two phases but its details are beyond the scope of this document.
 
 = Implemented instruments =
 
