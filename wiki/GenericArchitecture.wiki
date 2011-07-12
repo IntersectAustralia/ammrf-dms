@@ -53,7 +53,15 @@ Authentication is performed via [http://code.google.com/p/ammrf-dms/source/brows
 
 = Implemented transport protocols =
 
-Todo
+The dms-worker module implements access to data storage via custome [http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/TransportFactory.java TransportFactory] and [http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/TransportConnection.java TransportConnection].
+
+The _factory_ is just an extension to one of Apache object pool classes: the worker implements connection pooling. A _TransportConnection_ represents an actual connection, which should implement methods to listing a directory and getting resource information (_getList_ and _getInfo_); rename, delete and create directory (_createDir_); and opening IO streams for reading or writing (_openInputStream_ and _openOutputStream_). The DMS comes with three implementations which are explained below.
+
+== Local ==
+
+This _transport connection_ provides access to local resources in the file system where the worker is running. In the overall architecture diagram it is mentioned that instrument resources are accessed via SMB/CIFS protocol. This is achieved at the moment by mounting shared folders in the file system using Linux smbmount.
+
+A root directory is specified and folders inside this directory become _server names_ for the purpose of the protocol. For example: if the root is /var/dms and there is a subdirectory called 'instrument-a' then the open connection request will say protocol=local, server=instrument-a and username and password as configured in the local transport factory.
 
 = Implemented instruments =
 
