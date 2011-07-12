@@ -30,28 +30,34 @@ database.driverClassName=com.mysql.jdbc.Driver
 }}}
 
   # Database connections, pool settings; defaults here should be ok.
-  _c3p0.idleConnectionTestPeriod_: how often (in seconds) we should check for idle connections
-  _c3p0.maxIdleTime_: how long (is seconds) connection can be idle before been closed
+  _c3p0.idleConnectionTestPeriod_: how often (in seconds) we should check for idle connections; _c3p0.maxIdleTime_: how long (is seconds) connection can be idle before been closed
 {{{
 c3p0.idleConnectionTestPeriod=1200 
 c3p0.maxIdleTime=1800
 }}}
 
-# Path of the controller used to download/upload to the PC for the Applet
-# Note: localhost is not right here in production
-dms.applet.tunnelUrl=https://localhost:8443/dms-httptunnel/tunnel/app
-
-# url of the JMS broker like, dms.brokerUrl=tcp://localhost:61616
+  # JMS broker properties. The ActiveMQ instance is secured with username and password. Provide the same username and password as the one for !ActiveMQ.
+{{{
 dms.broker.url=tcp://localhost:61616
 dms.broker.username=dmsclient
 dms.broker.password=*********
+}}}
 
-# Apache Solr configuration
+  # Apache Solr configuration
+  _solr.serverUrl_: URL of the Solr instance. As seen, one can run Apache Solr in a different machine. The default works for development as probably ok for production too; _executor.poolSize_: size of thread pool for Solr.
+{{
 solr.serverUrl=http\://localhost\:8080/apache-solr-1.4.1
 executor.poolSize=10
+}}
+
+  # Tunnel URL for the applet.
+  _dms.applet.tunnelUrl_: the web application injects this property into the applet to enable communication to the dms-httptunnel. One should use the proper protocol and domain name in a production environment. Again, the default is ok for development. Note that the tunnel is a different web application and, in principle, can be installed in another server (although we haven't tested this scenario); _dms.webapp.key.filename_: also, the web app needs to encrypt the jobId to avoid security attacks (see [TunnelSecurity here] for quick overview of the security measures in place), so provide here the path to the corresponding public key.
+{{{
+dms.applet.tunnelUrl=https://<your-domain>:8443/dms-httptunnel/tunnel/app
+dms.webapp.key.filename=<path-to-public-key-1>
+}}}
 
 # keys, replace $CONFIGDIR with path to your config directory
-dms.webapp.key.filename=/$CONFIGDIR/keys/pubTunnelWorker.der
 
 # Publishing reminder email settings
 dms.email.server.url=smtp://localhost
