@@ -91,10 +91,62 @@ The DMS service uses a simple routing implementation where workers are configure
 dms.worker.<num>=<queue-name>
 dms.worker.<num>.<protocol>=<server-pattern>
 }}}
-where `<num>` starts at 1 and goes up in consecutive numbers; and `<protocol>` is a protocol identifier in that worker. Currently implemented are *local*, *ftp*, *hdd* (see [GenericArchitecture#Implemented_Transport_Protocols transport protocols]). Server pattern allows even finer control if required. It is converted into a regular expression by replacing `*` with `.*`, so patterns like *`*`.domain.edu.au|`*`.other.edu.au* work as expected. The first property dms.worker.`<num>` is the all important queue name, which must match the worker. The default configuration works ok for development environment.
+where `<num>` starts at 1 and goes up in consecutive numbers; and `<protocol>` is a protocol identifier in that worker. Currently implemented are *local*, *ftp*, *hdd* (see [GenericArchitecture#Implemented_transport_protocols transport protocols]). Server pattern allows even finer control if required. It is converted into a regular expression by replacing `*` with `.*`, so patterns like *`*`.domain.edu.au|`*`.other.edu.au* work as expected. A request can be sent to this worker if the server parameter matches the regular expression. 
+The first property dms.worker.`<num>` is the all important queue name, which must match one in the the worker. The default configuration works ok for development environment.
 {{{
 dms.worker.1=wn.request.node
 dms.worker.1.ftp=*
 dms.worker.1.hdd=*
 dms.worker.1.local=*
 }}}
+
+= worker.properties =
+
+Configures various worker settings, including the embedded transport protocols.
+
+  # broker configuration, similar to the dms.
+{{{
+dms.broker.url=tcp://localhost:61616
+dms.broker.username=dmsclient
+dms.broker.password=*********
+}}}
+
+  # queue associated with worker instance. If you deploy multiple workers, these (across all workers) must match the queues configured in *dms_routing.properties*
+{{{
+dms.wn.queue=wn.request.node
+}}}
+
+  # pool configuration for transport connections;  _dms.wn.pool.minEvictableIdleTimeMillis_ : elapsed time when an idle connection inside the pool is scheduled for closing; _dms.wn.pool.timeBetweenEvictionRunsMillis_ : how often the eviction task is run (usually lot less than the preious one); both values in milliseconds.
+{{{
+dms.wn.pool.minEvictableIdleTimeMillis=300000
+dms.wn.pool.timeBetweenEvictionRunsMillis=60000
+}}}
+  Note that in the case of FTP connections, the FTP server on the other end may close the connection before the timeout. The worker may attempt a reconnection on its own if the connection credentials are still known to the worker (see next)
+
+  # Active Connections cache configuration; configures for how long the worker can recall connections credentials and therefore will be able to reconnect. These parameters are the ones that clients of the worker see as timeouts for idle open connections. Also, there is a limit _maxElementsInMemory_ on this cache that can be extended depending on the number of concurrent users.
+{{{
+activeConnectionsCache.maxElementsInMemory=500
+activeConnectionsCache.timeToIdleSeconds=600
+}}}
+
+
+# the tunnel URL (if hdd is configured)
+dms.wn.tunnelUrl=https://localhost:8443/dms-httptunnel/tunnel/hdd
+
+# the localRoot (if local is configured)
+dms.wn.localRootPath=/var/dms
+
+#Username and Password for LocalConnection
+dms.wn.local.username=admin
+dms.wn.local.password=password
+
+# Active Connections cache configuration
+activeConnectionsCache.maxElementsInMemory=500
+activeConnectionsCache.timeToIdleSeconds=600
+
+# MicroCT file poller
+dms.wn.filepoller.periodMilliseconds=60000
+dms.wn.filepoller.delayMilliseconds=10000
+
+# keys, replace $CONFIGDIR with path to your config directory
+dms.wn.key.filename=/$CONFIGDIR/keys/pubTunnelWorker.der
