@@ -83,3 +83,18 @@ bookinggw.hibernate.showSql=true
 bookinggw.c3p0.idleConnectionTestPeriod=1200 
 bookinggw.c3p0.maxIdleTime=1800
 }}}
+
+= dms_routing.properties =
+
+The DMS service uses a simple routing implementation where workers are configured in this property file. Each worker is configured by the following pattern:
+{{{ 
+dms.worker.<num>=<queue-name>
+dms.worker.<num>.<protocol>=<server-pattern>
+}}}
+where `<num>` starts at 1 and goes up in consecutive numbers; and `<protocol>` is a protocol identifier in that worker. Currently implemented are *local*, *ftp*, *hdd* (see [GenericArchitecture#Implemented_Transport_Protocols transport protocols]). Server pattern allows even finer control if required. It is converted into a regular expression by replacing `*` with `.*`, so patterns like *`*`.domain.edu.au|`*`.other.edu.au* work as expected. The first property dms.worker.`<num>` is the all important queue name, which must match the worker. The default configuration works ok for development environment.
+{{{
+dms.worker.1=wn.request.node
+dms.worker.1.ftp=*
+dms.worker.1.hdd=*
+dms.worker.1.local=*
+}}}
