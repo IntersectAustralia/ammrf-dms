@@ -20,5 +20,15 @@ The DMS is deployed in one machine, running the following java processes:
       # Booking gateway (dms-booking)
     # Http tunnel
     # Apache solr
-  
-  
+
+= Changing the configuration =
+
+== Relocating components ==
+
+By modifying basic property files, one can achieve easily the following:
+
+  * Scale horizontally by providing more workers. One will need to change dms_routing.properties and the corresponding properties for each worker.
+
+  * Deploy tunnel and/or solr in another server by relocating the war. One issue which hasn't been tested though is when the applet points to a different server.
+
+  * Deploy multiple brokers, one in the server and one _slave_ for the worker. This configuration allows to deploy the worker machine inside an Intranet while the main server lives outside.
