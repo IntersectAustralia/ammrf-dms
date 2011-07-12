@@ -1,0 +1,26 @@
+#summary DMS ACMM specific architecture
+
+= Introduction =
+
+The DMS can be _wired_ in different ways. This page explains briefly the current ACMM setup, providing specifics in regards to deployment and current wiring of beans.
+
+= Overall picture =
+
+http://ammrf-dms.googlecode.com/svn/wiki/images/dms-setup.png
+
+The DMS is deployed in one machine, running the following java processes:
+
+  # ActiveMQ, the JMS broker
+
+  # Worker process
+  ## Transport implementations for *local*, *ftp* and *hdd*
+  ## Triggers and harvesters for all instruments (dms-instrument)
+
+  # Tomcat, with three web applications
+  ## Web application (dms-web)
+  ### DMS service (dms-service)
+  ### Booking gateway (dms-booking)
+  ## Http tunnel
+  ## Apache solr
+  
+  
