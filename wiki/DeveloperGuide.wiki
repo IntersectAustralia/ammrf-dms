@@ -48,7 +48,7 @@ Running the DMS inside STS with a single worker architecture requires more steps
   # In STS, configure the !Tomcat instance
   # Download [http://lucene.apache.org/solr/ Apache Solr] and put the apache-solr-`<version>`.war in the STS's Tomcat temporary folder as outlined in reference [#R1 R1].
 
-  `*` *Note*: !Tomcat, !ActiveMQ and !Solr are already in dms-install/src/main/resources/lib, but feel free to try latest if you want.
+  `*` *Note*: Tomcat, ActiveMQ and Solr are already in dms-install/src/main/resources/lib, but feel free to try a latest release if you want.
 
 == Configure your profile ==
 
@@ -59,7 +59,7 @@ Running the DMS inside STS with a single worker architecture requires more steps
 
 = References =
 ==R1== 
-_Retrieved from [http://abtj.blogspot.com/2009/07/how-to-adddeploy-war-file-into-eclipse.html here] 13/Jul/2011_
+(_Retrieved from [http://abtj.blogspot.com/2009/07/how-to-adddeploy-war-file-into-eclipse.html here] 13/Jul/2011_)
 In some scenarios, you wish to deploy a default web application into Eclipse Tomcat which is not part of your project, you may just add the war file into the below directory:
 
 %your_workspace%\.metadata\.plugins\org.eclipse.wst.server.core\tmpX\webapps
