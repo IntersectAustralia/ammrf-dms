@@ -129,24 +129,23 @@ activeConnectionsCache.maxElementsInMemory=500
 activeConnectionsCache.timeToIdleSeconds=600
 }}}
 
+  The following set of properties configure the transport factory beans.
 
-# the tunnel URL (if hdd is configured)
+  # the tunnel URL for the HDD; default should work on development. This one, if the worker is deployed in the same machine can be localhost, otherwise needs to point to the location of the tunnel web app; _dms.wn.key.filename_ path to public key to provide security in the tunnel.
+{{{
 dms.wn.tunnelUrl=https://localhost:8443/dms-httptunnel/tunnel/hdd
+dms.wn.key.filename=<path-to-public-key-1>
+}}}
 
-# the localRoot (if local is configured)
-dms.wn.localRootPath=/var/dms
-
-#Username and Password for LocalConnection
+  # the local protocol: _dms.wn.localRootPath_, root of folder hierarchy; top level folders there are treated as _server_ names, make sure this folder exists and has right permissions; _dms.wn.local.username_ and _dms.wn.local.password_ provide additional security, as indicate username and password that need to be provided in the open connection request;
+{{{
+dms.wn.localRootPath=<path-to-root>
 dms.wn.local.username=admin
 dms.wn.local.password=password
+}}}
 
-# Active Connections cache configuration
-activeConnectionsCache.maxElementsInMemory=500
-activeConnectionsCache.timeToIdleSeconds=600
-
-# MicroCT file poller
+   # MicroCT file poller: the Skyscan (or Micro-CT) trigger scans the source folder every _dms.wn.filepoller.periodMilliseconds_ looking for the .log file; when found it waits additional _dms.wn.filepoller.delayMilliseconds_ before starting the ingesiton
+{{{
 dms.wn.filepoller.periodMilliseconds=60000
 dms.wn.filepoller.delayMilliseconds=10000
-
-# keys, replace $CONFIGDIR with path to your config directory
-dms.wn.key.filename=/$CONFIGDIR/keys/pubTunnelWorker.der
+}}}
