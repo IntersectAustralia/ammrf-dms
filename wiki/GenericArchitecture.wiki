@@ -39,15 +39,17 @@ HTTP/HTTPS is used in a number of places. Of course, the web layer relies on it.
 
 == Database access ==
 
-Todo
+The web component requires a datasource to store configuration and basic user handling. The service component, stores job information into the database. The catalogue as well. All these components have independent datasource configurations, although underneath they all access the same database depicted in the diagram.
+
+Also, there is a custom authentication component that uses a different datasource, which gives it back-end access to the database used by the ACMM booking system. One should be able to easily change that authenticator to use other procedure.
 
 == Data transport access ==
 
-Todo
+The DMS uses its own data transport API (see below)
 
 = Authentication =
 
-Todo
+Authentication is performed via [http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-web/src/main/java/au/org/intersect/dms/webapp/impl/BookingSystemGatewayImpl.java BookingSystemGatewayImpl] which implements `AuthenticationProvider` as required by [http://static.springsource.org/spring-security/site/ Spring security]. It uses a service interface called [http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-bookinggw/src/main/java/au/org/intersect/dms/bookinggw/BookingGatewayInterface.java BookingGatewayInterface] defined in module dms-bookinggw.
 
 = Implemented transport protocols =
 
