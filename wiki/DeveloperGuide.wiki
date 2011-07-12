@@ -32,7 +32,7 @@ STS is a powerful IDE including support for Java, JSPX, javascript, AspectJ, Spr
   # Doing *Maven* > *Update project configuration*, *Maven* > *Update dependencies* then *Clean all projects* usually helps.
   # Tomcat support in Eclipse is a pain. So, *clean server folder* in context menu usually helps so things get re-deployed to known state as they should.
   # It is recommended to extend the Tomcat start up time out to at least 1.5 mins. (This is for your development machine, in a middle-end dedicated server the DMS starts in under 30 secs.)
-  # We believe most issues are created when one runs the command line maven build and then refresh STS. Unfortunately, doing a command line {{{mvn clean install}} to get all the tests checked is a must for any experienced developer. Our work around, cleaning the project space as mentioned above usually helps.
+  # We believe most issues are created when one runs the command line maven build and then refresh STS. Unfortunately, doing a command line {{{mvn clean install}}} to get all the tests checked is a must for any experienced developer. Our work around, cleaning the project space as mentioned above usually helps.
 
 = Running the DMS from STS =
 
