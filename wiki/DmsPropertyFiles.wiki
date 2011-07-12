@@ -29,13 +29,13 @@ database.password=*****
 database.driverClassName=com.mysql.jdbc.Driver
 }}}
 
-# DB connections pool settings
-# how often (in seconds) we should check for idle connections
-# 20 minutes
+  # Database connections, pool settings; defaults here should be ok.
+  _c3p0.idleConnectionTestPeriod_: how often (in seconds) we should check for idle connections
+  _c3p0.maxIdleTime_: how long (is seconds) connection can be idle before been closed
+{{{
 c3p0.idleConnectionTestPeriod=1200 
-# how long (is seconds) connection can be idle before been closed
-# 30 minutes
 c3p0.maxIdleTime=1800
+}}}
 
 # Path of the controller used to download/upload to the PC for the Applet
 # Note: localhost is not right here in production
