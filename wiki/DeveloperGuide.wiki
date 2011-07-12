@@ -23,9 +23,9 @@ The AMMRF-DMS was developed using the eclipse-based Spring source's _Integrated 
   # Done. You should have the DMS compiled into STS.
   # We recommend disabling all validations in STS.
 
-= Few STS troubleshooting =
+= Few points on basic STS troubleshooting =
 
-STS is a powerful IDE including support for Java, JSPX, javascript, AspectJ, Spring Roo, among others. But the DMS uses Roo and stretches it quite a bit and sometimes it just can't handle it. Few guide lines here:
+STS is a powerful IDE including support for Java, JSPX, javascript, AspectJ, Spring Roo, among others. But the DMS uses Roo and other features and it stretches it quite a bit; sometimes it just can't handle it. So, few tips are helpful:
 
   # Ignore the javascript error reported on jquery.
   # Sometimes, when using *auto build*, it just gets recompiling forever (in Linux). Disable *auto build* and build manually... at least for a while.
@@ -52,9 +52,11 @@ Running the DMS inside STS with a single worker architecture requires more steps
 
 == Configure your profile ==
 
-
+The system uses a bunch of java property files located in a configuration folder. A sample of those are in dms-install/src/main/resources/profiles/default.dir. Copy the contents of this folder into your home directory, under .ammrf/dms for example. Then follow this [DmsPropertyFiles guideline] on how to configure those properties for your system.
 
 == Launch in STS ==
+
+
 
 
 = References =
