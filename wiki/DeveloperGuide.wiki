@@ -1,0 +1,46 @@
+#summary Getting started guide for developers
+
+= Quick guide =
+
+For those with a hurry, the steps to get the source compiling are:
+  # Get and install [http://maven.apache.org/ Apache Maven]
+  # [http://code.google.com/p/ammrf-dms/source/checkout Checkout] the source code
+  # Open a command line shell and into the checked out directory do:
+{{{
+    $ cd ammrf-dm
+    $ mvn clean install
+}}} 
+  This compiles all sources command line and should work out of the box.
+  # Get and install the Spring source Tool Suite (STS) [http://www.springsource.com/developer/sts here]
+  # In STS use *Import* > *Existing maven projects*, and select the top folder
+  # STS cannot understand few generated folders that have been configured into the classpath; so one has to do it manually by selecting all projects, right-click and selecting *Maven* > *Update project configuration* and then same with *Maven* > *Update dependencies*
+  # Done. You should have the DMS compiled into STS.
+  # We recommend disabling all validations in STS
+
+Running the DMS inside STS with a single worker architecture requires few more steps:
+
+  # Grab and install [http://www.mysql.com/ MySQL]
+  # Likewise for [http://activemq.apache.org/ ActiveMQ]
+  # and [http://tomcat.apache.org/download-60.cgi Tomcat 6]
+  # In MySQL, create a database `ammrf` and populate it with the provided [http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-bookinggw/src/main/sql/mysql/001_create.sql sql] in dms-booking/src/main/sql/mysql
+  # Also, create a database `specimendb` if you want to try the atom probe ingestion (please contact us for sample data)
+  # In STS, configure the !Tomcat instance
+  # Download [http://lucene.apache.org/solr/ Apache Solr] and put the apache-solr-`<version>`.war in the STS's Tomcat temporary folder as outlined [#1 here].
+  
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
+
+= Notes =
+==1==
+In some scenarios, you wish to deploy a default web application into Eclipse Tomcat which is not part of your project, you may just add the war file into the below directory:
+
+%your_workspace%\.metadata\.plugins\org.eclipse.wst.server.core\tmpX\webapps
+
+where tmpX could be tmp0, tmp1 etc
+_Retrieved from [http://abtj.blogspot.com/2009/07/how-to-adddeploy-war-file-into-eclipse.html here] 13/Jul/2011_
