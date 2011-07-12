@@ -57,15 +57,29 @@ dms.applet.tunnelUrl=https://<your-domain>:8443/dms-httptunnel/tunnel/app
 dms.webapp.key.filename=<path-to-public-key-1>
 }}}
 
-# keys, replace $CONFIGDIR with path to your config directory
-
-# Publishing reminder email settings
+  # Publishing reminder email settings, most self-explanatory. The schedule follows quartz URL syntax. The _dms.email.dms.url_ is used to provide a link to the mentioned item in the email.
+{{{
 dms.email.server.url=smtp://localhost
 dms.email.from=dms@localhost
 dms.email.subject=Please publish your datasets
-# Send every 6 months on 1 day at 00:00:00
 dms.email.schedule=0+0+0+1+1/6+?
-
-
-#Change to suit the server that dms is hosted on
 dms.email.dms.url=https://localhost:8443/dms-web/catalogue/view?url=
+}}}
+
+= bookinggw.properties =
+
+  # datasource properties. Very similar to the ones configured for the DMS above. It is worth noticing that the hibernate dialect can be configured as well.
+{{{
+bookinggw.database.driverClassName=com.mysql.jdbc.Driver
+bookinggw.database.username=root
+bookinggw.database.password=*****
+bookinggw.database.url=jdbc:mysql://localhost/ammrf
+bookinggw.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+bookinggw.hibernate.showSql=true
+}}}
+
+  # Database connections pool settings: same as for DMS database
+{{{
+bookinggw.c3p0.idleConnectionTestPeriod=1200 
+bookinggw.c3p0.maxIdleTime=1800
+}}}
