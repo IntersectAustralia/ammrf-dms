@@ -84,3 +84,15 @@ The !Skyscan trigger is started when a job is scheduled. It waits for the appear
 == Atom Probe ==
 
 Imago's atom probe comes with an experiment database. Every time a new experiment is saved, a new entry is generated in the database in corresponding tables. The trigger is a task in [http://www.quartz-scheduler.org/ quartz scheduler] which polls the database and grabs newly created experiments, copies the data into the repository and attaches metadata available from the database. To simply the implementation, the metadata schema is the same as the !Skyscan.
+
+== Olympus Confocal (FV1000) ==
+
+Olympus FV1000 instrument is configured to save data directly to main ftp server through network drive (windows net share). At the end of experiment user saves data onto main ftp server in his directory. After some time (by schedule) system finds new data and performs in-place ingestion. During this process system parses .oif and .pty log files to extract instrument settings. These files are also in windows ini format.
+
+== Olympus Total Internal Reflection Fluorescence (TIRF) ==
+
+Olympus TIRF instrument is included into the system the same way as FV1000. No instrument specific metadata is extracted.
+
+== Olympus Live-Cell (Cell^R) ==
+
+Olympus Live-Cell instrument uses "manual" ingestion. User runs experiment and saves data to local drive on the controlling computer. Then user logs into the system and uses "ingestion wizard" to ingest data. Live-Cell instrument saves metadata in MS Access DB file format. This file is parsed during ingestion and instrument settings are extracted.
