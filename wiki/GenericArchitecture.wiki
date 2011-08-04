@@ -87,7 +87,7 @@ Imago's atom probe comes with an experiment database. Every time a new experimen
 
 == Olympus Confocal (FV1000) ==
 
-Olympus FV1000 instrument is configured to save data directly to main ftp server through network drive (windows net share). At the end of experiment user saves data onto main ftp server in his directory. After some time (by schedule) system finds new data and performs in-place ingestion. During this process system parses .oif and .pty log files to extract instrument settings. These files are also in windows ini format.
+Olympus FV1000 instrument is configured to save data directly to main ftp server through network drive (windows net share). At the end of experiment user saves data onto main ftp server in his directory. After some time (by schedule) system finds new data and performs in-place ingestion. During this process system parses .oif and .pty log files to extract instrument settings. These files are in windows ini format.
 
 == Olympus Total Internal Reflection Fluorescence (TIRF) ==
 
