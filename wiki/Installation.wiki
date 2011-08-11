@@ -1,0 +1,29 @@
+#summary Installation quick-guide
+
+Installing the system (for ACMM) is pretty straight forward.
+
+  # Build the system using maven as indicated. This will create a dms-install/target/dms-`<`version`>`-with-dependencies.zip. This file includes Tomcat, ActiveMQ and Solr, and weights more than 100Mb, this is why is not available for download from here.
+  # Upload the zip file to your server
+  # In there, as root, unzip into a folder and run the installation script
+{{{
+    $ mkdir tmp
+    $ cd tmp
+    $ unzip <path-to-dms-zip>
+}}}
+  # You need a `~/.dmsrc` file in your root's home dir to specify the type of installation. Just copy the provided sample to your home dir and edit it.
+{{{
+    $ cd dms-install-<version>
+    $ cp _dmsrc ~/.dmsrc
+    $ vi ~/.dmsrc
+}}}
+  # then you can run the installer
+{{{
+    $ ./install
+}}}
+
+
+There is a default profile in the installer, in `profiles/default.dir`, which you may to customise to your environment. The installer uses that one for installation. If you want to keep the default and create your own, use the hostname of the machine so the installer will pick it up automatically.
+
+If the installer uses the default profile, it will copy every required property file and then stop so you can edit the properties. Then re-run the installer again and it will keep your edits and therefore can be run several times.
+  
+On the other hand, if you configure your machine in `dms-install/src/main/resources/profiles` then the installer always takes the properties from the installer. After that, it checks that they are correct (just that all required properties are defined) based on the default profile.
