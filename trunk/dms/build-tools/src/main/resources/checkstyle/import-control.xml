@@ -23,6 +23,15 @@
                 <allow pkg="au.org.intersect.dms.core.service.dto"/>
             </subpackage>
             
+            <subpackage name="email">
+                <allow pkg="javax.mail"/>
+                <allow pkg="au.org.intersect.dms.bookinggw"/>
+                <allow pkg="au.org.intersect.dms.catalogue"/>
+                <allow pkg="org.springframework.beans.factory.annotation"/>
+                <allow pkg="org.springframework.scheduling.annotation"/>
+                <allow pkg="org.springframework.mail"/>                
+            </subpackage>
+            
             <subpackage name="rifcs">
                <allow pkg="au.org.ands.standards.rif_cs.registryobjects" />
                <subpackage name="impl">
@@ -76,7 +85,6 @@
 			<subpackage name="core">
 				<allow pkg="au.org.intersect.dms.core" />
 				<subpackage name="service">
-					<allow pkg="org.apache.camel" />
 					<subpackage name="dto">
 						<allow class="org.springframework.roo.addon.javabean.RooJavaBean" />
 						<allow
@@ -129,11 +137,8 @@
 				<allow pkg="org.springframework.stereotype" />
 				<allow class="java.sql.Timestamp" />
 				<subpackage name="impl">
-					<allow pkg="org.apache.camel" />
 					<allow class="javax.annotation.PostConstruct" />
-				</subpackage>
-				<subpackage name="integration">
-					<allow pkg="org.apache.camel" />
+                    <allow pkg="org.springframework.scheduling" />
 				</subpackage>
 				<subpackage name="transports">
 					<subpackage name="impl">
@@ -142,19 +147,22 @@
 						<allow pkg="au.org.intersect.dms.tunnel" />
 						<allow pkg="au.org.intersect.dms.encrypt" />
                         <allow pkg="org.apache.commons.io"/>
+                        <allow pkg="net.schmizz.sshj"/>
 					</subpackage>
 				</subpackage>
 			</subpackage>
             
             <subpackage name="catalogue">
                 <allow pkg="au.org.intersect.dms.core.catalogue"/>
+                <allow pkg="au.org.intersect.dms.core.errors"/>
                 <allow class="org.springframework.roo.addon.javabean.RooJavaBean" />
                 <allow class="org.springframework.roo.addon.tostring.RooToString" />
-                <allow pkg="org.apache.camel" />
                 <allow pkg="org.springframework.beans.factory.annotation"/>
                 <allow pkg="org.codehaus.jackson.annotate"/>
                 <allow pkg="javax.xml"/>
                 <allow pkg="org.xml.sax"/>
+                <allow pkg="org.springframework.core"/>
+                <allow pkg="org.springframework.xml"/>
                 <subpackage name="db">
 				    <allow pkg="au.org.intersect.dms.catalogue" />
     				<allow pkg="org.springframework.roo" />
@@ -174,14 +182,11 @@
             </subpackage>
 
 			<subpackage name="integration">
-				<allow pkg="org.apache.camel" />
-				<allow pkg="org.fcrepo" />
 				<allow pkg="org.springframework.beans.factory.annotation"/>
 				<allow class="au.org.intersect.dms.core.catalogue.MetadataSchema"/>
 			</subpackage>
 			
 			<subpackage name="workerrouter">
-				<allow pkg="org.apache.camel" />
 				<allow class="au.org.intersect.dms.core.service.WorkerNode" />
 				<subpackage name="impl">
 					<allow pkg="au.org.intersect.dms.core.service.dto" />
@@ -206,20 +211,22 @@
 				<allow pkg="org.springframework.context" />
 				<allow pkg="org.springframework.roo" />
 				<allow pkg="org.springframework.dao" />
-				<subpackage name="domain">
+                <allow pkg="org.springframework.scheduling.annotation" />
+                <allow pkg="org.springframework.transaction.annotation" />
+				
+                <subpackage name="domain">
 					<allow pkg="javax.persistence" />
 					<allow pkg="au.org.intersect.dms.util" />
 				</subpackage>
 				<subpackage name="impl">
 					<allow pkg="java.math" />
-					<allow pkg="org.apache.camel" />
-					<allow pkg="org.fcrepo" />
 					<allow pkg="au.org.intersect.dms.util" />
 					<allow pkg="au.org.intersect.dms.workerrouter"/>
 					<allow pkg="org.springframework.transaction.annotation" />
+                    <allow pkg="org.springframework.scheduling" />
 				</subpackage>
-                <subpackage name="email">
-                    <allow pkg="org.apache.camel"/>
+                <subpackage name="ingest">
+                    <allow pkg="org.springframework.transaction.annotation" />
                 </subpackage>
 			</subpackage>
 
@@ -257,6 +264,7 @@
 					<allow pkg="au.org.intersect.dms.integration.search"/>
 					<allow pkg="org.springframework.oxm"/>
 					<allow pkg="org.springframework.xml.transform"/>
+                    <allow pkg="javax.xml"/>
 				    <allow pkg="org.springframework.transaction.annotation" />
 				    <allow pkg="au.org.ands.standards.rif_cs.registryobjects" />
 				    <allow class="au.org.intersect.dms.rifcs.RifcsMarshallService" />
@@ -285,15 +293,14 @@
                 <allow pkg="com.healthmarketscience.jackcess"/>
                 <allow pkg="com.drew.imaging"/>
                 <allow pkg="com.drew.metadata"/>
+                <allow pkg="au.org.intersect.dms.catalogue"/>
+                <allow pkg="org.springframework.scheduling"/>
                                 
                 <subpackage name="harvester">
                     <allow pkg="au.org.intersect.dms.instrument"/>
                 </subpackage>
                 <subpackage name="ingest">
                     <allow pkg="au.org.intersect.dms.instrument.ingest.filewatcher"/>
-                    <subpackage name="filewatcher">
-                        <allow pkg="org.apache.camel" />
-                    </subpackage>
                 </subpackage>
 			</subpackage>
 	</subpackage>

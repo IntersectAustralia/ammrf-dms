@@ -2,12 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:camel="http://camel.apache.org/schema/spring"
     xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-    		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd  
-            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd  		
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
             ">
     <import resource="classpath:/META-INF/spring/applicationContext-bookinggw.xml"/>
     
@@ -18,7 +16,7 @@
         location="file://${dms.config.home}/olympus.properties" />
                 
 	<context:spring-configured />
-	
+    
     <bean id="scheduledExecutorService" class="java.util.concurrent.Executors" factory-method="newScheduledThreadPool">
         <constructor-arg value="1"/>
      </bean>
@@ -29,10 +27,12 @@
      
 	<bean id="fv1000Poller" class="au.org.intersect.dms.instrument.olympus.FV1000Poller" parent="repositoryServerPoller">
         <property name="rootDirectory" value="${dms.olympus.fv1000.repo.rootDir}"/>
+        <property name="jobCreator" ref="fv1000JobCreator"/>
     </bean>
 	
     <bean id="tirfPoller" class="au.org.intersect.dms.instrument.olympus.TIRFPoller" parent="repositoryServerPoller">
         <property name="rootDirectory" value="${dms.olympus.tirf.repo.rootDir}"/>
+        <property name="jobCreator" ref="tirfJobCreator"/>
     </bean>
     
     <bean id="inplaceIngestionJobCreator" class="au.org.intersect.dms.instrument.olympus.InplaceIngestionJobCreator" abstract="true">
@@ -48,53 +48,6 @@
         <property name="instrumentProfile" value="OLYMPUS_TIRF"/>
         <property name="instrumentId" value="${dms.olympus.tirf.instrumentId}"/>
     </bean>
-	
-    <!-- we can configure the tracer by defining the tracer bean and set the properties as we like -->
-    <!-- the id name can be anything its the class that must be org.apache.camel.processor.interceptor.Tracer -->
-    <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
-        <property name="traceInterceptors" value="true"/>
-        <property name="logName" value="org.apache.camel.processor.interceptor.TraceInterceptor"/>
-        <property name="logLevel" value="INFO"/>
-    </bean>
-
-	<camel:camelContext id="olympusCtx">
-        <camel:proxy id="configurationServiceProxy" serviceInterface="au.org.intersect.dms.core.service.ConfigurationService" serviceUrl="direct:configurationService"/>
-        <camel:proxy id="dmsServiceProxy" serviceInterface="au.org.intersect.dms.core.service.DmsService" serviceUrl="direct:dmsService"/>
-        
-        <camel:endpoint id="olympusScheduler"
-			uri="quartz://olympusTrigger?cron=${dms.olympus.schedule}" />
-        
-        <camel:route>
-            <camel:from ref="olympusScheduler" />
-            <camel:multicast parallelProcessing="true">
-                <camel:to uri="direct:fv1000Route" />
-                <camel:to uri="direct:tirfRoute" />
-            </camel:multicast>
-        </camel:route>
-        <camel:route>
-            <camel:from uri="direct:fv1000Route" />
-            <camel:to uri="bean:fv1000Poller?method=getNewDatasets" />
-			<camel:to uri="bean:fv1000JobCreator" />
-        </camel:route>
-        <camel:route>
-            <camel:from uri="direct:tirfRoute" />
-            <camel:to uri="bean:tirfPoller?method=getNewDatasets" />
-			<camel:to uri="bean:tirfJobCreator" />
-        </camel:route>
-        
-        <camel:route>
-            <camel:from uri="direct:dmsService"/>
-            <camel:threads poolSize="10">
-                <camel:to uri="activemq:dms.dmsService"/>
-            </camel:threads>
-        </camel:route>
-        <camel:route>
-            <camel:from uri="direct:configurationService"/>
-            <camel:threads poolSize="10">
-                <camel:to uri="activemq:dms.configurationService"/>
-            </camel:threads>
-        </camel:route>
-	</camel:camelContext>
 	
     <!-- beans looked-up by the ServiceLocatorFactoryBean -->
     <bean id="OLYMPUS_FV1000" class="au.org.intersect.dms.instrument.harvester.FV1000Harvester" scope="prototype"/>

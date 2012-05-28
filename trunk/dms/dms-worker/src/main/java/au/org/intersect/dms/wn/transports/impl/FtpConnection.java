@@ -46,6 +46,8 @@ import au.org.intersect.dms.core.errors.NotAuthorizedError;
 import au.org.intersect.dms.core.errors.PathNotFoundException;
 import au.org.intersect.dms.core.errors.TransportError;
 import au.org.intersect.dms.core.errors.TransportException;
+import au.org.intersect.dms.core.service.BasicConnectionDetails;
+import au.org.intersect.dms.wn.ConnectionParams;
 import au.org.intersect.dms.wn.TransportConnection;
 
 /**
@@ -57,6 +59,8 @@ public class FtpConnection implements TransportConnection
     private static final Logger LOGGER = LoggerFactory.getLogger(FtpConnection.class);
 
     private FTPClient client;
+    
+    private ConnectionParams params;
 
     protected FtpConnection()
     {
@@ -67,6 +71,7 @@ public class FtpConnection implements TransportConnection
         LOGGER.debug("ftp connect to server:{} using username:{} and password:{}", new String[] {server, username,
             password});
         boolean ok = false;
+        params = new ConnectionParams("ftp", server, username, null);
         try
         {
             client = new FTPClient();
@@ -257,6 +262,12 @@ public class FtpConnection implements TransportConnection
         FileInfo item = new FileInfo(type, PathUtils.joinPath(parentPath, info.getName()),
                 info.getName(), info.getSize(), date);
         return item;
+    }
+
+    @Override
+    public BasicConnectionDetails getBasicConnectionDetails()
+    {
+        return params;
     }
 
 }

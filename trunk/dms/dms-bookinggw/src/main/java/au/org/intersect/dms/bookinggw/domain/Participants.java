@@ -27,6 +27,7 @@ package au.org.intersect.dms.bookinggw.domain;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.TypedQuery;
 
 import org.springframework.roo.addon.dbre.RooDbManaged;
@@ -45,7 +46,10 @@ public class Participants
 {
 
     private static final String PARTICIPATIONS_FOR_USER = "select p from Participants p where p.agsUsers1.userid = ?";
-
+    
+    @Column(name = "supervisor")
+    private Integer agsUsers;
+    
     public static Participants[] findByUser(long userid)
     {
         TypedQuery<Participants> q = entityManager().createQuery(PARTICIPATIONS_FOR_USER, Participants.class);

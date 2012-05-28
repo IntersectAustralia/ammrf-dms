@@ -36,10 +36,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import au.org.intersect.dms.core.domain.InstrumentProfile;
 import au.org.intersect.dms.core.instrument.InstrumentHarvester;
-import au.org.intersect.dms.instrument.harvester.InstrumentHarvesterFactory;
+import au.org.intersect.dms.core.instrument.InstrumentHarvesterFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath*:META-INF/spring/applicationContext-workernode*.xml")
+@ContextConfiguration("classpath*:META-INF/spring/applicationContext*.xml")
 public class ApplicationContextTest
 {
     

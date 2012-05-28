@@ -30,17 +30,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.pool.KeyedObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.scheduling.annotation.Async;
 
 import au.org.intersect.dms.core.domain.FileInfo;
 import au.org.intersect.dms.core.domain.FileType;
@@ -48,21 +43,23 @@ import au.org.intersect.dms.core.domain.InstrumentProfile;
 import au.org.intersect.dms.core.errors.ConnectionClosedError;
 import au.org.intersect.dms.core.errors.UnknownProtocolError;
 import au.org.intersect.dms.core.instrument.InstrumentHarvester;
+import au.org.intersect.dms.core.instrument.InstrumentHarvesterFactory;
 import au.org.intersect.dms.core.instrument.UrlCreator;
 import au.org.intersect.dms.core.service.IngestionNode;
 import au.org.intersect.dms.core.service.Ingestor;
 import au.org.intersect.dms.core.service.JobListener;
+import au.org.intersect.dms.core.service.WorkerEventListener;
 import au.org.intersect.dms.core.service.WorkerNode;
 import au.org.intersect.dms.core.service.dto.CopyParameter;
 import au.org.intersect.dms.core.service.dto.CreateDirectoryParameter;
 import au.org.intersect.dms.core.service.dto.DeleteParameter;
+import au.org.intersect.dms.core.service.dto.GetFileInfoParameter;
 import au.org.intersect.dms.core.service.dto.GetListParameter;
 import au.org.intersect.dms.core.service.dto.IngestParameter;
 import au.org.intersect.dms.core.service.dto.JobFinished;
 import au.org.intersect.dms.core.service.dto.JobStatus;
 import au.org.intersect.dms.core.service.dto.OpenConnectionParameter;
 import au.org.intersect.dms.core.service.dto.RenameParameter;
-import au.org.intersect.dms.instrument.harvester.InstrumentHarvesterFactory;
 import au.org.intersect.dms.wn.CacheWrapper;
 import au.org.intersect.dms.wn.ConnectionParams;
 import au.org.intersect.dms.wn.CopyStrategy;
@@ -75,7 +72,7 @@ import au.org.intersect.dms.wn.TransportConnection;
 // TODO CHECKSTYLE-OFF: ClassFanOutComplexity
 // TODO CHECKSTYLE-OFF: ClassDataAbstractionCoupling
 // TODO Refactor to fix ClassFanOutComplexity violation
-public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
+public class WorkerNodeImpl implements WorkerNode, IngestionNode
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkerNodeImpl.class);
 
@@ -94,18 +91,12 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
     @Autowired
     private JobListener jobListener;
 
-    @Autowired
-    @Qualifier("workerCamelContext")
-    private CamelContext context;
+    private TriggerHelper trigger = new TriggerHelper();
 
     private CopyStrategy copier;
 
     @Autowired(required = false)
     private InstrumentHarvesterFactory instrumentProfileFinder;
-
-    private String queue;
-
-    private String beanName;
 
     private Map<InstrumentProfile, Ingestor> ingestors;
 
@@ -114,42 +105,9 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
         transportTemplate.setProtoMapping(protoMapping);
     }
 
-    @Required
-    public void setQueue(final String queue)
-    {
-        this.queue = queue;
-    }
-
-    @Required
     public void setIngestors(Map<InstrumentProfile, Ingestor> ingestors)
     {
         this.ingestors = ingestors;
-    }
-
-    @PostConstruct
-    public void camelWiring()
-    {
-        try
-        {
-            context.addRoutes(new RouteBuilder()
-            {
-
-                @Override
-                public void configure() throws Exception
-                {
-
-                    from("activemq:" + queue + "?transferException=true").to(beanName);
-                }
-
-            });
-        }
-        // TODO CHECKSTYLE-OFF: IllegalCatch
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-        // CHECKSTYLE-ON: IllegalCatch
-        LOGGER.info("WORKER STARTED ON {}", queue);
     }
 
     @Required
@@ -158,7 +116,8 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
         this.copier = copier;
     }
 
-    public void setActiveConnectionsCache(CacheWrapper<Integer, ConnectionParams> activeConnectionsCache)
+    public void setActiveConnectionsCache(
+            CacheWrapper<Integer, ConnectionParams> activeConnectionsCache)
     {
         this.activeConnectionsCache = activeConnectionsCache;
     }
@@ -213,7 +172,25 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
             }
 
         };
-        return transportTemplate.execute(activeConnectionsCache.get(getListParams.getConnectionId()), action);
+        return transportTemplate.execute(
+                activeConnectionsCache.get(getListParams.getConnectionId()), action);
+    }
+
+    @Override
+    public FileInfo getFileInfo(final GetFileInfoParameter getFileInfoParams)
+    {
+        TransportConnectionCallback<FileInfo> action = new TransportConnectionCallback<FileInfo>()
+        {
+
+            @Override
+            public FileInfo performWith(TransportConnection conn) throws IOException
+            {
+                return conn.getInfo(getFileInfoParams.getAbsolutePath());
+            }
+
+        };
+        return transportTemplate.execute(
+                activeConnectionsCache.get(getFileInfoParams.getConnectionId()), action);
     }
 
     @Override
@@ -226,25 +203,34 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
             throw new IllegalArgumentException(renameParams.getFrom() + " must begin with '/'");
         }
         int parentDirEnd = renameParams.getFrom().lastIndexOf('/');
-        final String parentDirectory = renameParams.getFrom().substring(0, parentDirEnd == 0 ? 1 : parentDirEnd);
-        final String oldName = renameParams.getFrom().substring(parentDirEnd + 1, renameParams.getFrom().length());
-
+        final String parentDirectory = renameParams.getFrom().substring(0,
+                parentDirEnd == 0 ? 1 : parentDirEnd);
+        final String oldName = renameParams.getFrom().substring(parentDirEnd + 1,
+                renameParams.getFrom().length());
+        final ConnectionParams connParams = activeConnectionsCache.get(connectionId);
         TransportConnectionCallback<Boolean> action = new TransportConnectionCallback<Boolean>()
         {
 
             @Override
             public Boolean performWith(TransportConnection conn) throws IOException
             {
-                return conn.rename(parentDirectory, oldName, to);
+                if (conn.rename(parentDirectory, oldName, to))
+                {
+                    trigger.rename(connParams, parentDirectory, oldName, to);
+                    return true;
+                }
+                return false;
             }
 
         };
-        return transportTemplate.execute(activeConnectionsCache.get(connectionId), action);
+        return transportTemplate.execute(connParams, action);
     }
 
     @Override
     public boolean delete(final DeleteParameter deleteParams)
     {
+        final ConnectionParams connParams = activeConnectionsCache.get(deleteParams
+                .getConnectionId());
         // TODO CHECKSTYLE-OFF: AnonInnerLength
         TransportConnectionCallback<Boolean> action = new TransportConnectionCallback<Boolean>()
         {
@@ -254,7 +240,8 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
                 return delete(conn, deleteParams.getFiles());
             }
 
-            private boolean delete(TransportConnection conn, List<FileInfo> subList) throws IOException
+            private boolean delete(TransportConnection conn, List<FileInfo> subList)
+                throws IOException
             {
                 boolean success = subList.size() > 0 ? false : true;
                 for (FileInfo file : subList)
@@ -268,6 +255,7 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
                         }
                     }
                     success = conn.delete(file);
+                    trigger.delete(connParams, file.getAbsolutePath());
                     if (!success)
                     {
                         LOGGER.error("Failed to delete file {}", file.getAbsolutePath());
@@ -277,7 +265,8 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
             }
         };
         // CHECKSTYLE-ON: AnonInnerLength
-        return transportTemplate.execute(activeConnectionsCache.get(deleteParams.getConnectionId()), action);
+        return transportTemplate.execute(
+                activeConnectionsCache.get(deleteParams.getConnectionId()), action);
     }
 
     private synchronized Integer newSessionId(ConnectionParams key)
@@ -291,33 +280,44 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
     @Override
     public boolean createDir(final CreateDirectoryParameter createDirectoryparams)
     {
+        final ConnectionParams connParams = activeConnectionsCache.get(createDirectoryparams
+                .getConnectionId());
         TransportConnectionCallback<Boolean> action = new TransportConnectionCallback<Boolean>()
         {
 
             @Override
             public Boolean performWith(TransportConnection conn) throws IOException
             {
-                return conn.createDir(createDirectoryparams.getParent(), createDirectoryparams.getName());
+                if (conn.createDir(createDirectoryparams.getParent(),
+                        createDirectoryparams.getName()))
+                {
+                    trigger.createDirectory(connParams, createDirectoryparams.getParent(),
+                            createDirectoryparams.getName());
+                    return true;
+                }
+                return false;
             }
 
         };
-        return transportTemplate.execute(activeConnectionsCache.get(createDirectoryparams.getConnectionId()), action);
+        return transportTemplate.execute(connParams, action);
     }
 
     @Override
+    @Async
     public void copy(CopyParameter copyParams)
     {
         copyAndOptionallyHarvest(copyParams, null);
     }
 
     @Override
-    public void copyAndOptionallyHarvest(final CopyParameter copyParams, final InstrumentProfile instrumentProfile)
+    public void copyAndOptionallyHarvest(final CopyParameter copyParams,
+            final InstrumentProfile instrumentProfile)
     {
         final JobTracker tracker = new JobTracker(jobListener, copyParams.getJobId());
         storeTracker(copyParams.getJobId(), tracker);
 
-        final InstrumentHarvester instrumentHarverster = getInstrumentHarvester(copyParams.getToConnectionId(),
-                instrumentProfile);
+        final InstrumentHarvester instrumentHarverster = getInstrumentHarvester(
+                copyParams.getToConnectionId(), instrumentProfile);
 
         if (instrumentProfile != null)
         {
@@ -331,35 +331,43 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
         // TODO CHECKSTYLE-OFF: IllegalCatch
         try
         {
+            final ConnectionParams fromConnParams = activeConnectionsCache.get(copyParams
+                    .getFromConnectionId());
             TransportConnectionCallback<Void> action = new TransportConnectionCallback<Void>()
             {
                 @Override
                 public Void performWith(final TransportConnection fromConn) throws IOException
                 {
-                    copier.doScope(tracker, fromConn, copyParams.getFromFiles(), copyParams.getToDir());
+
+                    copier.doScope(tracker, fromConn, copyParams.getFromFiles(),
+                            copyParams.getToDir());
+                    final ConnectionParams toConnParams = activeConnectionsCache.get(copyParams
+                            .getToConnectionId());
                     TransportConnectionCallback<Void> subAction = new TransportConnectionCallback<Void>()
                     {
                         @Override
-                        public Void performWith(final TransportConnection toConn) throws IOException
+                        public Void performWith(final TransportConnection toConn)
+                            throws IOException
                         {
                             if (instrumentHarverster != null)
                             {
                                 instrumentHarverster.harvestStart(copyParams.getToDir());
                             }
-                            copier.copy(tracker, fromConn, toConn, instrumentHarverster);
+                            copier.copy(tracker, fromConn, toConn, instrumentHarverster, trigger);
                             return null;
                         }
                     };
-                    return transportTemplate.execute(activeConnectionsCache.get(copyParams.getToConnectionId()),
-                            subAction);
+                    return transportTemplate.execute(toConnParams, subAction);
                 }
             };
 
-            LOGGER.debug("Starting copy: jobId={}, fromConnection={}, fromList={}, toConnection={}, toDir={}",
-                    new Object[] {copyParams.getJobId(), copyParams.getFromConnectionId(), copyParams.getFromFiles(),
-                        copyParams.getToConnectionId(), copyParams.getToDir()});
+            LOGGER.debug(
+                    "Starting copy: jobId={}, fromConnection={}, fromList={}, toConnection={}, toDir={}",
+                    new Object[] {copyParams.getJobId(), copyParams.getFromConnectionId(),
+                        copyParams.getFromFiles(), copyParams.getToConnectionId(),
+                        copyParams.getToDir()});
 
-            transportTemplate.execute(activeConnectionsCache.get(copyParams.getFromConnectionId()), action);
+            transportTemplate.execute(fromConnParams, action);
         }
         catch (Exception e)
         {
@@ -376,10 +384,11 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
     }
 
     @Override
-    public void harvestWithoutCopy(final IngestParameter ingestParams, final InstrumentProfile instrumentProfile)
+    public void harvestWithoutCopy(final IngestParameter ingestParams,
+            final InstrumentProfile instrumentProfile)
     {
-        final InstrumentHarvester instrumentHarverster = getInstrumentHarvester(ingestParams.getToConnectionId(),
-                instrumentProfile);
+        final InstrumentHarvester instrumentHarverster = getInstrumentHarvester(
+                ingestParams.getToConnectionId(), instrumentProfile);
 
         final JobTracker tracker = new JobTracker(jobListener, ingestParams.getJobId());
         storeTracker(ingestParams.getJobId(), tracker);
@@ -391,16 +400,19 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
                 @Override
                 public Void performWith(final TransportConnection fromConn) throws IOException
                 {
-                    copier.doScope(tracker, fromConn, ingestParams.getFromFiles(), ingestParams.getToDir());
+                    copier.doScope(tracker, fromConn, ingestParams.getFromFiles(),
+                            ingestParams.getToDir());
                     copier.harvest(ingestParams, instrumentHarverster, tracker, fromConn);
                     return null;
                 }
             };
 
-            LOGGER.debug("Starting in place ingestion: jobId={}, fromConnection={}, fromList={}", new Object[] {
-                ingestParams.getJobId(), ingestParams.getFromConnectionId(), ingestParams.getFromFiles()});
+            LOGGER.debug("Starting in place ingestion: jobId={}, fromConnection={}, fromList={}",
+                    new Object[] {ingestParams.getJobId(), ingestParams.getFromConnectionId(),
+                        ingestParams.getFromFiles()});
 
-            transportTemplate.execute(activeConnectionsCache.get(ingestParams.getFromConnectionId()), action);
+            transportTemplate.execute(
+                    activeConnectionsCache.get(ingestParams.getFromConnectionId()), action);
         }
         finally
         {
@@ -427,6 +439,7 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
     }
 
     @Override
+    @Async
     public void ingest(final IngestParameter ingestParams)
     {
         InstrumentProfile instrumentProfile = ingestParams.getInstrumentProfile();
@@ -465,7 +478,8 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
         Ingestor ingestor = ingestors.get(instrumentProfile);
         if (ingestor == null)
         {
-            throw new IllegalArgumentException("No ingestor found for instrument profile <" + instrumentProfile + ">");
+            throw new IllegalArgumentException("No ingestor found for instrument profile <"
+                    + instrumentProfile + ">");
         }
         return ingestor;
     }
@@ -493,8 +507,10 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
     public void stopIngest(Long jobId, JobStatus status)
     {
         stopIngestion(jobId);
-        jobListener.jobEnd(new JobFinished(jobId, status, status == JobStatus.ABORTED ? new RuntimeException(
-                "Job ingestion aborted") : null));
+        jobListener
+                .jobEnd(new JobFinished(jobId, status,
+                        status == JobStatus.ABORTED ? new RuntimeException("Job ingestion aborted")
+                                : null));
     }
 
     @Override
@@ -513,12 +529,6 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
             }
         }
         return resp;
-    }
-
-    @Override
-    public void setBeanName(String beanName)
-    {
-        this.beanName = beanName;
     }
 
     private void storeJobIngestor(Long jobId, Ingestor ingestor)
@@ -548,6 +558,17 @@ public class WorkerNodeImpl implements WorkerNode, IngestionNode, BeanNameAware
                 jobIngestors.remove(jobId);
             }
         }
+    }
+
+    @Override
+    public void addEventListener(WorkerEventListener listener)
+    {
+        trigger.addEventListener(listener);
+    }
+
+    public void removeEventListener(WorkerEventListener listener)
+    {
+        trigger.removeEventListener(listener);
     }
 
 }

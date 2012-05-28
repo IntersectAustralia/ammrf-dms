@@ -65,7 +65,7 @@ public class Fv1000OifHarvesterTest
                 assertEquals(MetadataSchema.OLYMPUS_FV1000, mdItem.getSchema());
                 // test that it contains an expected value there
                 assertTrue(mdItem.getMetadata().contains("XYZ"));
-                assertTrue(mdItem.getMetadata().contains("LaserTransmissivity01"));
+                assertTrue(mdItem.getMetadata().contains("PixUnit"));
 
                 // test dates conversion from EST to UTC
                 // 2011-01-20 09:38:25 (EST) in UTC

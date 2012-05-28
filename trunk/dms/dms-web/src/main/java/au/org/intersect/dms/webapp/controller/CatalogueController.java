@@ -25,6 +25,7 @@
 
 package au.org.intersect.dms.webapp.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,8 +35,10 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.TransformerException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,14 +79,16 @@ import au.org.intersect.dms.webapp.json.AjaxResponse;
 public class CatalogueController
 {
     private static final String OWNER = "owner";
-    
+
     @Autowired
+    @Qualifier("metadataRepository")
     private MetadataRepository metadataRepository;
 
     @Autowired
     private SecurityContextFacade securityContextFacade;
 
     @Autowired
+    @Qualifier("dmsClient")
     private DmsService dmsService;
 
     @Autowired
@@ -109,9 +114,11 @@ public class CatalogueController
      * 
      * @param url
      * @return
+     * @throws TransformerException
+     * @throws IOException
      */
     @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public ModelAndView view(@RequestParam(value = "url") String url)
+    public ModelAndView view(@RequestParam(value = "url") String url) throws IOException, TransformerException
     {
         return findMetadataForURL(url, "catalogue/view", true);
     }
@@ -219,10 +226,13 @@ public class CatalogueController
      * @param connectionId
      * @param response
      * @return
+     * @throws TransformerException
+     * @throws IOException
      */
     @RequestMapping(method = RequestMethod.GET, value = "/metadata")
     public ModelAndView getMetadata(@RequestParam(value = "path") String path,
-            @RequestParam(value = "connectionId") int connectionId, HttpServletResponse response)
+            @RequestParam(value = "connectionId") int connectionId, HttpServletResponse response) throws IOException,
+        TransformerException
     {
         String url = dmsService.getUrl(connectionId, path);
         return findMetadataForURL(url, "catalogue/viewMetadata", true);
@@ -235,9 +245,11 @@ public class CatalogueController
      * @param connectionId
      * @param response
      * @return
+     * @throws TransformerException
+     * @throws IOException
      */
     @RequestMapping(method = RequestMethod.GET, value = "/previewData")
-    public ModelAndView previewData(@RequestParam(value = "url") String url)
+    public ModelAndView previewData(@RequestParam(value = "url") String url) throws IOException, TransformerException
     {
         return findMetadataForURL(url, "catalogue/previewMetadata", false);
     }
@@ -248,12 +260,14 @@ public class CatalogueController
      * @param url
      * @param schema
      * @return
+     * @throws TransformerException
+     * @throws IOException
      */
     @RequestMapping(value = "/editMetadata")
     @AjaxMethod
     @ResponseBody
     public AjaxResponse editMetadata(@RequestParam(value = "url") String url,
-            @RequestParam(value = "schema") MetadataSchema schema)
+            @RequestParam(value = "schema") MetadataSchema schema) throws IOException, TransformerException
     {
         Dataset dataset = metadataRepository.findDatasetByUrl(url);
 
@@ -316,7 +330,7 @@ public class CatalogueController
     @RequestMapping(method = RequestMethod.POST, value = "/changeOwner")
     @AjaxMethod
     @ResponseBody
-    public AjaxResponse changeOwner(@RequestParam(value = "url") String url,
+    public AjaxResponse changeOwner(@RequestParam(value = "url") String url, 
             @RequestParam(value = "owner") String owner)
     {
         Dataset dataset = metadataRepository.findDatasetByUrl(url);
@@ -356,8 +370,11 @@ public class CatalogueController
      * @param url
      * @param viewBase
      * @return
+     * @throws TransformerException
+     * @throws IOException
      */
-    private ModelAndView findMetadataForURL(String url, String viewBase, boolean everything)
+    private ModelAndView findMetadataForURL(String url, String viewBase, boolean everything) throws IOException,
+        TransformerException
     {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("url", url);

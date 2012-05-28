@@ -48,7 +48,7 @@ import au.org.intersect.dms.instrument.ingest.filewatcher.FilePoller;
 import au.org.intersect.dms.instrument.ingest.filewatcher.FileWatcher;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath*:/META-INF/spring/applicationContext-workernode*.xml")
+@ContextConfiguration("classpath*:META-INF/spring/applicationContext*.xml")
 public class CancelPollerTest
 {
     private static final String SHOULDN_T_BE_CALLED_MESSAGE = "shouldn't be called";

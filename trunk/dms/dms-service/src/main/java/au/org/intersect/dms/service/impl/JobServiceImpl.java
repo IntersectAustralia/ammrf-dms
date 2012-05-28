@@ -32,7 +32,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import au.org.intersect.dms.bookinggw.BookingGatewayMetadataService;
+import au.org.intersect.dms.core.catalogue.MetadataPopulator;
 import au.org.intersect.dms.core.catalogue.MetadataSchema;
 import au.org.intersect.dms.core.service.dto.JobType;
 import au.org.intersect.dms.service.JobService;
@@ -47,9 +47,9 @@ import au.org.intersect.dms.service.domain.JobDetailMetadata;
 @Transactional("service")
 public class JobServiceImpl implements JobService
 {
-    
-    @Autowired
-    private BookingGatewayMetadataService bookingGatewayMetadataService;
+
+    @Autowired(required = false)
+    private MetadataPopulator metadataPopulator;
 
     @Override
     public Job createJob(JobType type, String username, Long projectCode, String sourceDetails, List<String> sources,
@@ -64,28 +64,23 @@ public class JobServiceImpl implements JobService
     }
 
     @Override
-    public void setWorker(Long jobId, int workerId)
-    {
-        Job job = findJob(jobId);
-        
-        job.setWorkerId(workerId);
-        job.merge();
-
-    }
-    
-    @Override
     public void storeMetadata(Long jobId, String metadata)
     {
         Job job = findJob(jobId);
-        
+
         String url = job.getDestinationUrl();
 
         String metadataXML = metadata;
         if (metadata == null || metadata.isEmpty())
         {
+            if (metadataPopulator == null)
+            {
+                throw new IllegalStateException(
+                        "Metadata populator is not configured. Check spring application context configuration.");
+            }
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("url", url);
-            metadataXML = bookingGatewayMetadataService.getMetadata(params);
+            metadataXML = metadataPopulator.getMetadata(params);
         }
 
         JobDetailMetadata jdm = new JobDetailMetadata();
@@ -93,7 +88,7 @@ public class JobServiceImpl implements JobService
         jdm.setUrl(url);
         jdm.setMetadataSchema(MetadataSchema.RIF_CS);
         jdm.setMetadata(metadataXML);
-        
+
         jdm.persist();
         job.merge();
     }

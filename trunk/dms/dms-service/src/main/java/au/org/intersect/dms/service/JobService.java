@@ -52,14 +52,6 @@ public interface JobService
             String destinationDetails, String targetDir);
     
     /**
-     * Sets worker in the job.
-     * 
-     * @param jobId
-     * @param workerId
-     */
-    void setWorker(Long jobId, int workerId);
-    
-    /**
      * Stores provided metadata (RIF-CS) in the job
      * 
      * @param jobId job ID

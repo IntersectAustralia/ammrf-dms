@@ -106,24 +106,26 @@ public class CellRIngestor implements Ingestor
                     workstationConnectionParams.getServer(), workstationConnectionParams.getUsername(),
                     workstationConnectionParams.getPassword());
 
-            dmsService.copy(ingestParams.getUsername(), fromConnectionId, createCopyFromList(ingestParams),
-                    toConnectionId, workstationTargetDir);
+            List<String> copyFromList = createCopyFromList(ingestParams);
+            LOGGER.debug("Copy from list: {}", copyFromList);
+
+            dmsService.copy(ingestParams.getUsername(), fromConnectionId, copyFromList, toConnectionId,
+                    workstationTargetDir);
         }
         LOGGER.info("Finished.");
     }
 
     List<String> createCopyFromList(IngestParameter ingestParams)
     {
-        StringBuffer from = new StringBuffer(ingestParams.getToDir());
-        String fromDir = ingestParams.getFromFiles().get(0); // For CellR we ingest always one directory
-        if (ingestParams.getToDir().endsWith(SLASH))
-        {
-            from.append(fromDir.substring(1)); // removing leading slash
-        }
-        else
+        StringBuffer from = new StringBuffer(ingestParams.getToDir().equals(SLASH) ? "" : ingestParams.getToDir());
+        String fromDirAbsolutePath = ingestParams.getFromFiles().get(0); // For CellR we ingest always one directory
+        String fromDir = fromDirAbsolutePath.substring(fromDirAbsolutePath.lastIndexOf(SLASH),
+                fromDirAbsolutePath.length());
+        if (!fromDir.equals(SLASH))
         {
             from.append(fromDir);
         }
+        
         return Arrays.asList(from.toString());
     }
 

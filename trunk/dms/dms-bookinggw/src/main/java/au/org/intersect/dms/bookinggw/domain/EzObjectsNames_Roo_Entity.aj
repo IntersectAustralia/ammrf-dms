@@ -17,7 +17,7 @@ privileged aspect EzObjectsNames_Roo_Entity {
     
     declare @type: EzObjectsNames: @Entity;
     
-    declare @type: EzObjectsNames: @Table(name = "ez_objects_names");
+    declare @type: EzObjectsNames: @Table(name = "EZ_ObjectNames");
     
     @PersistenceContext(unitName = "bookinggwPU")
     transient EntityManager EzObjectsNames.entityManager;

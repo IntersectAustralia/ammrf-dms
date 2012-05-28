@@ -37,7 +37,7 @@ import org.springframework.roo.addon.tostring.RooToString;
  */
 @RooJavaBean
 @RooToString
-@RooEntity(versionField = "", table = "ags_users", persistenceUnit = "bookinggwPU")
+@RooEntity(versionField = "", table = "AGS_Users", persistenceUnit = "bookinggwPU")
 @RooDbManaged(automaticallyDelete = true)
 public class AgsUsers
 {

@@ -6,7 +6,7 @@
 	xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" >  
 	
 	<jsp:directive.page contentType="text/html;charset=UTF-8" />  
-	<spring:url value="/images/favicon.ico" var="faviconPath" />
+	<spring:url value="/resources/images/favicon.ico" var="faviconPath" />
 		
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -36,17 +36,27 @@
 	    		
 			</div>
 			
-			<c:url var="affiliatesDir" value="/resources/images/affiliates"/>
 			<table id="affiliates" class="main" border="0" width="95%">
 		    <tbody>
 		    
 		    <tr>
-		    <td><a href="http://www.sydney.edu.au/acmm/" target="_blank"><img src="${affiliatesDir}/u_syd.gif" border="0" alt="University of Sydney" /></a></td>
-		    <td><a href="http://www.uq.edu.au/nanoworld/" target="_blank"><img src="${affiliatesDir}/u_q.gif" border="0" alt="University of Queensland" /></a></td>
-		    <td><a href="http://www.cmca.uwa.edu.au/" target="_blank"><img src="${affiliatesDir}/u_wa.gif" border="0" alt="University of Western Australia" /></a></td>
-		    <td><a href="http://srv.emunit.unsw.edu.au/" target="_blank"><img src="${affiliatesDir}/u_nsw.gif" border="0" alt="University of New South Wales" /></a></td>
-		    <td><a href="http://www.anu.edu.au/EMU/" target="_blank"><img src="${affiliatesDir}/u_anu.gif" border="0" alt="Australian National University" /></a></td>
-		    <td><a href="http://www.adelaide.edu.au/microscopy/sarf/" target="_blank"><img src="${affiliatesDir}/u_sarf.gif" border="0" alt="South Australian Regional Facility Nodes" /></a></td>
+			<c:url var="usydLogo" value="/resources/images/affiliates/u_syd.gif"/>
+		    <td><a href="http://www.sydney.edu.au/acmm/" target="_blank"><img src="${usydLogo}" border="0" alt="University of Sydney" /></a></td>
+            
+            <c:url var="uqLogo" value="/resources/images/affiliates/u_q.gif"/>
+		    <td><a href="http://www.uq.edu.au/nanoworld/" target="_blank"><img src="${uqLogo}" border="0" alt="University of Queensland" /></a></td>
+		    
+            <c:url var="uwaLogo" value="/resources/images/affiliates/u_wa.gif"/>
+            <td><a href="http://www.cmca.uwa.edu.au/" target="_blank"><img src="${uwaLogo}" border="0" alt="University of Western Australia" /></a></td>
+		    
+            <c:url var="unswLogo" value="/resources/images/affiliates/u_nsw.gif"/>
+            <td><a href="http://srv.emunit.unsw.edu.au/" target="_blank"><img src="${unswLogo}" border="0" alt="University of New South Wales" /></a></td>
+		    
+            <c:url var="uanuLogo" value="/resources/images/affiliates/u_anu.gif"/>
+            <td><a href="http://www.anu.edu.au/EMU/" target="_blank"><img src="${uanuLogo}" border="0" alt="Australian National University" /></a></td>
+		    
+            <c:url var="usarfLogo" value="/resources/images/affiliates/u_sarf.gif"/>
+            <td><a href="http://www.adelaide.edu.au/microscopy/sarf/" target="_blank"><img src="${usarfLogo}" border="0" alt="South Australian Regional Facility Nodes" /></a></td>
 		    </tr>
 		    
 		    </tbody>

@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import au.org.intersect.dms.core.service.AtomProbeService;
 
@@ -48,6 +49,8 @@ public class AtomProbePoller extends SimpleJdbcDaoSupport
     
     @Autowired
     private AtomProbeService atomProbeService;
+    
+    private AtomProbeJobCreator jobCreator;
 
     /**
      * Stock server of the instrument.
@@ -66,8 +69,24 @@ public class AtomProbePoller extends SimpleJdbcDaoSupport
     {
         this.machineId = machineId;
     }
-
-    public List<Experiment> getExperiments()
+    
+    @Required
+    public void setJobCreator(AtomProbeJobCreator jobCreator)
+    {
+        this.jobCreator = jobCreator;
+    }
+    
+    @Scheduled(cron = "${dms.atomProbe.schedule}")
+    public void ingestNewExperiments()
+    {
+        List<Experiment> newExperiments = getExperiments();
+        if (!newExperiments.isEmpty())
+        {
+            jobCreator.createJobs(newExperiments);
+        }
+    }
+    
+    private List<Experiment> getExperiments()
     {
         SimpleJdbcTemplate jdbcTemplate = getSimpleJdbcTemplate();
         StringBuilder query = new StringBuilder();

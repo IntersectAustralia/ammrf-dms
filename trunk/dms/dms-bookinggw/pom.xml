@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>au.org.intersect.dms</groupId>
 		<artifactId>dms</artifactId>
-		<version>1.0.2</version>
+		<version>1.3.3</version>
 	</parent>
 	<groupId>au.org.intersect.dms</groupId>
 	<artifactId>dms-bookinggw</artifactId>
@@ -18,7 +18,14 @@
 		<hibernate-jpa.version>1.0.0.Final</hibernate-jpa.version>
 		<topLevelDir>${project.parent.basedir}</topLevelDir>
 	</properties>
-
+    
+    <repositories>
+        <repository>
+            <id>local-repo</id>
+            <url>file://${project.basedir}/local-repo</url>
+        </repository>
+    </repositories>
+    
 	<dependencies>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -62,8 +69,6 @@
 		<dependency>
 			<groupId>au.org.intersect.dms</groupId>
 			<artifactId>dms-test</artifactId>
-			<version>${dms.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>javassist</groupId>
@@ -126,6 +131,11 @@
 			<version>5.1.6</version>
 			<scope>runtime</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver.jdbc</groupId>
+            <artifactId>sqljdbc</artifactId>
+            <version>${mssql-sqljdbc.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
@@ -313,15 +323,6 @@
 						<projectnature>com.springsource.sts.roo.core.nature</projectnature>
 						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
 					</additionalProjectnatures>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<dms.config.home>${basedir}/src/test/resources</dms.config.home>
-					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 		</plugins>

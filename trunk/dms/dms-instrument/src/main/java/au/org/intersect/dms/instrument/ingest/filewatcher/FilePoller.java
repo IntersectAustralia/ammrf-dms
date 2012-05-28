@@ -25,13 +25,12 @@
 
 package au.org.intersect.dms.instrument.ingest.filewatcher;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Starts polling directory for marker file.
@@ -45,10 +44,6 @@ public class FilePoller
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FilePoller.class);
 
-    @Autowired
-    @Qualifier("workerCamelContext")
-    private CamelContext camelContext;
-
     /**
      * Time in millis to wait before marker file can be processed and polling stopped. Used to make sure marker file is
      * not accessed by writing process any longer.
@@ -59,12 +54,14 @@ public class FilePoller
      * Time in millis between polls.
      */
     private long period;
-
+    
+    @Required
     public void setDelay(long delay)
     {
         this.delay = delay;
     }
-
+    
+    @Required
     public void setPeriod(long period)
     {
         this.period = period;
@@ -84,28 +81,65 @@ public class FilePoller
         // TODO CHECKSTYLE-OFF: IllegalCatch
         try
         {
-            camelContext.addRoutes(new RouteBuilder()
-            {
+            final Timer timer = new Timer();
 
-                @Override
-                public void configure() throws Exception
-                {
-                    StringBuilder timerURL = new StringBuilder("timer:fileWatcher");
-                    timerURL.append(connectionId).append(dir).append("?period=").append(period);
-                    from(timerURL.toString()).bean(fileWatcher, "checkMarkerFile").choice()
-                            .when(body().isEqualTo(FileWatcherResult.ERROR)).bean(fileWatcher, "abortIngest")
-                            .to(BEAN_ROUTESTOPPER_STOP).when(body().isEqualTo(FileWatcherResult.CANCELLED))
-                            .bean(fileWatcher, "cancelIngest").to(BEAN_ROUTESTOPPER_STOP)
-                            .when(body().isEqualTo(FileWatcherResult.FOUND)).delay(delay).multicast()
-                            .parallelProcessing().bean(fileWatcher, "ingest").to(BEAN_ROUTESTOPPER_STOP);
-                }
-            });
+            TimerTask task = new FileCheckTask(timer, fileWatcher);
+
+            timer.schedule(task, 0, period);
         }
         catch (Exception e)
         {
             LOGGER.error("Failed to start file watcher for connection {}, and directory {}", connectionId, dir);
-            throw new RuntimeCamelException("Failed to start file watcher", e);
+            throw new RuntimeException("Failed to start file watcher", e);
         }
         // CHECKSTYLE-ON: IllegalCatch
+    }
+    
+    /**
+     * Timer task which checks if marker file appeared.
+     * If marker file found that it also initiates ingest.
+     * 
+     */
+    private final class FileCheckTask extends TimerTask
+    {
+        private final Timer timer;
+        private final FileWatcher fileWatcher;
+
+        private FileCheckTask(Timer timer, FileWatcher fileWatcher)
+        {
+            this.timer = timer;
+            this.fileWatcher = fileWatcher;
+        }
+
+        @Override
+        public void run()
+        {
+            FileWatcherResult markerFileFound = fileWatcher.checkMarkerFile();
+            switch (markerFileFound)
+            {
+                case ERROR:
+                    timer.cancel();
+                    fileWatcher.abortIngest();
+                    break;
+                case CANCELLED:
+                    timer.cancel();
+                    fileWatcher.cancelIngest();
+                    break;
+                case FOUND:
+                    timer.cancel();
+                    try
+                    {
+                        Thread.sleep(delay);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        throw new RuntimeException("Delay thread was interrupted", e);
+                    }
+                    fileWatcher.ingest();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

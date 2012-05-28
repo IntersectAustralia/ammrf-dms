@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +54,7 @@ import au.org.intersect.dms.webapp.json.AjaxResponse;
 public class JobsController
 {
     @Autowired
+    @Qualifier("dmsClient")
     private DmsService dmsService;
 
     @Autowired

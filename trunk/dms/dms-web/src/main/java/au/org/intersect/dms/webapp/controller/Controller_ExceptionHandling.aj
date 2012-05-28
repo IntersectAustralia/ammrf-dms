@@ -25,7 +25,6 @@
 
 package au.org.intersect.dms.webapp.controller;
 
-import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +45,6 @@ public aspect Controller_ExceptionHandling
         try
         {
             return proceed();
-        }
-        catch (RuntimeCamelException e)
-        {
-            return buildResponse(e.getCause());
         }
         catch (Exception e)
         {

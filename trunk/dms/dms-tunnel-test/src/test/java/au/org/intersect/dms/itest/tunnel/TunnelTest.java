@@ -28,7 +28,6 @@ package au.org.intersect.dms.itest.tunnel;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -46,7 +45,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
-import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,13 +62,15 @@ import au.org.intersect.dms.wn.TransportConnection;
 import au.org.intersect.dms.wn.impl.TransportConnectionCallback;
 import au.org.intersect.dms.wn.impl.TransportConnectionTemplate;
 
+//TODO CHECKSTYLE-OFF: ClassFanOutComplexity
+//TODO CHECKSTYLE-OFF: ClassDataAbstractionCoupling
 public class TunnelTest
 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TunnelTest.class);
 
-    ExecutorService executor = Executors.newFixedThreadPool(3);
-    Boolean check = false;
+    private ExecutorService executor = Executors.newFixedThreadPool(3);
+    private Boolean check = false;
 
     @Test
     public void integrationTest() throws Exception
@@ -93,8 +93,9 @@ public class TunnelTest
     private void connectFromApplet(String jobId) throws Exception
     {
         PublicEncryptAgent agent = new PublicEncryptAgent("classpath:/keys/pubTunnelApplet.der");
-        final PcConnection connection = new PcConnection("http://localhost:8777/dms-tunnel-test/app",
-                getEncryptedJobId(jobId), new HddAccess(), agent);
+        final PcConnection connection = new PcConnection(
+                "http://localhost:8777/dms-tunnel-test/app", getEncryptedJobId(jobId),
+                new HddAccess(), agent);
         executor.submit(new Runnable()
         {
 
@@ -117,9 +118,10 @@ public class TunnelTest
 
     private void connectFromWorker(String jobId, final String path)
     {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("/META-INF/spring/context-hdd.xml");
-        final TransportConnectionTemplate template = ctx
-                .getBean("transportTemplate", TransportConnectionTemplate.class);
+        ApplicationContext ctx = new ClassPathXmlApplicationContext(
+                "/META-INF/spring/context-hdd.xml");
+        final TransportConnectionTemplate template = ctx.getBean("transportTemplate",
+                TransportConnectionTemplate.class);
         final ConnectionParams key = new ConnectionParams("hdd", "upload", jobId, null);
         final TransportConnectionCallback<List<FileInfo>> action = new TransportConnectionCallback<List<FileInfo>>()
         {
@@ -171,7 +173,7 @@ public class TunnelTest
         }
         new FileOutputStream(new File(temp, "text-a.txt")).close();
         new FileOutputStream(new File(temp, "text-b.txt")).close();
-        return (temp);
+        return temp;
     }
 
     /**
@@ -198,12 +200,14 @@ public class TunnelTest
             }
             if (method == null)
             {
-                throw new RuntimeException("Cannot find " + methodName + " in " + controller.getClass().getSimpleName());
+                throw new RuntimeException("Cannot find " + methodName + " in "
+                        + controller.getClass().getSimpleName());
             }
         }
 
         @Override
-        protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        protected void service(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException
         {
             try
             {

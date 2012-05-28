@@ -41,11 +41,6 @@ public class InvestigatorRole implements Serializable
     private long userId;
 
     /**
-     * If user has supervisor role.
-     */
-    private boolean isSupervisor;
-
-    /**
      * From users.title.
      */
     private String title;
@@ -92,8 +87,6 @@ public class InvestigatorRole implements Serializable
      * 
      * @param userId
      *            the userid
-     * @param isSupervisor
-     *            if supervisor
      * @param nameParts
      *            the parts of the name as array
      * @param affiliation
@@ -101,11 +94,10 @@ public class InvestigatorRole implements Serializable
      * @param affiliationId
      *            the organization id
      */
-    public InvestigatorRole(long userId, boolean isSupervisor, String[] nameParts, String affiliation,
+    public InvestigatorRole(long userId, String[] nameParts, String affiliation,
             String affiliationId)
     {
         this.userId = userId;
-        this.isSupervisor = isSupervisor;
         int i = 0;
         this.title = nameParts[i++];
         this.firstName = nameParts[i++];
@@ -131,23 +123,6 @@ public class InvestigatorRole implements Serializable
     public void setUserId(long userId)
     {
         this.userId = userId;
-    }
-
-    /**
-     * @return the isSupervisor
-     */
-    public boolean isSupervisor()
-    {
-        return this.isSupervisor;
-    }
-
-    /**
-     * @param isSupervisor
-     *            the isSupervisor to set
-     */
-    public void setSupervisor(boolean isSupervisor)
-    {
-        this.isSupervisor = isSupervisor;
     }
 
     /**

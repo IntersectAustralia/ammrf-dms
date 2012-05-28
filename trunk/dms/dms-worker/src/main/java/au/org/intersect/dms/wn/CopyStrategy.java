@@ -31,6 +31,7 @@ import java.util.List;
 import au.org.intersect.dms.core.instrument.InstrumentHarvester;
 import au.org.intersect.dms.core.service.dto.IngestParameter;
 import au.org.intersect.dms.wn.impl.JobTracker;
+import au.org.intersect.dms.wn.impl.TriggerHelper;
 
 /**
  * A strategy to copy files and folders between transports, with optional metadata harvesting
@@ -50,8 +51,8 @@ public interface CopyStrategy
      * @return
      * @throws IOException
      */
-    JobTracker doScope(JobTracker tracker, TransportConnection conn, List<String> fromFiles, String to)
-        throws IOException;
+    JobTracker doScope(JobTracker tracker, TransportConnection conn, List<String> fromFiles,
+            String to) throws IOException;
 
     /**
      * Performs a copy/ingestion job
@@ -60,11 +61,15 @@ public interface CopyStrategy
      * @param fromConn
      * @param toConn
      * @param instrument
+     * @param trigger
+     * @param toConnParams
+     * @param fromConnParams
      * @throws IOException
      */
-    void copy(final JobTracker tracker, final TransportConnection fromConn, final TransportConnection toConn,
-            InstrumentHarvester instrument) throws IOException;
-    
+    void copy(final JobTracker tracker, final TransportConnection fromConn,
+            final TransportConnection toConn, InstrumentHarvester instrument,
+            TriggerHelper trigger) throws IOException;
+
     /**
      * Performs ingestion in place without copy
      * 

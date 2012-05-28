@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            ">
+    
+    <bean id="configurationService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="au.org.intersect.dms.core.service.ConfigurationService" />
+    </bean>
+    
+    <bean id="dmsService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="au.org.intersect.dms.core.service.DmsService" />
+    </bean>
+    
+    <bean id="atomProbeService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="au.org.intersect.dms.core.service.AtomProbeService" />
+    </bean>
+    
+    <!-- bean id="jobListener" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="au.org.intersect.dms.core.service.JobListener" />
+    </bean-->
+</beans>

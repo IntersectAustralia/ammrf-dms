@@ -6,7 +6,7 @@
 	<artifactId>dms</artifactId>
 	<packaging>pom</packaging>
 	<name>DMS</name>
-	<version>1.0.2</version>
+	<version>1.3.3</version>
 	<description>DMS Application</description>
 	<modules>
 		<module>build-tools</module>
@@ -26,6 +26,10 @@
 		<module>dms-web</module>
 		<module>dms-install</module>
 		<module>dms-instrument</module>
+		<module>dms-tunnel-test</module>
+		<module>dms-email</module>
+		<module>dms-metadata-ingestor</module>
+		<module>dms-service-core</module>
 	</modules>
 
 	<properties>
@@ -33,23 +37,19 @@
 		<checkstyle_config_dir>${topLevelDir}/build-tools/src/main/resources/checkstyle</checkstyle_config_dir>
 		<topLevelDir>${basedir}</topLevelDir>
 
-		<dms.version>1.0.2</dms.version>
+		<dms.version>1.3.3</dms.version>
 
 		<roo.version>1.1.0.RELEASE</roo.version>
 		<roo-equals.version>1.2.0</roo-equals.version>
 
 		<spring.version>3.0.5.RELEASE</spring.version>
 		<spring-security.version>3.0.3.RELEASE</spring-security.version>
-		<spring-ws.version>1.5.9</spring-ws.version>
 		<aspectj.version>1.6.10</aspectj.version>
 		<log4j.version>1.2.16</log4j.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<powermock.version>1.4.6</powermock.version>
 		<validator-api.version>1.0.0.GA</validator-api.version>
 		<commons-pool.version>1.5.4</commons-pool.version>
-		<activemq.version>5.4.0</activemq.version>
-		<apache-camel.version>2.4.0</apache-camel.version>
-		<apache-cxf.version>2.2.9</apache-cxf.version>
 		<stringtemplate.version>3.2.1</stringtemplate.version>
 		<xmlunit.version>1.3</xmlunit.version>
 		<unitils.version>3.1</unitils.version>
@@ -63,6 +63,7 @@
 		<flexjson.version>2.0</flexjson.version>
 		<c3p0.version>0.9.1.2</c3p0.version>
 		<mysql-connector.version>5.1.12</mysql-connector.version>
+        <mssql-sqljdbc.version>3.0</mssql-sqljdbc.version>
 		<joda-time.version>1.6.2</joda-time.version>
 		<hibernate.version>3.5.5-Final</hibernate.version>
 		<hibernate-validator.version>4.1.0.Final</hibernate-validator.version>
@@ -77,12 +78,14 @@
 		<maven-jaxb2-plugin.version>0.7.4</maven-jaxb2-plugin.version>
 		<maven-dependency-plugin.version>2.2</maven-dependency-plugin.version>
         <maven-svn-revision-number-plugin.version>1.4</maven-svn-revision-number-plugin.version>
+        <maven-surefire-plugin.version>2.9</maven-surefire-plugin.version>
+        <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
 
 	</properties>
 
 	<build>
 		<defaultGoal>package</defaultGoal>
-
+        
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -157,16 +160,26 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<excludes>
-						<exclude>**/*_Roo_*</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+            </plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -235,9 +248,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
+                    <excludes>
+                        <exclude>**/*_Roo_*</exclude>
+                    </excludes>
                     <systemPropertyVariables>
-                        <dms.config.home>${basedir}/src/test/resources</dms.config.home>
+                        <dms.config.home>${basedir}/../dms-test/src/main/resources</dms.config.home>
                         <dms.worker.profile>worker-internal.xml</dms.worker.profile>
                         <log4j.ignoreTCL>true</log4j.ignoreTCL>
                     </systemPropertyVariables>
@@ -275,6 +292,13 @@
 
 	<dependencyManagement>
 		<dependencies>
+            <dependency>
+                <groupId>au.org.intersect.dms</groupId>
+                <artifactId>dms-test</artifactId>
+                <version>${dms.version}</version>
+                <scope>test</scope>
+            </dependency>
+        
 			<dependency>
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
@@ -324,12 +348,6 @@
 				<version>${unitils.version}</version>
 				<scope>test</scope>
 			</dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-test</artifactId>
-                <version>${apache-camel.version}</version>
-                <scope>test</scope>
-            </dependency>
 
 			<dependency>
 				<groupId>log4j</groupId>
@@ -478,18 +496,6 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-orm</artifactId>
 				<version>${spring.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-core</artifactId>
-				<version>${activemq.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
     	<dependency>

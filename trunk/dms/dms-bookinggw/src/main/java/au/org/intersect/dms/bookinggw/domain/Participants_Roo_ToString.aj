@@ -10,7 +10,6 @@ privileged aspect Participants_Roo_ToString {
     public String Participants.toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Projects: ").append(getProjects()).append(", ");
-        sb.append("AgsUsers: ").append(getAgsUsers()).append(", ");
         sb.append("AgsUsers1: ").append(getAgsUsers1()).append(", ");
         sb.append("Academic: ").append(getAcademic()).append(", ");
         sb.append("Academics: ").append(getAcademics()).append(", ");
@@ -23,7 +22,8 @@ privileged aspect Participants_Roo_ToString {
         sb.append("Subsmngr: ").append(getSubsmngr()).append(", ");
         sb.append("Supervisors: ").append(getSupervisors()).append(", ");
         sb.append("Timestamp: ").append(getTimestamp()).append(", ");
-        sb.append("Regno: ").append(getRegno());
+        sb.append("Regno: ").append(getRegno()).append(", ");
+        sb.append("AgsUsers: ").append(getAgsUsers());
         return sb.toString();
     }
     

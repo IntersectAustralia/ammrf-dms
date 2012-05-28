@@ -47,7 +47,8 @@
                     <tr>
                         <th class="ui-state-default">ID</th>
                         <th class="ui-state-default">Location</th>
-                        <th class="ui-state-default">Creation Date</th>
+                        <th class="ui-state-default">Advertised</th>
+                        <th class="ui-state-default">Owner</th>
                     </tr>
                 </thead>
                 <tbody>

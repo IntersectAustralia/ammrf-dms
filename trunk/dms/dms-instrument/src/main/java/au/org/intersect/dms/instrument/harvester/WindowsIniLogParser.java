@@ -137,29 +137,23 @@ public class WindowsIniLogParser
         {
             String sectionProperty = sectionName + "." + node.getName();
 
-            if (mode == Mode.EXCLUSION)
+            if ((mode == Mode.EXCLUSION && !findMatch(sectionProperty.trim()))
+                    || (mode == Mode.INCLUSION && findMatch(sectionProperty.trim())))
             {
-                if (!fields.contains(sectionProperty.trim()))
-                {
-                    String name = node.getName();
-                    String value = node.getValue().toString();
-                    value = convertPropertyValue(sectionProperty, value);
-                    sectionMap.put(AbstractHarvester.toXML(name), AbstractHarvester.toXML(value));
-                }
-            }
-            else if (mode == Mode.INCLUSION)
-            {
-                if (findMatch(sectionProperty.trim()))
 
-                {
-                    String name = node.getName();
-                    String value = node.getValue().toString();
-                    value = convertPropertyValue(sectionProperty, value);
-                    sectionMap.put(AbstractHarvester.toXML(name), AbstractHarvester.toXML(value));
-                }
+                String name = node.getName();
+                String value = node.getValue().toString();
+                MetadataField field = mapField(name, value);
+                value = convertPropertyValue(sectionProperty, field.getValue());
+                sectionMap.put(AbstractHarvester.toXML(field.getName()), AbstractHarvester.toXML(value));
             }
         }
         return sectionMap;
+    }
+
+    protected MetadataField mapField(String name, String value)
+    {
+        return new MetadataField(name, value);
     }
 
     private boolean findMatch(String property)

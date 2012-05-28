@@ -3,7 +3,6 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        ">
     
-    <bean id="routeStopper" class="au.org.intersect.dms.instrument.ingest.filewatcher.RouteStopper" />
     <bean id="filePoller" class="au.org.intersect.dms.instrument.ingest.filewatcher.FilePoller">
         <property name="period" value="${dms.wn.filepoller.periodMilliseconds}"/>
         <property name="delay" value="${dms.wn.filepoller.delayMilliseconds}"/>

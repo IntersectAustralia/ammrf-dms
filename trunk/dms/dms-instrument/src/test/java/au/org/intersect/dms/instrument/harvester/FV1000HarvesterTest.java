@@ -77,8 +77,8 @@ public class FV1000HarvesterTest
         {
             LOGGER.info("Metadata: {}:\n{}", metadataEventItem.getSchema(), metadataEventItem.getMetadata());
             // test that it contains an expected value there
-            assertTrue(metadataEventItem.getMetadata().contains("ObjectiveLens Name"));
-            assertTrue(metadataEventItem.getMetadata().contains("LaserTransmissivity01"));
+            assertTrue(metadataEventItem.getMetadata().contains("Objective"));
+            assertTrue(metadataEventItem.getMetadata().contains("ScanDirection"));
         }
         
     }

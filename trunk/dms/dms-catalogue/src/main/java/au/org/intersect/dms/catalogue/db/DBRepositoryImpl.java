@@ -41,10 +41,10 @@ import org.springframework.transaction.annotation.Transactional;
 import au.org.intersect.dms.catalogue.Dataset;
 import au.org.intersect.dms.catalogue.DatasetNotFoundException;
 import au.org.intersect.dms.catalogue.DatasetSearchResult;
-import au.org.intersect.dms.catalogue.IngestionFailedException;
 import au.org.intersect.dms.catalogue.MetadataItem;
 import au.org.intersect.dms.catalogue.MetadataRepository;
 import au.org.intersect.dms.core.catalogue.MetadataSchema;
+import au.org.intersect.dms.core.errors.IngestionFailedException;
 import au.org.intersect.dms.util.DateFormatter;
 
 /**
@@ -187,6 +187,7 @@ public class DBRepositoryImpl implements MetadataRepository
         dbDataset.setProjectCode(dataset.getProjectCode());
         dbDataset.setOwner(dataset.getOwner());
         dbDataset.merge();
+        DbDataset.indexDbDataset(dbDataset);
     }
 
     private Dataset fromDbDataset(DbDataset dbDataset)

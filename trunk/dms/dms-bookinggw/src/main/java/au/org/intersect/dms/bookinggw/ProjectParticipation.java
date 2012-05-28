@@ -37,8 +37,6 @@ public class ProjectParticipation
 
     private String comments;
 
-    private String supervisorUsername;
-
     /**
      * Empty for marshalling.
      */
@@ -54,11 +52,10 @@ public class ProjectParticipation
      * @param supervisorUsername
      *            the supervisor (as username).
      */
-    public ProjectParticipation(Project project, String comments, String supervisorUsername)
+    public ProjectParticipation(Project project, String comments)
     {
         this.project = project;
         this.comments = comments;
-        this.supervisorUsername = supervisorUsername;
     }
 
     /**
@@ -93,23 +90,6 @@ public class ProjectParticipation
     public void setComments(String comments)
     {
         this.comments = comments;
-    }
-
-    /**
-     * @return the supervisorUsername
-     */
-    public String getSupervisorUsername()
-    {
-        return this.supervisorUsername;
-    }
-
-    /**
-     * @param supervisorUsername
-     *            the supervisorUsername to set
-     */
-    public void setSupervisorUsername(String supervisorUsername)
-    {
-        this.supervisorUsername = supervisorUsername;
     }
 
 }

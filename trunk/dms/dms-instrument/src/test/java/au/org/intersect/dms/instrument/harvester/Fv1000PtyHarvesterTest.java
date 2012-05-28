@@ -64,7 +64,7 @@ public class Fv1000PtyHarvesterTest
                 assertEquals(url, mdItem.getUrl());
                 assertEquals(MetadataSchema.EMPTY, mdItem.getSchema());
                 // test that it contains an expected value there
-                assertTrue(mdItem.getMetadata().contains("ObjectiveLens Name"));
+                assertTrue(mdItem.getMetadata().contains("\"Objective\""));
 
                 // test that it does not contain the exclusions
                 assertFalse(mdItem.getMetadata().contains("LightControl"));

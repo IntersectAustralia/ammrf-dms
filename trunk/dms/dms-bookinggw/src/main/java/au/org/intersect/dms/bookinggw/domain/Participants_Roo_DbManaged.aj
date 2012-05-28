@@ -22,10 +22,6 @@ privileged aspect Participants_Roo_DbManaged {
     private Projects Participants.projects;
     
     @ManyToOne
-    @JoinColumn(name = "supervisor", referencedColumnName = "userid")
-    private AgsUsers Participants.agsUsers;
-    
-    @ManyToOne
     @JoinColumn(name = "userid", referencedColumnName = "userid")
     private AgsUsers Participants.agsUsers1;
     
@@ -76,14 +72,6 @@ privileged aspect Participants_Roo_DbManaged {
     
     public void Participants.setProjects(Projects projects) {
         this.projects = projects;
-    }
-    
-    public AgsUsers Participants.getAgsUsers() {
-        return this.agsUsers;
-    }
-    
-    public void Participants.setAgsUsers(AgsUsers agsUsers) {
-        this.agsUsers = agsUsers;
     }
     
     public AgsUsers Participants.getAgsUsers1() {

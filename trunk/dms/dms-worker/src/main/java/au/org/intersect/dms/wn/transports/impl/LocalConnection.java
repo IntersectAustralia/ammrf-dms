@@ -44,6 +44,8 @@ import au.org.intersect.dms.core.domain.FileType;
 import au.org.intersect.dms.core.errors.PathNotFoundException;
 import au.org.intersect.dms.core.errors.TransportError;
 import au.org.intersect.dms.core.errors.TransportException;
+import au.org.intersect.dms.core.service.BasicConnectionDetails;
+import au.org.intersect.dms.wn.ConnectionParams;
 import au.org.intersect.dms.wn.TransportConnection;
 
 /**
@@ -58,8 +60,11 @@ public class LocalConnection implements TransportConnection
 
     private File dirBase;
 
-    public LocalConnection(File rootDir, String path)
+    private ConnectionParams params;
+
+    public LocalConnection(File rootDir, String path, String username)
     {
+        params = new ConnectionParams("local", path, username, null);
         dirBase = new File(rootDir, path);
         if (!dirBase.exists())
         {
@@ -277,6 +282,12 @@ public class LocalConnection implements TransportConnection
         FileInfo info = new FileInfo(type, PathUtils.joinPath(parentPath, file.getName()), file.getName(), size,
                 lastModified);
         return info;
+    }
+
+    @Override
+    public BasicConnectionDetails getBasicConnectionDetails()
+    {
+        return params;
     }
 
 }

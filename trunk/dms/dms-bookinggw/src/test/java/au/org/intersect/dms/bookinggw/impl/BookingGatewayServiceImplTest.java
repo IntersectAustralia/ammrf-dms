@@ -167,14 +167,13 @@ public class BookingGatewayServiceImplTest extends AbstractJUnit4SpringContextTe
 
         ProjectParticipation[] resp = impl.getProjectParticipations(USERNAME_1);
         ProjectParticipation[] expected = new ProjectParticipation[] {new ProjectParticipation(new Project(1,
-                PROJECT_TITLE_1), "What is this for?", USERNAME_1)};
+                PROJECT_TITLE_1), "What is this for?")};
         assertLenientEquals(expected, resp);
 
         resp = impl.getProjectParticipations(USERNAME_2);
         expected = new ProjectParticipation[] {
-            new ProjectParticipation(new Project(1, PROJECT_TITLE_1), "What is this for?", USERNAME_1),
-            new ProjectParticipation(new Project(2, PROJECT_TITLE_2), "What is this for again?",
-                    USERNAME_2)};
+            new ProjectParticipation(new Project(1, PROJECT_TITLE_1), "What is this for?"),
+            new ProjectParticipation(new Project(2, PROJECT_TITLE_2), "What is this for again?")};
         assertLenientEquals(expected, resp);
 
     }
@@ -191,15 +190,15 @@ public class BookingGatewayServiceImplTest extends AbstractJUnit4SpringContextTe
     {
         ProjectDetails actual = impl.getProjectDetails(1, 101);
         InvestigatorRole[] investigators = new InvestigatorRole[] {
-            new InvestigatorRole(1, true, new String[] {DR, "John", "", "Smith", "JS"}, "Organisation 21", "21"),
-            new InvestigatorRole(2, false, new String[] {DR, "Mary", "Josephine", "Poppins", "MJP"}, "The 22nd org",
+            new InvestigatorRole(1, new String[] {DR, "John", "", "Smith", "JS"}, "Organisation 21", "21"),
+            new InvestigatorRole(2, new String[] {DR, "Mary", "Josephine", "Poppins", "MJP"}, "The 22nd org",
                     "22")};
         ProjectDetails expected = new ProjectDetails(1, PROJECT_TITLE_1, 101, "X-Ray thing",
                 "We got sample from a alleged alien spaceship and we are analysing its properties.", investigators);
         assertLenientEquals(expected, actual);
 
         actual = impl.getProjectDetails(2, 105);
-        investigators = new InvestigatorRole[] {new InvestigatorRole(2, true, new String[] {DR, "Mary", "Josephine",
+        investigators = new InvestigatorRole[] {new InvestigatorRole(2, new String[] {DR, "Mary", "Josephine",
             "Poppins", "MJP"}, "The 22nd org", "22")};
         expected = new ProjectDetails(2, PROJECT_TITLE_2, 105, "Y-Ray thing",
                 "We got another sample from a alleged alien spaceship and we are analysing its structure.",

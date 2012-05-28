@@ -45,6 +45,7 @@ import org.mockito.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
+import au.org.intersect.dms.catalogue.MetadataRepository;
 import au.org.intersect.dms.core.domain.FileInfo;
 import au.org.intersect.dms.core.domain.FileType;
 import au.org.intersect.dms.core.domain.InstrumentProfile;
@@ -67,7 +68,10 @@ public class TirfPollerTest
 
     @Mock
     private DmsService dmsService;
-
+    
+    @Mock
+    private MetadataRepository metadataRepository;
+    
     @InjectMocks
     private TIRFPoller poller = new TIRFPoller();
 
@@ -124,7 +128,7 @@ public class TirfPollerTest
         userFiles.add(dataset1);
         when(dmsService.getList(connectionId, "/testuser1")).thenReturn(userFiles);
 
-        when(dmsService.isUrlCatalogued(DATASET1_URL)).thenReturn(true);
+        when(metadataRepository.isUrlCatalogued(DATASET1_URL)).thenReturn(true);
         when(dmsService.getList(connectionId, DATASET1_PATH)).thenReturn(datasetFiles);
 
         assertReflectionEquals("No new datasets expected", Collections.EMPTY_LIST, poller.getNewDatasets());
@@ -140,7 +144,7 @@ public class TirfPollerTest
         userFiles.add(dataset2);
         when(dmsService.getList(connectionId, "/testuser1")).thenReturn(userFiles);
 
-        when(dmsService.isUrlCatalogued(DATASET1_URL)).thenReturn(false);
+        when(metadataRepository.isUrlCatalogued(DATASET1_URL)).thenReturn(false);
         when(dmsService.getList(connectionId, DATASET1_PATH)).thenReturn(datasetFiles);
 
         Collection<DatasetParams> newDatasets = poller.getNewDatasets();

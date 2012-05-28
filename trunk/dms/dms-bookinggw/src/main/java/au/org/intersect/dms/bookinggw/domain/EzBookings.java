@@ -40,7 +40,7 @@ import org.springframework.roo.addon.tostring.RooToString;
  */
 @RooJavaBean
 @RooToString
-@RooEntity(versionField = "", table = "ez_bookings", persistenceUnit = "bookinggwPU")
+@RooEntity(versionField = "", table = "EZ_Bookings", persistenceUnit = "bookinggwPU")
 @RooDbManaged(automaticallyDelete = true)
 public class EzBookings
 {

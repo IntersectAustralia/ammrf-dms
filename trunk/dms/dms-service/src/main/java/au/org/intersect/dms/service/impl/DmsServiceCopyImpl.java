@@ -43,7 +43,6 @@ import au.org.intersect.dms.core.service.dto.JobType;
 import au.org.intersect.dms.core.service.dto.OpenConnectionParameter;
 import au.org.intersect.dms.service.JobService;
 import au.org.intersect.dms.service.domain.Job;
-import au.org.intersect.dms.workerrouter.WorkerRouter;
 
 /**
  * Helper to create jobs and call the worker copy or ingest and flag job as aborted on problems
@@ -58,7 +57,7 @@ public class DmsServiceCopyImpl
     private JobListener jobListener;
 
     @Autowired
-    private WorkerRouter router;
+    private WorkerNode workerNode;
 
     @Autowired
     private JobService jobService;
@@ -66,18 +65,14 @@ public class DmsServiceCopyImpl
     public Long callCopy(String username, Integer sourceConnectionId, List<String> sources,
             Integer destinationConnectionId, String targetDir)
     {
-        Job job = jobService.createJob(JobType.COPY, username, null, makeDescriptor(router, sourceConnectionId),
-                sources, makeDescriptor(router, destinationConnectionId), targetDir);
+        Job job = jobService.createJob(JobType.COPY, username, null, makeDescriptor(sourceConnectionId), sources,
+                makeDescriptor(destinationConnectionId), targetDir);
+
+        NewConnections newConnections = openHddConnections(sourceConnectionId, destinationConnectionId, job.getId());
         try
         {
-            WorkerAndNewConnections details = resolveCommonWorker(router, sourceConnectionId, destinationConnectionId,
-                    job.getId().toString());
-            WorkerNode workerNode = details.getWorkerNode();
-            Integer sourceToUse = details.getSourceId();
-            Integer destinationToUse = details.getDestinationId();
-            jobService.setWorker(job.getId(), router.getWorkerId(sourceToUse));
-            workerNode
-                    .copy(new CopyParameter(username, job.getId(), sourceToUse, sources, destinationToUse, targetDir));
+            workerNode.copy(new CopyParameter(username, job.getId(), newConnections.getSourceId(), sources,
+                    newConnections.getDestinationId(), targetDir));
         }
         // TODO CHECKSTYLE-OFF: IllegalCatch
         catch (Exception e)
@@ -95,22 +90,16 @@ public class DmsServiceCopyImpl
         String targetDir = parameters.getToDir();
         InstrumentProfile instrumentProfile = parameters.getInstrumentProfile();
 
-        Job job = jobService.createJob(JobType.INGEST, username, projectCode,
-                makeDescriptor(router, sourceConnectionId), parameters.getFromFiles(),
-                makeDescriptor(router, destinationConnectionId), targetDir);
+        Job job = jobService.createJob(JobType.INGEST, username, projectCode, makeDescriptor(sourceConnectionId),
+                parameters.getFromFiles(), makeDescriptor(destinationConnectionId), targetDir);
+        NewConnections newConnections = openHddConnections(sourceConnectionId, destinationConnectionId, job.getId());
+
         try
         {
-            WorkerAndNewConnections details = resolveCommonWorker(router, sourceConnectionId, destinationConnectionId,
-                    job.getId().toString());
-            WorkerNode workerNode = details.getWorkerNode();
-            Integer newSourceId = details.getSourceId();
-            Integer newdestinationId = details.getDestinationId();
-            jobService.setWorker(job.getId(), router.getWorkerId(newSourceId));
-
             jobService.storeMetadata(job.getId(), metadata);
 
-            IngestParameter ingestParams = new IngestParameter(username, job.getId(), newSourceId,
-                    parameters.getFromFiles(), newdestinationId, targetDir, instrumentProfile);
+            IngestParameter ingestParams = new IngestParameter(username, job.getId(), newConnections.getSourceId(),
+                    parameters.getFromFiles(), newConnections.getDestinationId(), targetDir, instrumentProfile);
             ingestParams.setCopyToWorkstation(parameters.isCopyToWorkstation());
             workerNode.ingest(ingestParams);
         }
@@ -123,15 +112,14 @@ public class DmsServiceCopyImpl
         return job.getId();
     }
 
-    private String makeDescriptor(WorkerRouter router, Integer connectionId)
+    private String makeDescriptor(Integer connectionId)
     {
         if (connectionId != null)
         {
-            if (connectionId == -1)
+            if (WorkerNode.HDD_CONNECTION_ID.equals(connectionId))
             {
                 return "PC:/";
             }
-            WorkerNode workerNode = router.findWorker(connectionId);
             OpenConnectionParameter details = workerNode.getConnectionDetails(connectionId);
             return details.getProtocol() + "://" + details.getServer();
         }
@@ -147,34 +135,34 @@ public class DmsServiceCopyImpl
         jobListener.jobEnd(new JobFinished(jobId, JobStatus.CANCELLED, null));
     }
 
-    private WorkerAndNewConnections resolveCommonWorker(WorkerRouter router, Integer sourceConnectionId,
-            Integer destinationConnectionId, String jobId)
+    @Transactional("service")
+    public boolean stopJob(Job job)
     {
-        WorkerNode source = isApplet(sourceConnectionId) ? null : router.findWorker(sourceConnectionId);
-        WorkerNode destination = isApplet(destinationConnectionId) ? null : router.findWorker(destinationConnectionId);
-        WorkerNode workerNode;
-        Integer newSourceId;
-        Integer newDestinationId;
-        if (source != destination)
+        boolean resp = workerNode.stopJob(job.getId());
+        if (!resp)
         {
-            OpenConnectionParameter sourceDetails = isApplet(sourceConnectionId) ? new OpenConnectionParameter("hdd",
-                    "upload", jobId, null) : source.getConnectionDetails(sourceConnectionId);
-            OpenConnectionParameter destinationDetails = isApplet(destinationConnectionId)
-                ? new OpenConnectionParameter("hdd", "download", jobId, null)
-                : destination.getConnectionDetails(destinationConnectionId);
+            forceStopJob(job.getId());
+        }
+        return true;
+    }
 
-            workerNode = router.findCommonWorker(sourceDetails.getProtocol(), sourceDetails.getServer(),
-                    destinationDetails.getProtocol(), destinationDetails.getServer());
-            newSourceId = workerNode.openConnection(sourceDetails);
-            newDestinationId = workerNode.openConnection(destinationDetails);
-        }
-        else
+    private NewConnections openHddConnections(Integer sourceConnectionId, Integer destinationConnectionId, Long jobId)
+    {
+        Integer newSourceId = sourceConnectionId;
+        Integer newDestinationId = destinationConnectionId;
+
+        if (isApplet(sourceConnectionId))
         {
-            workerNode = source;
-            newSourceId = sourceConnectionId;
-            newDestinationId = destinationConnectionId;
+            newSourceId = workerNode
+                    .openConnection(new OpenConnectionParameter("hdd", "upload", jobId.toString(), null));
         }
-        return new WorkerAndNewConnections(workerNode, newSourceId, newDestinationId);
+        if (isApplet(destinationConnectionId))
+        {
+            newDestinationId = workerNode.openConnection(new OpenConnectionParameter("hdd", "download", jobId
+                    .toString(), null));
+        }
+
+        return new NewConnections(newSourceId, newDestinationId);
     }
 
     private boolean isApplet(Integer connectionId)
@@ -187,23 +175,16 @@ public class DmsServiceCopyImpl
      * 
      * @version $Rev: 29 $
      */
-    private static class WorkerAndNewConnections
+    private static class NewConnections
     {
 
-        private WorkerNode workerNode;
         private Integer sourceId;
         private Integer destinationId;
 
-        public WorkerAndNewConnections(WorkerNode workerNode, Integer newSourceId, Integer newDestinationId)
+        public NewConnections(Integer newSourceId, Integer newDestinationId)
         {
-            this.workerNode = workerNode;
             this.sourceId = newSourceId;
             this.destinationId = newDestinationId;
-        }
-
-        public WorkerNode getWorkerNode()
-        {
-            return workerNode;
         }
 
         public Integer getSourceId()
@@ -216,18 +197,6 @@ public class DmsServiceCopyImpl
             return destinationId;
         }
 
-    }
-
-    @Transactional("service")
-    public boolean stopJob(WorkerRouter router, Job job)
-    {
-        WorkerNode workerNode = router.findWorkerById(job.getWorkerId());
-        boolean resp = workerNode.stopJob(job.getId());
-        if (!resp)
-        {
-            forceStopJob(job.getId());
-        }
-        return true;
     }
 
 }

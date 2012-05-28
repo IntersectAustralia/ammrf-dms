@@ -63,7 +63,7 @@ public class Fv1000OifHarvester extends AbstractHarvester
     @Override
     String process(InputStream input) throws IOException
     {
-        WindowsIniLogParser parser = new WindowsIniLogParser(Mode.INCLUSION, INCLUSIONS_FIELDS, TYPES, TEMPLATE,
+        Fv1000OifParser parser = new Fv1000OifParser(Mode.INCLUSION, INCLUSIONS_FIELDS, TYPES, TEMPLATE,
                 FV1000_DATE_TIME_FORMATTER);
         parser.setEncoding("UTF-16");
         parser.setSectionChecker(new SectionChecker()
