@@ -31,7 +31,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import au.org.intersect.dms.catalogue.MetadataRepository;
 import au.org.intersect.dms.core.domain.FileInfo;
 import au.org.intersect.dms.core.domain.JobItem;
 import au.org.intersect.dms.core.domain.JobSearchResult;
@@ -40,6 +39,7 @@ import au.org.intersect.dms.core.service.DmsService;
 import au.org.intersect.dms.core.service.WorkerNode;
 import au.org.intersect.dms.core.service.dto.CreateDirectoryParameter;
 import au.org.intersect.dms.core.service.dto.DeleteParameter;
+import au.org.intersect.dms.core.service.dto.GetFileInfoParameter;
 import au.org.intersect.dms.core.service.dto.GetListParameter;
 import au.org.intersect.dms.core.service.dto.IngestParameter;
 import au.org.intersect.dms.core.service.dto.JobStatus;
@@ -48,8 +48,6 @@ import au.org.intersect.dms.core.service.dto.RenameParameter;
 import au.org.intersect.dms.service.domain.DmsUser;
 import au.org.intersect.dms.service.domain.Job;
 import au.org.intersect.dms.service.domain.JobFrom;
-import au.org.intersect.dms.workerrouter.WorkerNotFoundException;
-import au.org.intersect.dms.workerrouter.WorkerRouter;
 
 /**
  * Implementation of DMS Service.
@@ -64,36 +62,35 @@ public class DmsServiceImpl implements DmsService
     private DmsServiceCopyImpl copyImpl;
 
     @Autowired
-    private WorkerRouter router;
+    private WorkerNode workerNode;
     
-    @Autowired
-    private MetadataRepository repository;
-
     @Override
     public Integer openConnection(String protocol, String server, String username, String password)
     {
-        WorkerNode workerNode = router.findWorker(protocol, server);
         return workerNode.openConnection(new OpenConnectionParameter(protocol, server, username, password));
     }
 
     @Override
     public List<FileInfo> getList(Integer connectionId, String absolutePath)
     {
-        WorkerNode workerNode = router.findWorker(connectionId);
         return workerNode.getList(new GetListParameter(connectionId, absolutePath));
+    }
+    
+    @Override
+    public FileInfo getFileInfo(Integer connectionId, String absolutePath) 
+    {
+        return workerNode.getFileInfo(new GetFileInfoParameter(connectionId, absolutePath));
     }
 
     @Override
     public boolean rename(Integer connectionId, String from, String to)
     {
-        WorkerNode workerNode = router.findWorker(connectionId);
         return workerNode.rename(new RenameParameter(connectionId, from, to));
     }
 
     @Override
     public boolean delete(Integer connectionId, List<FileInfo> files)
     {
-        WorkerNode workerNode = router.findWorker(connectionId);
         return workerNode.delete(new DeleteParameter(connectionId, files));
     }
 
@@ -123,7 +120,6 @@ public class DmsServiceImpl implements DmsService
     @Override
     public boolean createDir(Integer connectionId, String parent, String name)
     {
-        WorkerNode workerNode = router.findWorker(connectionId);
         return workerNode.createDir(new CreateDirectoryParameter(connectionId, parent, name));
     }
 
@@ -232,7 +228,6 @@ public class DmsServiceImpl implements DmsService
     @Override
     public String getUrl(Integer connectionId, String path)
     {
-        WorkerNode workerNode = router.findWorker(connectionId);
         OpenConnectionParameter connDetails = workerNode.getConnectionDetails(connectionId);
         return connDetails.getProtocol() + "://" + connDetails.getServer() + path;
     }
@@ -242,7 +237,13 @@ public class DmsServiceImpl implements DmsService
     public boolean stopJob(String username, Long jobId)
     {
         Job job = getJobForUser(username, jobId);
-        return copyImpl.stopJob(router, job);
+        return copyImpl.stopJob(job);
+    }
+    
+    @Override
+    public OpenConnectionParameter getConnectionParameters(Integer connectionId)
+    {
+        return workerNode.getConnectionDetails(connectionId);
     }
 
     private Job getJobForUser(String username, Long jobId)
@@ -259,33 +260,8 @@ public class DmsServiceImpl implements DmsService
     @Override
     public boolean checkForValidRouting(Integer connectionIdFrom, Integer connectionIdTo)
     {
-        try
-        {
-            OpenConnectionParameter fromDetails = getConnectionDetails(connectionIdFrom);
-            OpenConnectionParameter toDetails = getConnectionDetails(connectionIdTo);
-            router.findCommonWorker(fromDetails.getProtocol(), fromDetails.getServer(), toDetails.getProtocol(),
-                    toDetails.getServer());
-            return true;
-        }
-        catch (WorkerNotFoundException e)
-        {
-            return false;
-        }
+        return true;
     }
-    
-    @Override
-    public boolean isUrlCatalogued(String url)
-    {
-        return repository.isUrlCatalogued(url);
-    }
-    
-    private OpenConnectionParameter getConnectionDetails(Integer connectionId)
-    {
-        if (WorkerNode.HDD_CONNECTION_ID.equals(connectionId))
-        {
-            return new OpenConnectionParameter("hdd", "myPC", null, null);
-        }
-        return router.findWorker(connectionId).getConnectionDetails(connectionId);
-    }
+
     
 }

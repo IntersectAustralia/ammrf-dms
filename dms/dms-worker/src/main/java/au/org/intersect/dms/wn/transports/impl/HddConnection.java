@@ -40,8 +40,10 @@ import org.slf4j.LoggerFactory;
 import au.org.intersect.dms.core.domain.FileInfo;
 import au.org.intersect.dms.core.errors.PathNotFoundException;
 import au.org.intersect.dms.core.errors.TransportException;
+import au.org.intersect.dms.core.service.BasicConnectionDetails;
 import au.org.intersect.dms.tunnel.HddConstants;
 import au.org.intersect.dms.tunnel.HddUtil;
+import au.org.intersect.dms.wn.ConnectionParams;
 import au.org.intersect.dms.wn.TransportConnection;
 import au.org.intersect.dms.wn.transports.impl.HddHttpClient.HttpMethod;
 
@@ -50,6 +52,7 @@ import au.org.intersect.dms.wn.transports.impl.HddHttpClient.HttpMethod;
  * 
  * @version $Rev: 29 $
  */
+//TODO CHECKSTYLE-OFF: ClassFanOutComplexity
 public class HddConnection implements TransportConnection
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(HddConnection.class);
@@ -61,10 +64,13 @@ public class HddConnection implements TransportConnection
 
     private boolean used;
 
+    private ConnectionParams params;
+
     public HddConnection(HddHttpClient client, final String jobId)
     {
         this.client = client;
         this.jobId = jobId;
+        params = new ConnectionParams("hdd", "tunnel", jobId, null);
     }
 
     @Override
@@ -239,6 +245,12 @@ public class HddConnection implements TransportConnection
         }
         return HddUtil.deserialize(is, clazz);
 
+    }
+
+    @Override
+    public BasicConnectionDetails getBasicConnectionDetails()
+    {
+        return params;
     }
 
 }

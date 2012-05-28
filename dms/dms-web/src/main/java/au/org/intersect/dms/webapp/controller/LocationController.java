@@ -25,8 +25,11 @@
 
 package au.org.intersect.dms.webapp.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,11 +38,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,6 +95,7 @@ public class LocationController
     private static final String CONNECTIONS = "connections";
 
     @Autowired
+    @Qualifier("dmsClient")
     private DmsService dmsService;
 
     @Autowired
@@ -289,6 +295,23 @@ public class LocationController
     public AjaxResponse listStockServers()
     {
         List<StockServer> base = StockServer.findAllStockServers();
+        Collections.sort(base, new Comparator<StockServer>()
+        {
+
+            @Override
+            public int compare(StockServer o1, StockServer o2)
+            {
+                if (o1.getType() == o2.getType())
+                {
+                    return o1.getDescription().compareTo(o2.getDescription());
+                }
+                else
+                {
+                    return o1.getType().compareTo(o2.getType());
+                }
+            }
+        });
+
         List<Map<String, Object>> resp = new ArrayList<Map<String, Object>>();
         Iterator<StockServer> i = base.iterator();
         while (i.hasNext())
@@ -425,7 +448,7 @@ public class LocationController
     public AjaxResponse prefillMetadata(@RequestParam(required = false) Long projectCode,
             @RequestParam(required = false) Long bookingId, @RequestParam(value = "source_item") String sourceItem,
             @RequestParam(value = "destination_connectionId") Integer destinationConnectionId,
-            @RequestParam(value = "destination_item") String destinationItem)
+            @RequestParam(value = "destination_item") String destinationItem) throws IOException, TransformerException
     {
         String username = securityContextFacade.getAuthorizedUsername();
 
@@ -444,6 +467,7 @@ public class LocationController
     public AjaxResponse confirmMetadata(@RequestParam(value = "source_item") String sourceItem,
             @RequestParam(value = "destination_connectionId") Integer destinationConnectionId,
             @RequestParam(value = "destination_item") String destinationItem, HttpServletRequest request)
+        throws IOException, TransformerException
     {
         String username = securityContextFacade.getAuthorizedUsername();
 

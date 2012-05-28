@@ -27,12 +27,11 @@ package au.org.intersect.dms.core.service;
 
 import java.util.List;
 
-import org.apache.camel.InOnly;
-
 import au.org.intersect.dms.core.domain.FileInfo;
 import au.org.intersect.dms.core.service.dto.CopyParameter;
 import au.org.intersect.dms.core.service.dto.CreateDirectoryParameter;
 import au.org.intersect.dms.core.service.dto.DeleteParameter;
+import au.org.intersect.dms.core.service.dto.GetFileInfoParameter;
 import au.org.intersect.dms.core.service.dto.GetListParameter;
 import au.org.intersect.dms.core.service.dto.IngestParameter;
 import au.org.intersect.dms.core.service.dto.OpenConnectionParameter;
@@ -79,6 +78,20 @@ public interface WorkerNode
     List<FileInfo> getList(GetListParameter getListParams);
     
     /**
+     * Returns FileInfo for given path. The path is relative to the root directory, i.e. 'dir1/obj1' is equivalent to
+     * '/dir1/obj1'.
+     * @param getListParams 
+     * 
+     * @return
+     * 
+     * @throws ConnectionGoneException
+     * @throws au.org.intersect.dms.core.errors.TransportError
+     * @throws au.org.intersect.dms.core.errors.PathNotFoundException
+     * @throws ConnectionOpenException
+     */
+    FileInfo getFileInfo(GetFileInfoParameter getFileInfoParams);
+    
+    /**
      * Renames file/directory.
      * @param renameParams TODO
      * 
@@ -115,19 +128,30 @@ public interface WorkerNode
      * Starts copy of files and directories
      * @param copyParams TODO
      */
-    @InOnly
     void copy(CopyParameter copyParams);
     
     /**
      * Starts ingestion
      * @param ingestParams TODO
      */
-    @InOnly
     void ingest(IngestParameter ingestParams);
     
     /**
      * Stops a running job
      */
     boolean stopJob(Long jobId);
+    
+    /**
+     * Adds a event listener to the queue. Events are sent in the same thread as the IO thread, so implementations
+     * should avoid lengthy processes when called.
+     * @param listener
+     */
+    void addEventListener(WorkerEventListener listener);
+    
+    /**
+     * Removes an existing listener; if it is not found returns silently.
+     * @param listener
+     */
+    void removeEventListener(WorkerEventListener listener);
     
 }

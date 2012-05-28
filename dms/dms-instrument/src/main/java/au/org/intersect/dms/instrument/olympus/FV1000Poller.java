@@ -46,7 +46,7 @@ public class FV1000Poller extends RepositoryServerPoller
         
         if (file.getName().toLowerCase().endsWith(".oif"))
         {
-            if (!getDmsService().isUrlCatalogued(fileURL))
+            if (!getMetadataRepository().isUrlCatalogued(fileURL))
             {
                 datasetParams = new DatasetParams(username, file.getAbsolutePath(), file.getModificationDate(),
                         InstrumentProfile.OLYMPUS_FV1000);

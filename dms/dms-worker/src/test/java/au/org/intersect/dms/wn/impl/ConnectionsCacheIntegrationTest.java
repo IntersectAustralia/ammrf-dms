@@ -37,7 +37,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import au.org.intersect.dms.wn.ConnectionParams;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath*:/META-INF/spring/applicationContext*.xml")
+@ContextConfiguration("classpath*:META-INF/spring/applicationContext*.xml")
 public class ConnectionsCacheIntegrationTest
 {
     @Autowired

@@ -27,10 +27,8 @@ package au.org.intersect.dms.wn.transports.impl;
 
 import java.io.File;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool.BaseKeyedPoolableObjectFactory;
 
-import au.org.intersect.dms.core.errors.NotAuthorizedError;
 import au.org.intersect.dms.wn.ConnectionParams;
 import au.org.intersect.dms.wn.TransportFactory;
 
@@ -42,10 +40,6 @@ public class LocalTransportFactory extends BaseKeyedPoolableObjectFactory implem
 
     private static final String PROTOCOL = "local";
 
-    private String username;
-    
-    private String password;    
-    
     private File rootDir;
 
     public void setRootPath(String local)
@@ -57,31 +51,11 @@ public class LocalTransportFactory extends BaseKeyedPoolableObjectFactory implem
         }
     }
 
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-
     @Override
     public Object makeObject(Object key) throws Exception
     {
         ConnectionParams details = (ConnectionParams) key;
-        if (!StringUtils.defaultString(username).equals(StringUtils.defaultString(details.getUsername())))
-        {
-            throw new NotAuthorizedError();
-        }
-
-        if (!StringUtils.defaultString(password).equals(StringUtils.defaultString(details.getPassword())))
-        {
-            throw new NotAuthorizedError();
-        }
-
-        return new LocalConnection(rootDir, details.getHostname());
+        return new LocalConnection(rootDir, details.getHostname(), details.getUsername());
     }
 
     @Override

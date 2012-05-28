@@ -20,7 +20,7 @@ privileged aspect EzBookings_Roo_Entity {
     
     declare @type: EzBookings: @Entity;
     
-    declare @type: EzBookings: @Table(name = "ez_bookings");
+    declare @type: EzBookings: @Table(name = "EZ_Bookings");
     
     @PersistenceContext(unitName = "bookinggwPU")
     transient EntityManager EzBookings.entityManager;

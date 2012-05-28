@@ -51,6 +51,7 @@
         </xsl:when>
         <xsl:otherwise><xsl:value-of select="@value" /></xsl:otherwise>
     </xsl:choose>
+    <xsl:if test="@name = 'LaserTransmissivity'">%</xsl:if>
     </li>
 	</ul>
 </xsl:template>

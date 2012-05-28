@@ -21,5 +21,9 @@
     <menu:category id="c_catalogue" z="user-managed">
         <menu:item activeMenuId="${activeMenuId}" id="i_catalogue_reindex" url="/admin/reindex" z="user-managed"/>
     </menu:category>
-</menu:menu>
+<menu:category id="c_stockserver" z="ALRaSMY93hEPydxpbzBN9l3qPck=">
+            <menu:item activeMenuId="${activeMenuId}" id="i_stockserver_new" messageCode="global_menu_new" url="/admin/stockservers?form" z="4ZnRDnVlfo2HIIaIecnB/wgmXlA="/>
+        <menu:item activeMenuId="${activeMenuId}" id="i_stockserver_list" messageCode="global_menu_list" url="/admin/stockservers?page=${empty param.page ? 1 : param.page}&amp;size=${empty param.size ? 10 : param.size}" z="8NKQtga9CH7d1AV/VtRKBrS01IY="/>
+        </menu:category>
+    </menu:menu>
 </div>

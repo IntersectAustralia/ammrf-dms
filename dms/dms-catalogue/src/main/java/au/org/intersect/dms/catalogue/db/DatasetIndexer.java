@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
@@ -57,19 +59,21 @@ public class DatasetIndexer
     private static final String INDEX_EXCEPTION_MESSAGE = "Exception during indexing";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetIndexer.class);
-    
+
     private static final String SPACE = " ";
-    
+
     @Autowired
     private MetadataXmlConverter metadataXmlConverter;
 
     @Qualifier("searchUnmarshaller")
     @Autowired
     private Unmarshaller unmarshaller;
-    
+
     public void indexDatasets(Collection<DbDataset> datasets)
     {
         List<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
+
+    dataset: 
         for (DbDataset dataset : datasets)
         {
             LOGGER.debug("Indexing dataset with ID {}", dataset.getId());
@@ -79,27 +83,20 @@ public class DatasetIndexer
             summary.append(dataset.getCreationDate()).append(SPACE).append(dataset.getId()).append(SPACE)
                     .append(dataset.getOwner()).append(SPACE).append(dataset.getUrl());
 
-            StringBuilder metadata = new StringBuilder();
-            for (DbMetadataItem metadataItem : dataset.getMetadata())
+            String metadata;
+            try
             {
-                if (metadataXmlConverter.isConvertionSupported(metadataItem.getMetadataSchema(), Format.INDEX))
-                {
-                    ConversionParams conversionParams = new ConversionParams();
-                    conversionParams.schema(metadataItem.getMetadataSchema()).desinationFormat(Format.INDEX)
-                            .metadata(metadataItem.getMetadata());
-
-                    String text = metadataXmlConverter.convert(conversionParams);
-                    List<Field> fields = extractFields(text);
-                    for (Field field : fields)
-                    {
-                        LOGGER.debug("Adding index field <{}> with value <{}>", field.getName(), field.getValue());
-                        sid.addField(field.getName(), field.getValue());
-                        if (FieldType.TEXT == field.getType())
-                        {
-                            metadata.append(field.getValue()).append(" ");
-                        }
-                    }
-                }
+                metadata = indexMetadata(dataset, sid);
+            }
+            catch (IOException e)
+            {
+                LOGGER.error("Exception during indexing. Skipping this dataset.", e);
+                continue dataset;
+            }
+            catch (TransformerException e)
+            {
+                LOGGER.error("Exception during indexing. Skipping this dataset.", e);
+                continue dataset;
             }
 
             if (metadata.length() > 0)
@@ -129,12 +126,53 @@ public class DatasetIndexer
             LOGGER.error(INDEX_EXCEPTION_MESSAGE, e);
         }
     }
+    
+    /**
+     * Adds metadata fields of this dataset into passed SolrInputDocument.
+     * Also returns space separated list of fields (values)
+     * 
+     * @param dataset
+     * @param sid
+     * @return
+     * @throws IOException
+     * @throws TransformerException
+     */
+    private String indexMetadata(DbDataset dataset, SolrInputDocument sid) throws IOException, TransformerException
+    {
+        StringBuilder metadata = new StringBuilder();
+        for (DbMetadataItem metadataItem : dataset.getMetadata())
+        {
+            if (metadataXmlConverter.isConvertionSupported(metadataItem.getMetadataSchema(), Format.INDEX))
+            {
+                ConversionParams conversionParams = new ConversionParams();
+                conversionParams.schema(metadataItem.getMetadataSchema()).desinationFormat(Format.INDEX)
+                        .metadata(metadataItem.getMetadata());
+
+                String text = metadataXmlConverter.convert(conversionParams);
+
+                List<Field> fields = extractFields(text);
+                for (Field field : fields)
+                {
+                    LOGGER.debug("Adding index field <{}> with value <{}>", field.getName(), field.getValue());
+                    sid.addField(field.getName(), field.getValue());
+                    if (FieldType.TEXT == field.getType())
+                    {
+                        metadata.append(field.getValue()).append(" ");
+                    }
+                }
+            }
+        }
+        
+        return metadata.toString();
+    }
 
     /**
      * Adds basic dataset's fields into solr index
      * 
-     * @param dataset input dataset
-     * @param solrInputDocument solr document to add fields
+     * @param dataset
+     *            input dataset
+     * @param solrInputDocument
+     *            solr document to add fields
      */
     private void addBasicFields(DbDataset dataset, SolrInputDocument solrInputDocument)
     {
@@ -142,10 +180,9 @@ public class DatasetIndexer
         solrInputDocument.addField("dataset.creationdate_dt", dataset.getCreationDate());
         solrInputDocument.addField("dataset.id_l", dataset.getId());
         solrInputDocument.addField("dataset.owner_s", dataset.getOwner());
-        solrInputDocument.addField("dataset.project_l", dataset.getProjectCode()); //TODO check if null is OK
+        solrInputDocument.addField("dataset.project_l", dataset.getProjectCode()); // TODO check if null is OK
         solrInputDocument.addField("dataset.url_s", dataset.getUrl());
     }
-
 
     private List<Field> extractFields(String xml)
     {

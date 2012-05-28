@@ -20,7 +20,7 @@ privileged aspect AgsUsers_Roo_Entity {
     
     declare @type: AgsUsers: @Entity;
     
-    declare @type: AgsUsers: @Table(name = "ags_users");
+    declare @type: AgsUsers: @Table(name = "AGS_Users");
     
     @PersistenceContext(unitName = "bookinggwPU")
     transient EntityManager AgsUsers.entityManager;

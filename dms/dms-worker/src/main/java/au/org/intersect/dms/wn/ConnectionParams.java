@@ -29,13 +29,15 @@ import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
 
+import au.org.intersect.dms.core.service.BasicConnectionDetails;
+
 /**
  * Holds the key for the transport pool. As this object is handed down to the factory object, 
  * we put all the info needed to create the connection to the
  * server.
  * @version $Rev: 29 $
  */
-public final class ConnectionParams implements Serializable
+public final class ConnectionParams implements Serializable, BasicConnectionDetails
 {
 
     private static final long serialVersionUID = 6733033199259181074L;

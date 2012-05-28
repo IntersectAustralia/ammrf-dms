@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import au.org.intersect.dms.core.catalogue.MetadataSchema;
+import au.org.intersect.dms.core.errors.IngestionFailedException;
 
 /**
  * Metadata repository.

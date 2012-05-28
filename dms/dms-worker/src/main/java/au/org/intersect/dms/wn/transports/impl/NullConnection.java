@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 
 import au.org.intersect.dms.core.domain.FileInfo;
 import au.org.intersect.dms.core.errors.TransportException;
+import au.org.intersect.dms.core.service.BasicConnectionDetails;
+import au.org.intersect.dms.wn.ConnectionParams;
 import au.org.intersect.dms.wn.TransportConnection;
 
 /**
@@ -107,6 +109,12 @@ public class NullConnection implements TransportConnection
     {
         os.close();
         return true;
+    }
+
+    @Override
+    public BasicConnectionDetails getBasicConnectionDetails()
+    {
+        return new ConnectionParams("null", "", "?", null);
     }
 
 }

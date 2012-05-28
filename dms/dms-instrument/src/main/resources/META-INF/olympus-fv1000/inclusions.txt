@@ -1,11 +1,7 @@
 Acquisition Parameters Common.ImageCaputreDate
-Acquisition Parameters Common.LaserTransmissivity01
-Acquisition Parameters Common.LaserWavelength01
 Acquisition Parameters Common.ScanMode
-Acquisition Parameters Common.SamplingClock
 Acquisition Parameters Common.ScanDirection
 Acquisition Parameters Common.SequentialMode
-Acquisition Parameters Common.Z Stepsize Check
 Acquisition Parameters Common.ZoomValue
 Axis \d Parameters Common.AxisCode
 Axis \d Parameters Common.AxisName
@@ -23,7 +19,11 @@ Bleach Laser  \d parameters.LaserWavelength
 Laser \d Parameters.Laser Enable
 Laser \d Parameters.LaserTransmissivity
 Laser \d Parameters.LaserWavelength
-Channel 1 Parameters.AnalogPMTVoltage
-Channel 1 Parameters.DyeName
+Channel \d Parameters.AnalogPMTVoltage
+Channel \d Parameters.DyeName
+Channel \d Parameters.EmissionDM Name
+Channel \d Parameters.ExcitationDM Name
+Channel \d Parameters.BF Position
+Channel \d Parameters.BF Range
 File Info.DataName
 Reference Image Parameter.ValidBitCounts

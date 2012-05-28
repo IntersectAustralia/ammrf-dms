@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -45,6 +46,8 @@ import au.org.intersect.dms.catalogue.DatasetSearchResult;
 public class SolrIndexFacade
 {
     
+    private static final String ID = "dataset.id_l";
+
     public DatasetSearchResult findDatasets(String query, int startIndex, int pageSize)
     {
         return findDatasets("*", null, query, startIndex, pageSize);
@@ -69,9 +72,10 @@ public class SolrIndexFacade
             int pageSize)
     {
         SolrQuery solrQuery = new SolrQuery();
-        solrQuery.setFields("dataset.id_l");
+        solrQuery.setFields(ID);
         solrQuery.setStart(startIndex);
         solrQuery.setRows(pageSize);
+        solrQuery.setSortField(ID, ORDER.asc);
         StringBuilder queryString = new StringBuilder();
         if (query == null || "".equals(query))
         {
@@ -94,12 +98,22 @@ public class SolrIndexFacade
         QueryResponse solrResponse = DbDataset.search(solrQuery);
         SolrDocumentList docs = solrResponse.getResults();
 
+        List<Dataset> datasets = convertSolrDocuments2Datasets(docs);
+        
+        DatasetSearchResult result = new DatasetSearchResult();
+        result.setDatasets(datasets);
+        result.setTotalSize(docs != null ? docs.getNumFound() : 0);
+        return result;
+    }
+
+    private List<Dataset> convertSolrDocuments2Datasets(SolrDocumentList solrDocuments)
+    {
         List<Dataset> datasets = new LinkedList<Dataset>();
-        if (docs != null)
+        if (solrDocuments != null)
         {
-            for (SolrDocument solrDocument : docs)
+            for (SolrDocument solrDocument : solrDocuments)
             {
-                Long datasetId = (Long) solrDocument.getFieldValue("dataset.id_l");
+                Long datasetId = (Long) solrDocument.getFieldValue(ID);
                 DbDataset dbDataset = DbDataset.findDbDataset(datasetId);
                 if (dbDataset != null)
                 {
@@ -108,14 +122,13 @@ public class SolrIndexFacade
                     dataset.setUrl(dbDataset.getUrl());
                     dataset.setOwner(dbDataset.getOwner());
                     dataset.setCreationDate(dbDataset.getCreationDate());
+                    dataset.setVisible(dbDataset.getVisible() == 0 ? false : true);
                     datasets.add(dataset);
                 }
             }
         }
-        DatasetSearchResult result = new DatasetSearchResult();
-        result.setDatasets(datasets);
-        result.setTotalSize(docs != null ? docs.getNumFound() : 0);
-        return result;
+        
+        return datasets;
     }
     
     private String buildProjectCriteria(List<Long> projects)

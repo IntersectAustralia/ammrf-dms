@@ -36,7 +36,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooEntity(identifierType = EzObjectsNamesPK.class, versionField = "", 
-        table = "ez_objects_names", persistenceUnit = "bookinggwPU")
+        table = "EZ_ObjectNames", persistenceUnit = "bookinggwPU")
 @RooDbManaged(automaticallyDelete = true)
 public class EzObjectsNames
 {

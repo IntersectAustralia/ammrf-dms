@@ -39,7 +39,7 @@
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="databasePlatform" value="${bookinggw.hibernate.dialect}" />
 				<property name="showSql" value="${bookinggw.hibernate.showSql}" />
-				<property name="generateDdl" value="true" />
+                <property name="generateDdl" value="${bookinggw.hibernate.generateDdl}" />
 				<!-- set your properties here -->
 			</bean>
 		</property>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>au.org.intersect.dms</groupId>
         <artifactId>dms</artifactId>
-        <version>1.0.2</version>
+        <version>1.3.3</version>
     </parent>
     <groupId>au.org.intersect.dms</groupId>
     <artifactId>dms-instrument</artifactId>
@@ -23,16 +23,20 @@
             <version>${dms.version}</version>
         </dependency>
         <dependency>
-            <artifactId>dms-test</artifactId>
-            <groupId>au.org.intersect.dms</groupId>
-            <version>${dms.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <artifactId>dms-bookinggw</artifactId>
             <groupId>au.org.intersect.dms</groupId>
             <version>${dms.version}</version>
         </dependency>
+        <dependency>
+            <artifactId>dms-catalogue</artifactId>
+            <groupId>au.org.intersect.dms</groupId>
+            <version>${dms.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>au.org.intersect.dms</groupId>
+            <artifactId>dms-test</artifactId>
+        </dependency>
+        
         <!-- General dependencies for standard applications -->
         <dependency>
             <groupId>junit</groupId>
@@ -216,30 +220,6 @@
             <artifactId>c3p0</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
-            <version>${activemq.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-camel</artifactId>
-            <version>${activemq.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-            <version>${apache-camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-quartz</artifactId>
-            <version>${apache-camel.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>stringtemplate</artifactId>
             <version>${stringtemplate.version}</version>
@@ -291,15 +271,6 @@
                         <projectnature>com.springsource.sts.roo.core.nature</projectnature>
                         <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
                     </additionalProjectnatures>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <dms.config.home>${basedir}/src/test/resources</dms.config.home>
-                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

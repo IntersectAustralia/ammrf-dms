@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import au.org.intersect.dms.core.domain.FileInfo;
+import au.org.intersect.dms.core.service.BasicConnectionDetails;
 
 /**
  * Actual connection to access the data server. Access to active, getFileInfo and getList must be synchronized by
@@ -137,4 +138,10 @@ public interface TransportConnection
      * @throws IOException
      */
     boolean closeOutputStream(String to, OutputStream os) throws IOException;
+
+    /**
+     * Get connection details
+     * @return
+     */
+    BasicConnectionDetails getBasicConnectionDetails();
 }

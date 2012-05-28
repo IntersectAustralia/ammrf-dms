@@ -52,6 +52,7 @@ public class LocalConnectionTest
     
     private static final String ROOT_PATH = "/";
     private static final String A_PATH = "test";
+    private static final String USERNAME = "username";
 
     @Before
     public void setUp() throws Exception
@@ -70,7 +71,7 @@ public class LocalConnectionTest
         File rootDir = mock(File.class);
         utilSetupForLocalConnectionTests(rootDir, path, true, true);
 
-        new LocalConnection(rootDir, path);
+        new LocalConnection(rootDir, path, USERNAME);
     }
 
     @Test(expected = TransportError.class)
@@ -80,7 +81,7 @@ public class LocalConnectionTest
         File rootDir = mock(File.class);
         utilSetupForLocalConnectionTests(rootDir, path, false, false);
 
-        new LocalConnection(rootDir, path);
+        new LocalConnection(rootDir, path, USERNAME);
     }
 
     @Test(expected = TransportError.class)
@@ -90,7 +91,7 @@ public class LocalConnectionTest
         File rootDir = mock(File.class);
         utilSetupForLocalConnectionTests(rootDir, path, false, true);
 
-        new LocalConnection(rootDir, path);
+        new LocalConnection(rootDir, path, USERNAME);
     }
 
     private File utilSetupForLocalConnectionTests(File rootDir, String path, boolean isDir, boolean exists)
@@ -113,7 +114,7 @@ public class LocalConnectionTest
         when(basedir.isDirectory()).thenReturn(true);
         when(basedir.listFiles()).thenReturn(new File[]{});
 
-        LocalConnection connection = new LocalConnection(rootDir, path);
+        LocalConnection connection = new LocalConnection(rootDir, path, USERNAME);
         
         List<FileInfo> list = connection.getList(ROOT_PATH);
         assertTrue(list.size() == 0);
@@ -129,7 +130,7 @@ public class LocalConnectionTest
         when(basedir.isDirectory()).thenReturn(true);
         when(basedir.listFiles()).thenReturn(files);
 
-        LocalConnection connection = new LocalConnection(rootDir, path);
+        LocalConnection connection = new LocalConnection(rootDir, path, USERNAME);
         List<FileInfo> list = connection.getList(ROOT_PATH);
         assertEquals(2, list.size());
         for (int i = 0; i < list.size(); i++)
@@ -161,7 +162,7 @@ public class LocalConnectionTest
         
         when(from.renameTo(to)).thenReturn(true);
         
-        LocalConnection connection = new LocalConnection(rootDir, path);
+        LocalConnection connection = new LocalConnection(rootDir, path, USERNAME);
         assertTrue(connection.rename(ROOT_PATH, "ren-one.txt", "one-a.txt"));
     }
 

@@ -34,7 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.scheduling.annotation.Scheduled;
 
+import au.org.intersect.dms.catalogue.MetadataRepository;
 import au.org.intersect.dms.core.domain.FileInfo;
 import au.org.intersect.dms.core.domain.FileType;
 import au.org.intersect.dms.core.service.ConfigurationService;
@@ -55,6 +57,11 @@ public abstract class RepositoryServerPoller
 
     @Autowired
     private DmsService dmsService;
+    
+    @Autowired
+    private MetadataRepository metadataRepository;
+    
+    private InplaceIngestionJobCreator jobCreator;
 
     /**
      * Stock server of the repository.
@@ -74,13 +81,34 @@ public abstract class RepositoryServerPoller
     {
         this.rootDirectory = rootDirectory;
     }
+    
+    @Required
+    public void setJobCreator(InplaceIngestionJobCreator jobCreator)
+    {
+        this.jobCreator = jobCreator;
+    }
 
     protected DmsService getDmsService()
     {
         return dmsService;
     }
-
-    public Collection<DatasetParams> getNewDatasets()
+    
+    protected MetadataRepository getMetadataRepository()
+    {
+        return metadataRepository;
+    }
+    
+    @Scheduled(cron = "${dms.olympus.schedule}")
+    public void ingestNewDatasets()
+    {
+        Collection<DatasetParams> newDatasets = getNewDatasets();
+        if (!newDatasets.isEmpty())
+        {
+            jobCreator.createJobs(newDatasets);
+        }
+    }
+    
+    protected Collection<DatasetParams> getNewDatasets()
     {
         LOGGER.info("Checking for new datasets in directory {}....", rootDirectory);
 
@@ -122,7 +150,8 @@ public abstract class RepositoryServerPoller
                     newDatasetsAccumulator.add(datasetParams);
                 }
             }
-            else if (!fileInfo.getName().toLowerCase().endsWith(".oif.files") && !dmsService.isUrlCatalogued(url))
+            else if (!fileInfo.getName().toLowerCase().endsWith(".oif.files")
+                    && !metadataRepository.isUrlCatalogued(url))
             {
                 processDirectory(username, repositoryConnectionParams, connectionId, fileInfo, newDatasetsAccumulator);
             }

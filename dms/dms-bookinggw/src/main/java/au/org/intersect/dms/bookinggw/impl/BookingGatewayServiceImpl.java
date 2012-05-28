@@ -26,6 +26,7 @@
 package au.org.intersect.dms.bookinggw.impl;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -180,7 +181,7 @@ public class BookingGatewayServiceImpl implements BookingGatewayInterface
         }
         else
         {
-            invRoles = convertToInvestigatorRole(partSet.toArray(new Participants[partSet.size()]));
+            invRoles = convertToInvestigatorRole(partSet);
         }
         return new ProjectDetails(projectCode, proj.getTitle(), bookingId, instrument, proj.getOutline(), invRoles);
     }
@@ -243,8 +244,7 @@ public class BookingGatewayServiceImpl implements BookingGatewayInterface
         {
             Participants aParticipant = participant[i];
             ProjectParticipation item = new ProjectParticipation(convertToProject(aParticipant.getProjects()),
-                    aParticipant.getComments(), aParticipant.getAgsUsers() == null ? aParticipant.getAgsUsers1()
-                            .getUsername() : aParticipant.getAgsUsers().getUsername());
+                    aParticipant.getComments());
             resp[i] = item;
         }
         return resp;
@@ -265,14 +265,11 @@ public class BookingGatewayServiceImpl implements BookingGatewayInterface
      *            the participation to convert
      * @return an InvestigatorRole object
      */
-    private static InvestigatorRole[] convertToInvestigatorRole(Participants[] participations)
+    private static InvestigatorRole[] convertToInvestigatorRole(Set<Participants> participations)
     {
-        InvestigatorRole[] resp = new InvestigatorRole[participations.length];
-        for (int i = 0; i < participations.length; i++)
+        Set<InvestigatorRole> resp = new HashSet<InvestigatorRole>();
+        for (Participants p : participations)
         {
-            Participants p = participations[i];
-            boolean isSuper = p.getAgsUsers() == null
-                    || p.getAgsUsers().getUserid().equals(p.getAgsUsers1().getUserid());
             String fname = p.getAgsUsers1().getUserFname();
             String lname = p.getAgsUsers1().getUserLname();
             String mname;
@@ -302,11 +299,12 @@ public class BookingGatewayServiceImpl implements BookingGatewayInterface
                 organization = "";
                 orgId = "";
             }
-            InvestigatorRole item = new InvestigatorRole(p.getAgsUsers1().getUserid(), isSuper, new String[] {title,
-                fname, mname, lname, initials}, organization, orgId);
-            resp[i] = item;
+            InvestigatorRole item = new InvestigatorRole(p.getAgsUsers1().getUserid(), new String[] {title, fname,
+                mname, lname, initials}, organization, orgId);
+            resp.add(item);
         }
-        return resp;
+
+        return resp.toArray(new InvestigatorRole[resp.size()]);
     }
 
     /**

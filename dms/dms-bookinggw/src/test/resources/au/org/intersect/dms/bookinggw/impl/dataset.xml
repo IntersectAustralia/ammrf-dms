@@ -72,9 +72,9 @@
 		
 	<!-- table: ez_objects_names -->
 
-	<ez_objects_names objectid="1" languageid="en" objectname="X-Ray thing" objectdescription="From the movie"/>
-	<ez_objects_names objectid="2" languageid="en" objectname="Y-Ray thing" objectdescription="Next generation"/>
-	<ez_objects_names objectid="3" languageid="en" objectname="Z-Ray thing" objectdescription="The ultimate"/>
+	<ez_objectnames objectid="1" languageid="en" objectname="X-Ray thing" objectdescription="From the movie"/>
+	<ez_objectnames objectid="2" languageid="en" objectname="Y-Ray thing" objectdescription="Next generation"/>
+	<ez_objectnames objectid="3" languageid="en" objectname="Z-Ray thing" objectdescription="The ultimate"/>
 	
 	<!-- table: organisations -->
 

@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:camel="http://camel.apache.org/schema/spring"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:cxf="http://camel.apache.org/schema/cxf"
-	xmlns:http="http://cxf.apache.org/transports/http/configuration"
-	xmlns:sec="http://cxf.apache.org/configuration/security"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd        
-            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-            http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
-            http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
-            http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
             ">
 
@@ -29,106 +17,13 @@
 	<!-- BASIC JPA -->
 
 	<context:spring-configured />
-
-	<context:annotation-config />
-
-	<context:component-scan base-package="au.org.intersect.dms.service">
-		<context:exclude-filter expression=".*_Roo_.*"
-			type="regex" />
-	</context:component-scan>
-
-	<tx:annotation-driven mode="aspectj"
-		transaction-manager="serviceTM" />
-
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="serviceTM">
-		<property name="entityManagerFactory" ref="serviceEMF"/>
-		<qualifier value="service"/>
-	</bean>
-	
-	<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="serviceEMF">
-		<property name="dataSource" ref="serviceDS"/>
-		<property name="persistenceXmlLocation"
-			value="classpath*:META-INF/persistence-service.xml" />
-		<property name="persistenceUnitName" value="servicePU" />
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
-				<property name="showSql" value="false" />
-				<property name="generateDdl" value="true" />
-			</bean>
-		</property>
-		<property name="jpaProperties">
-			<props>
-				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
-			</props>
-		</property>
-	</bean>
-	
-	<bean class="com.mchange.v2.c3p0.ComboPooledDataSource" id="serviceDS">
-        <property name="driverClass" value="${database.driverClassName}"/>
-        <property name="jdbcUrl" value="${database.url}"/>
-        <property name="user" value="${database.username}"/>
-        <property name="password" value="${database.password}"/>
-        <property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}"/>
-        <property name="maxIdleTime" value="${c3p0.maxIdleTime}"/>
-        <property name="preferredTestQuery" value="SELECT 1"/>
-    </bean>
-    
-	
-	
-	<!-- CAMEL -->
-
-    <!-- we can configure the tracer by defining the tracer bean and set the properties as we like -->
-    <!-- the id name can be anything its the class that must be org.apache.camel.processor.interceptor.Tracer -->
-    <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
-        <property name="traceInterceptors" value="true"/>
-        <property name="logName" value="org.apache.camel.processor.interceptor.TraceInterceptor"/>
-        <property name="logLevel" value="INFO"/>
-    </bean>
-    
-	<camel:camelContext id="serviceCamelContext">
-        <camel:endpoint id="emailScheduler"
-            uri="quartz://emailTrigger?cron=${dms.email.schedule}" />
-        <camel:route>
-            <camel:from ref="emailScheduler" />
-            <camel:to uri="bean:emailReminder?method=sendReminderEmails" />
-        </camel:route>
-        
-		<camel:route>
-		    <camel:from uri="activemq:wn.updates" />
-		    <camel:to uri="bean:jobListener" />
-		</camel:route>
-        <camel:route>
-            <camel:from uri="activemq:dms.dmsService"/>
-            <camel:to uri="bean:dmsClient"/>
-        </camel:route>
-	</camel:camelContext>
 	
 	<!-- DMS BEANS -->
 	
-	<bean class="au.org.intersect.dms.workerrouter.impl.WorkerRouterImpl" id="workerRouter">
-		<property name="routingTableLocation" value="${dms.config.home}" />
-	</bean>
-
     <bean class="au.org.intersect.dms.service.impl.JobServiceImpl" id="jobService" />
     
 	<bean class="au.org.intersect.dms.service.impl.DmsServiceCopyImpl" id="dmsCopy" />
 	
 	<bean class="au.org.intersect.dms.service.impl.DmsServiceImpl" id="dmsClient" />
-	
-	<bean class="au.org.intersect.dms.service.impl.JobListenerImpl" id="jobListener" />
-	
-	<bean id="metadataIngestor" class="au.org.intersect.dms.service.impl.MetadataIngestor" />
     
-    <!-- Email reminder -->
-    <bean id="emailReminder" class="au.org.intersect.dms.service.email.ReminderEmailSender">
-        <property name="emailServerEndpointURL" value="${dms.email.server.url}"/>
-        <property name="fromEmail" value="${dms.email.from}"/>
-        <property name="subject" value="${dms.email.subject}"/>
-    </bean>
-    
-    <bean id="emailBuilder" class="au.org.intersect.dms.service.email.ReminderEmailBuilder">
-    	<property name="dmsLocation" value="${dms.email.dms.url}"/>
-    </bean>
-	
 </beans>

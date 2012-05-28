@@ -31,6 +31,7 @@ import au.org.intersect.dms.core.domain.FileInfo;
 import au.org.intersect.dms.core.domain.JobItem;
 import au.org.intersect.dms.core.domain.JobSearchResult;
 import au.org.intersect.dms.core.service.dto.IngestParameter;
+import au.org.intersect.dms.core.service.dto.OpenConnectionParameter;
 
 /**
  * Client to DMS API.
@@ -59,6 +60,15 @@ public interface DmsService
      */
     List<FileInfo> getList(Integer connectionId, String absolutePath);
 
+    /**
+     * List info of a file or directory
+     * 
+     * @param connectionId
+     * @param absolutePath
+     * @return
+     */
+    FileInfo getFileInfo(Integer connectionId, String absolutePath);
+    
     /**
      * Renames file/directory.
      * 
@@ -178,5 +188,11 @@ public interface DmsService
 
     boolean checkForValidRouting(Integer connectionIdFrom, Integer connectionIdTo);
     
-    boolean isUrlCatalogued(String url);
+    /**
+     * Returns the parameters used to create the connection 
+     * @param connectionId
+     * @return
+     */
+    OpenConnectionParameter getConnectionParameters(Integer connectionId);
+    
 }

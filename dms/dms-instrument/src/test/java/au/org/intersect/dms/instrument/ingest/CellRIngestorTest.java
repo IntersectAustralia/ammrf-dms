@@ -43,8 +43,8 @@ public class CellRIngestorTest
     private CellRIngestor ingestor = new CellRIngestor();
     private List<String> fromFiles;
     private IngestParameter ingestParams;
-    private String fromDir = "/testSrc";
-    private String toDir = "/testDest";
+    private String fromDir = "/testSrc/test Source Dir";
+    private String toDir = "/testDest/test Dest Dir";
 
     @Before
     public void setUp() throws Exception
@@ -53,6 +53,7 @@ public class CellRIngestorTest
         {
             {
                 add(fromDir);
+                add(fromDir + "/somethig else");
             }
         };
         ingestParams = new IngestParameter("test", 1L, 1, fromFiles, 2, toDir, InstrumentProfile.OLYMPUS_CELL_R);
@@ -70,7 +71,7 @@ public class CellRIngestorTest
         List<String> expectedList = new ArrayList<String>()
         {
             {
-                add(toDir + fromDir);
+                add(toDir + "/test Source Dir");
             }
         };
         ReflectionAssert.assertReflectionEquals(COPY_FROM_LIST_ERROR_MESSAGE, expectedList, fromList);
@@ -89,7 +90,7 @@ public class CellRIngestorTest
         List<String> expectedList = new ArrayList<String>()
         {
             {
-                add(toDir + SLASH);
+                add(toDir);
             }
         };
         ReflectionAssert.assertReflectionEquals(COPY_FROM_LIST_ERROR_MESSAGE, expectedList, fromList);
@@ -104,7 +105,7 @@ public class CellRIngestorTest
         List<String> expectedList = new ArrayList<String>()
         {
             {
-                add(fromDir);
+                add("/test Source Dir");
             }
         };
         ReflectionAssert.assertReflectionEquals(COPY_FROM_LIST_ERROR_MESSAGE, expectedList, fromList);

@@ -8,5 +8,7 @@ INSTALL_DIR=/home/carlos/Programs
 DMS_USER=carlos
 
 #Certificate and keystore properties
-KEYSTORE_PASS=dms-password
-CERTIFICATE_ALIAS=dms
+DMS_KEYSTORE_FILE=$HOME/.ammrf/dms/keystore/keystore
+DMS_KEYSTORE_PASS=dms-password
+DMS_KEY_ALIAS=dms
+DMS_APPLET_KEY_ALIAS=dms

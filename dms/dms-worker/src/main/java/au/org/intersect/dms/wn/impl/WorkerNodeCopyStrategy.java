@@ -68,8 +68,8 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
         this.bufferSize = bufferSize;
     }
 
-    public JobTracker doScope(JobTracker tracker, TransportConnection conn, List<String> fromFiles, String to)
-        throws IOException
+    public JobTracker doScope(JobTracker tracker, TransportConnection conn, List<String> fromFiles,
+            String to) throws IOException
     {
         tracker.scopeStarted();
         Set<String> addedParents = new HashSet<String>();
@@ -85,8 +85,8 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
         return tracker;
     }
 
-    private void doScope(TransportConnection conn, Set<String> addedParents, String from, String to, JobTracker tracker)
-        throws IOException
+    private void doScope(TransportConnection conn, Set<String> addedParents, String from,
+            String to, JobTracker tracker) throws IOException
     {
         FileInfo info = conn.getInfo(from);
         if (info.getFileType() == FileType.DIRECTORY)
@@ -97,8 +97,8 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
                 addedParents.add(from);
                 for (FileInfo child : conn.getList(from))
                 {
-                    doScope(conn, addedParents, child.getAbsolutePath(), PathUtils.joinPath(to, info.getName()),
-                            tracker);
+                    doScope(conn, addedParents, child.getAbsolutePath(),
+                            PathUtils.joinPath(to, info.getName()), tracker);
                 }
             }
         }
@@ -108,8 +108,9 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
         }
     }
 
-    public void copy(final JobTracker tracker, final TransportConnection fromConn, final TransportConnection toConn,
-            final InstrumentHarvester instrument) throws IOException
+    public void copy(final JobTracker tracker, final TransportConnection fromConn,
+            final TransportConnection toConn, final InstrumentHarvester instrument,
+            TriggerHelper trigger) throws IOException
     {
         final TransportStreamTemplate tst = new TransportStreamTemplate();
 
@@ -123,10 +124,12 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
                     String name = PathUtils.getName(fromTo.getTo());
                     if (!toConn.createDir(parent, name))
                     {
-                        throw new TransportException("Job " + tracker.getJobId() + ": failed to create " + parent + "/"
-                                + name);
+                        throw new TransportException("Job " + tracker.getJobId()
+                                + ": failed to create " + parent + "/" + name);
                     }
                 }
+                trigger.copyFromTo(fromConn.getBasicConnectionDetails(), fromTo.getFrom(),
+                        toConn.getBasicConnectionDetails(), fromTo.getTo());
                 tracker.directoryEnd(fromTo.getTo());
                 if (instrument != null)
                 {
@@ -140,12 +143,16 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
                     @Override
                     public void withStream(final InputStream is) throws IOException
                     {
-                        StreamCallback<OutputStream> outputCallback = makeOutputStreamCallback(is, tracker,
-                                instrument != null ? instrument.getHarvesterFor(fromTo.getFrom()) : null,
-                                fromTo.getTo());
-                        tst.withOutputStream(toConn, outputCallback, fromTo.getTo(), fromTo.getSize());
+                        StreamCallback<OutputStream> outputCallback = makeOutputStreamCallback(is,
+                                tracker,
+                                instrument != null ? instrument.getHarvesterFor(fromTo.getFrom())
+                                        : null, fromTo.getTo());
+                        tst.withOutputStream(toConn, outputCallback, fromTo.getTo(),
+                                fromTo.getSize());
                     }
                 };
+                trigger.copyFromTo(fromConn.getBasicConnectionDetails(), fromTo.getFrom(),
+                        toConn.getBasicConnectionDetails(), fromTo.getTo());
                 tst.withInputStream(fromConn, inputCallback, fromTo.getFrom());
                 tracker.fileEnd(fromTo.getTo());
                 if (instrument != null)
@@ -189,10 +196,10 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
                             @Override
                             public void withStream(final InputStream is) throws IOException
                             {
-                                StreamCallback<OutputStream> outputCallback = makeOutputStreamCallback(is, tracker,
-                                        harvester, fromTo.getTo());
-                                tst.withOutputStream(new NullConnection(), outputCallback, fromTo.getTo(),
-                                        fromTo.getSize());
+                                StreamCallback<OutputStream> outputCallback = makeOutputStreamCallback(
+                                        is, tracker, harvester, fromTo.getTo());
+                                tst.withOutputStream(new NullConnection(), outputCallback,
+                                        fromTo.getTo(), fromTo.getSize());
                             }
                         };
                         tst.withInputStream(fromConn, inputCallback, fromTo.getFrom());
@@ -225,7 +232,8 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
             }
             else
             {
-                throw new TransportException("File " + fromTo.getTo() + " found, but is not a directory");
+                throw new TransportException("File " + fromTo.getTo()
+                        + " found, but is not a directory");
             }
         }
         catch (PathNotFoundException e)
@@ -246,8 +254,8 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
         }
     }
 
-    private StreamCallback<OutputStream> makeOutputStreamCallback(final InputStream is, final JobTracker tracker,
-            final FileHarvester harvester, final String toPath)
+    private StreamCallback<OutputStream> makeOutputStreamCallback(final InputStream is,
+            final JobTracker tracker, final FileHarvester harvester, final String toPath)
     {
         return new StreamCallback<OutputStream>()
         {
@@ -282,8 +290,8 @@ public class WorkerNodeCopyStrategy implements CopyStrategy
         }
     }
 
-    private void streamCopy(byte[] buffer, final InputStream is, final JobTracker tracker, OutputStream os,
-            OutputStream harvestOS) throws IOException
+    private void streamCopy(byte[] buffer, final InputStream is, final JobTracker tracker,
+            OutputStream os, OutputStream harvestOS) throws IOException
     {
         int readBytes = is.read(buffer);
         while (readBytes > 0)

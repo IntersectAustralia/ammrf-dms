@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.intersect.dms.core.errors.ConnectionClosedError;
-import au.org.intersect.dms.core.errors.TransportError;
 import au.org.intersect.dms.core.errors.TransportException;
 import au.org.intersect.dms.wn.ConnectionParams;
 import au.org.intersect.dms.wn.TransportConnection;
@@ -101,7 +100,7 @@ public class TransportConnectionTemplate
                 }
             }
             conn = null;
-            throw new TransportError("This server has stopped responding. Please close the current tab and" 
+            throw new ConnectionClosedError("This server has stopped responding. Please close the current tab and" 
                     + " re-establish the connection. " 
                     + "If the problem persists please contact your system administrator.");
         }

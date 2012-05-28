@@ -25,8 +25,6 @@
 
 package au.org.intersect.dms.core.service;
 
-import org.apache.camel.InOnly;
-
 import au.org.intersect.dms.core.service.dto.JobFinished;
 import au.org.intersect.dms.core.service.dto.JobScoped;
 import au.org.intersect.dms.core.service.dto.JobStatusUpdateEvent;
@@ -37,7 +35,6 @@ import au.org.intersect.dms.core.service.dto.JobUpdate;
  * 
  * @version $Rev: 29 $
  */
-@InOnly
 public interface JobListener
 {
     void jobStatusUpdate(JobStatusUpdateEvent details);

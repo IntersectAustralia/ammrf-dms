@@ -53,7 +53,7 @@ public class Fv1000PtyHarvester extends AbstractHarvester
     @Override
     String process(InputStream input) throws IOException
     {
-        WindowsIniLogParser parser = new WindowsIniLogParser(Mode.INCLUSION, INCLUSIONS_FIELDS, null, TEMPLATE,
+        Fv1000PtyParser parser = new Fv1000PtyParser(Mode.INCLUSION, INCLUSIONS_FIELDS, null, TEMPLATE,
                 null);
         parser.setEncoding("UTF-16");
         return parser.parse(input);

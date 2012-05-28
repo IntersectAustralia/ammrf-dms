@@ -183,7 +183,7 @@ function initd_worker {
 
 function initd_tomcat {
    sed -e "s\$_JAVA_HOME_\$$JAVA_HOME\$" -e "s\$_TOMCAT_HOME_\$$TOMCAT_HOME\$" -e "s\$_DMS_USER_\$$DMS_USER\$" $CURRENT_DIR/init_d/tomcat > /etc/init.d/tomcat
-   sed -e "s\$_DMS_CONFIG_HOME_\$$USER_DIR/.ammrf/dms\$g" -e "s\$_DMS_KEYSTORE_PASS_\$$KEYSTORE_PASS\$g" $CURRENT_DIR/init_d/setenv.sh > $TOMCAT_HOME/bin/setenv.sh
+   sed -e "s\$_DMS_CONFIG_HOME_\$$USER_DIR/.ammrf/dms\$g" -e "s\$_DMS_KEYSTORE_FILE_\$$DMS_KEYSTORE_FILE\$g" -e "s\$_DMS_KEYSTORE_PASS_\$$DMS_KEYSTORE_PASS\$g" -e "s\$_DMS_KEY_ALIAS_\$$DMS_KEY_ALIAS\$g" $CURRENT_DIR/init_d/setenv.sh > $TOMCAT_HOME/bin/setenv.sh
    chmod a+x /etc/init.d/tomcat
    chmod a+x $TOMCAT_HOME/bin/setenv.sh
 }
@@ -275,11 +275,10 @@ function sign_applet {
 	jar xf $TOMCAT_HOME/webapps/dms-web.war applets/dms-applet.jar
 		
 	APPLET=/var/tmp/applets/dms-applet.jar
-	KEYSTORE=$USER_DIR/.ammrf/dms/keystore/keystore
 
 	install_applet_key $APPLET
-	echo "Signing dms applet <$APPLET> using keystore <$KEYSTORE> and alias <$CERTIFICATE_ALIAS>"
-	$JAVA_HOME/bin/jarsigner -keystore $KEYSTORE -storepass $KEYSTORE_PASS $APPLET $CERTIFICATE_ALIAS
+	echo "Signing dms applet <$APPLET> using keystore <$DMS_KEYSTORE_FILE> and alias <$DMS_APPLET_KEY_ALIAS>"
+	$JAVA_HOME/bin/jarsigner -keystore $DMS_KEYSTORE_FILE -storepass $DMS_KEYSTORE_PASS $APPLET $DMS_APPLET_KEY_ALIAS
 	
 	echo "Putting signed applet back to war"
 	jar uf $TOMCAT_HOME/webapps/dms-web.war applets/dms-applet.jar

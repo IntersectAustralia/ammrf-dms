@@ -25,12 +25,26 @@
 
 package au.org.intersect.dms.catalogue;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.camel.ProducerTemplate;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.xml.transform.StringResult;
+import org.springframework.xml.transform.StringSource;
 
 import au.org.intersect.dms.core.catalogue.MetadataSchema;
 
@@ -42,6 +56,8 @@ import au.org.intersect.dms.core.catalogue.MetadataSchema;
  */
 public class MetadataXmlConverter
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataXmlConverter.class);
+    
     /**
      * Conversion destination formats
      */
@@ -49,10 +65,9 @@ public class MetadataXmlConverter
     {
         HTML, INDEX
     }
-    
+
     /**
-     * Parameters for conversion process.
-     * Implemented through Builder pattern.
+     * Parameters for conversion process. Implemented through Builder pattern.
      */
     public static class ConversionParams
     {
@@ -61,71 +76,97 @@ public class MetadataXmlConverter
         private String metadata;
         private boolean isEditMode;
         private Map<String, Object> extraParams = new HashMap<String, Object>();
-        
+
         public ConversionParams schema(MetadataSchema schema)
         {
             this.schema = schema;
             return this;
         }
-        
+
         public ConversionParams desinationFormat(Format destinationFormat)
         {
             this.destinationFormat = destinationFormat;
             return this;
         }
-        
+
         public ConversionParams metadata(String metadata)
         {
             this.metadata = metadata;
             return this;
         }
-        
+
         public ConversionParams edit(boolean isEditMode)
         {
             this.isEditMode = isEditMode;
             return this;
         }
-        
+
         public ConversionParams extraParam(String name, Object value)
         {
             extraParams.put(name, value);
             return this;
         }
     }
-    
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+
     private Map<MetadataSchema, Map<Format, String>> mapping = new HashMap<MetadataSchema, Map<Format, String>>();
 
-    @Autowired(required = true)
-    @Qualifier("catalogueProducerTemplate")
-    private ProducerTemplate template;
-
+    @Required
     public void setMapping(Map<MetadataSchema, Map<Format, String>> mapping)
     {
         this.mapping = mapping;
     }
-    
+
     /**
      * Converts metadata of supported schemas into supported formats
      * 
-     * @param params conversion parameters
+     * @param params
+     *            conversion parameters
      * @return
+     * @throws IOException
+     * @throws TransformerException
      */
-    public String convert(ConversionParams params)
+    public String convert(ConversionParams params) throws IOException, TransformerException
     {
-        Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("editMode", params.isEditMode ? Boolean.TRUE : "");
-        if (params.extraParams != null)
-        {
-            headers.putAll(params.extraParams);
-        }
         String xslt = getXslt(params.schema, params.destinationFormat);
         if (xslt == null)
         {
             throw new IllegalArgumentException("Mapping from " + params.schema + " to " + params.destinationFormat
                     + " is not supported.");
         }
-        Object resp = template.requestBodyAndHeaders(xslt, params.metadata, headers);
-        return resp.toString();
+
+        TransformerFactory xsltFactory = TransformerFactory.newInstance();
+        final Resource xsltResource = resourceLoader.getResource(xslt);
+        Transformer transformer = xsltFactory.newTransformer(new StreamSource(xsltResource
+                .getInputStream()));
+        transformer.setParameter("editMode", params.isEditMode);
+        final String baseURI = xsltResource.getURI().toString();
+        transformer.setURIResolver(new URIResolver()
+        {
+            
+            @Override
+            public Source resolve(String href, String base) throws TransformerException
+            {
+                StringBuilder resolvedPath = new StringBuilder();
+                resolvedPath.append(baseURI.substring(0, baseURI.lastIndexOf("/") + 1)).append(href);
+                LOGGER.debug("Relative path [{}] was resolved to [{}]", href, resolvedPath);
+                return new StreamSource(resolvedPath.toString());
+            }
+        });
+        if (params.extraParams != null)
+        {
+            for (Entry<String, Object> parameter : params.extraParams.entrySet())
+            {
+                transformer.setParameter(parameter.getKey(), parameter.getValue());
+            }
+        }
+
+        StringResult result = new StringResult();
+        transformer.transform(new StringSource(params.metadata), result);
+
+        return result.toString();
     }
 
     /**

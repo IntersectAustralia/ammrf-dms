@@ -175,7 +175,7 @@ public class HddAccess
             public FileInfo[] run()
             {
                 File[] fsvRoots = attemptFileSystemRoots();
-                if (fsvRoots.length == 1 && ROOT_PATH.equals(fsvRoots[0].getName()))
+                if (fsvRoots == null || (fsvRoots.length == 1 && ROOT_PATH.equals(fsvRoots[0].getName())))
                 {
                     return getListDir(ROOT_PATH);
                 }
@@ -200,6 +200,10 @@ public class HddAccess
     private File[] attemptFileSystemRoots()
     {
         File[] fsvRoots = File.listRoots();
+        if (fsvRoots == null)
+        {
+            return null;
+        }
         if (fsvRoots.length == 1 || ROOT_PATH.equals(fsvRoots[0].getName()))
         {
             fsvRoots = FileSystemView.getFileSystemView().getRoots();
@@ -222,7 +226,12 @@ public class HddAccess
                     throw new RuntimeException("Path does not exist");
                 }
                 List<FileInfo> resp = new ArrayList<FileInfo>();
-                for (File file : dir.listFiles())
+                File[] files = dir.listFiles();
+                if (files == null)
+                {
+                    return new FileInfo[0];
+                }
+                for (File file : files)
                 {
                     if (".".equals(file.getName()) || "..".equals(file.getName()))
                     {
