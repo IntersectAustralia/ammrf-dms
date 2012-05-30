@@ -1,9 +1,0 @@
-<registryObjects
- 	xmlns:jsp="http://java.sun.com/JSP/Page"
-	xmlns:tiles="http://tiles.apache.org/tags-tiles"
-	xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/home/orca/schemata/1.2.0/registryObjects.xsd">
-    <jsp:output omit-xml-declaration="no"/>
-    <tiles:insertAttribute name="body" />
-</registryObjects>

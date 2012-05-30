@@ -1,7 +1,0 @@
-<div style="display:none;" id="createDialog" title="Create folder">
-    <form id="createForm" name="create" action="create" method="POST">
-    <input id="connectionId" type="hidden" name="connectionId"/>
-    <input id="parent" type="hidden" name="parent"/>
-    Folder name: <input id="name" type='text' name="name" style="width:250px"/>
-    </form>
-</div>

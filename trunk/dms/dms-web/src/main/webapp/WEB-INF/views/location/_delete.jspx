@@ -1,4 +1,0 @@
-<div style="display:none;" id="deleteDialog" title="Delete">
-Are you sure you want to delete selected files and directories?<br/>This will remove following files and directories(including sub-files) permanently:
-<ul style="border:1px solid gray;height:180px;overflow:auto;"><!-- FF3 --></ul>
-</div>
