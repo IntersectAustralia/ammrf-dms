@@ -1,1 +1,0 @@
-WORKER_PROPERTIES="-Ddms.config.home=$HOME/.ammrf/dms -Ddms.worker.profile=worker-internal.xml -Djavax.net.ssl.trustStore=$HOME/.ammrf/dms/keystore/keystore -Djavax.net.ssl.trustStorePassword=dms-password"

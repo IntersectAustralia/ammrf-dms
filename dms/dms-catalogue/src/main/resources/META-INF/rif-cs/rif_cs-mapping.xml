@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mapping>
-	<property xml-field="originatingSource" index-field="rifcs_originating_source_tws" display-name="Source" type="text" />
-	<property xml-field="name" index-field="rifcs_collection_name_t" display-name="Name" type="text" />
-	<property xml-field="description" index-field="rifcs_collection_description_t" display-name="Description" type="text" />
-	<property xml-field="url" index-field="rifcs_url_s" display-name="URL" type="text" />
-	<property xml-field="physicalAddress" index-field="rifcs_physical_address_t" display-name="Physical address" type="text" />
-</mapping>
