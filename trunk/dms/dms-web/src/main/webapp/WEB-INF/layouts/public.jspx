@@ -1,0 +1,70 @@
+<html 
+ 	xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:tiles="http://tiles.apache.org/tags-tiles"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" >  
+	
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />  
+	<spring:url value="/resources/images/favicon.ico" var="faviconPath" />
+		
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=8" />		
+		
+        <util:load-scripts />
+		
+		<spring:message code="application_name" var="app_name"/>
+		<title><spring:message code="welcome_h3" arguments="${app_name}" /></title>
+		<link REL="SHORTCUT ICON" HREF="${faviconPath}"/>
+		
+	</head>
+   	<body class="tundra spring">
+   		<div id="banner">
+			<div id="logo"><jsp:text></jsp:text></div>
+		    <div id="app_title">
+                <c:url var="logoImage" value="/resources/images/dms.png"/>
+                <img src="${logoImage}" border="0" alt="Data Management System"/>
+		    </div>
+		</div>		
+   		<div id="wrapper">
+		    <!-- tiles:insertAttribute name="menu" ignore="true" /-->
+	    	<div id="main">
+
+				
+	    		<tiles:insertAttribute name="body" />
+	    		
+			</div>
+			
+			<table id="affiliates" class="main" border="0" width="95%">
+		    <tbody>
+		    
+		    <tr>
+			<c:url var="usydLogo" value="/resources/images/affiliates/u_syd.gif"/>
+		    <td><a href="http://www.sydney.edu.au/acmm/" target="_blank"><img src="${usydLogo}" border="0" alt="University of Sydney" /></a></td>
+            
+            <c:url var="uqLogo" value="/resources/images/affiliates/u_q.gif"/>
+		    <td><a href="http://www.uq.edu.au/nanoworld/" target="_blank"><img src="${uqLogo}" border="0" alt="University of Queensland" /></a></td>
+		    
+            <c:url var="uwaLogo" value="/resources/images/affiliates/u_wa.gif"/>
+            <td><a href="http://www.cmca.uwa.edu.au/" target="_blank"><img src="${uwaLogo}" border="0" alt="University of Western Australia" /></a></td>
+		    
+            <c:url var="unswLogo" value="/resources/images/affiliates/u_nsw.gif"/>
+            <td><a href="http://srv.emunit.unsw.edu.au/" target="_blank"><img src="${unswLogo}" border="0" alt="University of New South Wales" /></a></td>
+		    
+            <c:url var="uanuLogo" value="/resources/images/affiliates/u_anu.gif"/>
+            <td><a href="http://www.anu.edu.au/EMU/" target="_blank"><img src="${uanuLogo}" border="0" alt="Australian National University" /></a></td>
+		    
+            <c:url var="usarfLogo" value="/resources/images/affiliates/u_sarf.gif"/>
+            <td><a href="http://www.adelaide.edu.au/microscopy/sarf/" target="_blank"><img src="${usarfLogo}" border="0" alt="South Australian Regional Facility Nodes" /></a></td>
+		    </tr>
+		    
+		    </tbody>
+		    </table>
+		    
+    		<div id="footer">
+		        <p><span style="float:left;">v<spring:message code="app.version"/>#<spring:message code="app.revision"/></span><spring:message code="default_disclaimer_footer" htmlEscape="false"/><a target="_blank" href="http://www.intersect.org.au" class="intersect_logo_link"><jsp:text></jsp:text></a> Developed by <a href="http://www.intersect.org.au" target="_blank">Intersect Australia Ltd</a></p>     
+			</div>
+		</div>
+	</body>
+</html>

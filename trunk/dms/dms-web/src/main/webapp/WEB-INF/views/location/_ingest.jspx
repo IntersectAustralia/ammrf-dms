@@ -1,0 +1,84 @@
+<div style="display:none;" id="ingestDialog" title="Ingest">
+    <div class="wizard-navigation" id="stage_container">
+    	
+        <div class="wizard-navigation-step one_stage">
+            	<div class="dot dot_inactive"><!-- FF3 bug --></div>
+        		<div class="stage_description stage_inactive"><p><strong>1.</strong> Select instrument</p></div>
+        </div>
+        
+        
+        <div class="wizard-navigation-step one_stage">
+        	<div class="dot dot_inactive"><!-- FF3 bug --></div>
+        	<div class="stage_description stage_inactive"><p><strong>2.</strong> Browse directory (from)</p></div>
+        </div>
+        
+        	
+        <div class="wizard-navigation-step one_stage">
+        	<div class="dot dot_inactive"><!-- FF3 bug --></div>
+        	<div class="stage_description stage_inactive"><p><strong>3.</strong> Browse dirtectory (to)</p></div>
+        </div>
+        
+        <div class="wizard-navigation-step one_stage">
+        	<div class="dot dot_inactive"><!-- FF3 bug --></div>
+        	<div class="stage_description stage_inactive"><p><strong>4.</strong> Select Project/Booking</p></div>
+        </div>
+        
+        <div class="wizard-navigation-step one_stage">
+            <div class="dot dot_inactive"><!-- FF3 bug --></div>
+            <div class="stage_description stage_inactive"><p><strong>5.</strong> Update Metadata</p></div>
+        </div>
+        
+        <div class="wizard-navigation-step end">
+            <div class="dot dot_inactive"><!-- FF3 bug --></div>
+            <div class="stage_description end stage_inactive"><p><strong>6.</strong> Confirm</p></div>
+        </div>
+        
+    
+    </div> <!-- /stage_container -->
+
+   <form id="ingestWizard" action="ingest" method="POST"> 
+       <div class="step step-1" style="height:250px;">
+       <div style="border-bottom:1px solid black;">Select instrument to copy from:</div>
+       <div class="input_group"><label for="copyFrom">From:</label><select style="width:40%;" id="copyFrom"><!-- FFX --></select></div>
+       <div class="input_group"><label for="copyTo">To:</label><select  style="width:40%;" id="copyTo"><!-- FFX --></select></div>
+       </div>
+       
+       <div class="step step-2" style="height:250px;">
+       <div style="border-bottom:1px solid black;">Select directory to ingest:</div>
+       <div id="treeFrom" style="height:220px;overflow:auto;"><!-- required for FF3 and Opera --></div>
+       </div>
+       
+       <div class="step">
+       <div style="border-bottom:1px solid black;">Select directory to ingest to on ACMM server:</div>
+       <div id="treeTo" style="height:220px;overflow:auto;"><!-- required for FF3 and Opera --></div>
+       <div id="copyToWorkstationDiv" class="input_group" style="display: none;"><label for="copyToWorkstation">Copy to Workstation:</label><input type="checkbox" id="copyToWorkstation" name="copyToWorkstation" value="true"><!-- FFX --></input></div>
+       </div>
+       
+       <div class="step">
+       <div style="border-bottom:1px solid black;">Select the project and booking:</div>
+       <div class="input_group"><label for="projectCode">Project:</label><select style="width:40%;" id="projectCode"><!-- FFX --></select></div>
+       <div class="input_group"><label for="bookingId">Booking ID:</label><select  style="width:40%;" id="bookingId"><!-- FFX --></select></div>
+       <div class="input_group"><label for="fromDate">From Date:</label><input type="text" style="width:40%;" id="fromDate"/><!-- FFX --></div>
+       <div class="input_group"><label for="toDate">To Date:</label><input type="text" style="width:40%;" id="toDate"/><!-- FFX --></div>
+       </div>
+       
+       <div class="step">
+       <div style="border-bottom:1px solid black;">Update metadata:</div>
+       <div id="prefillMetadata"><!-- FFX --></div>
+       </div>
+       
+       <div class="step">
+       <div style="border-bottom:1px solid black;">Confirm directory to be ingested:</div>
+       <div style="margin:5px;"><div>From: <span id="fromServerLabel"><!-- FF3 --></span></div><ul id="confirmFrom" style="border:1px solid gray;height:180px;overflow:auto;"><!-- FF3 --></ul></div>
+       <div style="margin:5px;"><div>To be copied to: <span id="toServerLabel"><!-- FF3 --></span></div><ul id="confirmTo" style="border:1px solid gray;height:1.2em;overflow:auto;"><!-- FF3 --></ul></div>
+       <div id="confirmCopyToWorkstationDiv" style="margin:5px; display:none;">Copy to Workstation:<span id="confrimCopyToWorkstation"><!-- FFX --></span></div>
+       <div style="margin:5px;">Metadata:<span id="confirmMetadata"><!-- FFX --></span></div>
+       </div>
+       
+       <div class="wizard-buttons" style="margin-top:5px;">
+            <button id="copyFrom_back" value="Back" class="wizard_back">Back</button>
+            <button id="copyFrom_next" value="Next" class="wizard_next">Next</button>
+            <button id="copyFrom_cancel" style="float:right;">Cancel</button>
+       </div>
+   </form>
+</div>

@@ -1,0 +1,7 @@
+<div style="display:none;" id="renameDialog" title="Rename">
+    <form id="renameForm" name="rename" action="rename" method="POST">
+    <input id="connectionId" type="hidden" name="connectionId"/>
+    <input id="from" type="hidden" name="from"/>
+    New name: <input id="to" type='text' name="to" style="width:250px"/>
+    </form>
+</div>

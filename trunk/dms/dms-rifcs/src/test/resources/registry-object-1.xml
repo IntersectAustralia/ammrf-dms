@@ -1,0 +1,38 @@
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects">
+	<registryObject group="TEST">
+		<key>9d8e21e2cb090dc890c9925170ab4041</key>
+		<originatingSource>griffith.edu.au</originatingSource>
+		<activity type="project">
+			<name type="primary">
+				<namePart>Lorem ipsum dolor sit amet</namePart>
+			</name>
+
+			<relatedObject>
+				<key>5d851a9d212bd7149aa6e72353f6fff9</key>
+				<relation type="hasAssociationWith">
+				</relation>
+			</relatedObject>
+
+			<relatedObject>
+				<key>2f947cf92c4198376896c73985e3441b</key>
+				<relation type="isManagedBy">
+				</relation>
+			</relatedObject>
+			<subject type="anzsrc-for" xml:lang="en">0601</subject>
+			<subject type="anzsrc-seo" xml:lang="en">730111</subject>
+
+			<description type="brief">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse id
+				quam vel augue tempus imperdiet laoreet a dui. Donec justo turpis,
+				imperdiet at eleifend et, egestas eu sapien. Vestibulum ante ipsum
+				primis in faucibus orci luctus et ultrices posuere cubilia Curae;
+				Maecenas tincidunt consequat sem ut consectetur. Aenean ut velit
+				ligula. Etiam eu felis et velit pharetra rhoncus nec vitae risus.
+				Nam ullamcorper elit id sapien ornare tristique. Pellentesque
+				tristique, tellus non facilisis hendrerit, libero nunc pellentesque
+				ipsum, ac malesuada arcu augue sit amet lectus. Morbi nec placerat
+				neque. Ut elementum dui sed ipsum aliquet tincidunt.
+</description>
+		</activity>
+	</registryObject>
+</registryObjects>

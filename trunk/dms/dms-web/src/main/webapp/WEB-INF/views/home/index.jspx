@@ -1,0 +1,126 @@
+<div xmlns:spring="http://www.springframework.org/tags" 
+	 xmlns:jsp="http://java.sun.com/JSP/Page"
+	 xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" 
+	 version="2.0">
+	<jsp:output omit-xml-declaration="yes"/>
+	
+	
+    <style type="text/css">
+	 
+	#home-block {
+	  margin-top: 10px;
+      background: #fef2bf;
+      height: 300px;
+	}
+	   	
+    .data {
+      background: #fef2bf;
+      display: inline;
+      float: left;
+      width: 279px;
+      padding: 20px;
+      min-height: 180px;
+    }
+    
+    .divider {
+      float: left;
+      display: inline;  
+      background: url("../images/img_divider.gif") center center no-repeat #fef2bf;
+      min-height: 180px;
+      width: 50px;    
+      padding: 20px 0;
+    }
+        
+    .icon {
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    
+    h2.home {
+      color: #c75a1c;
+      font-size: 1.5em;
+      height: 20px;
+      margin-bottom: 10px;
+      height: 50px;
+    }
+    
+    li {
+      list-style-image: url("../images/img_bullet.gif");
+      list-style-position: inside;
+    }
+        
+		</style>
+		
+		<script type="text/javascript">
+    $(function() {
+    	$.each(['ingest','manage','advertise'],
+    		function(index, value) {
+        		var $aboutIngest = $("#about_" + value).createMessageDialog({title:"About " + value});
+				$("#more_" + value).click(function(){
+					$aboutIngest.dialog('open');
+				})
+    	});        
+    });
+    
+    </script>
+		
+		
+		<div id="home-block">
+          <div id="ingest_data" class="data">
+          <h2 class="home"><img src="../images/icon_ingest.gif" class="icon" />Ingest Data</h2>
+          <p>Move my data from an instrument to private AMMRF temporary storage. Instruments include:</p>
+
+          
+          <ul>
+          <li>Skyscan</li>
+          <li>AtomProbe</li>
+          <li>Olympus Microscopes</li>
+          </ul>
+          
+          <div style="float:right;"><a id="more_ingest" href="#">more</a></div>
+          
+          </div>
+          
+          <div class="divider"><!-- FFBug --></div> 
+          
+          <div id="manage_data" class="data">
+          <h2 class="home"><img src="../images/icon_manage.gif" class="icon" />Manage Data</h2>
+          <ul>
+          <li>Copy data from ACMM storage to any FTP location</li>
+          <li>Copy data from any FTP location to ACMM</li>
+          <li>Download data to my workstation</li>
+          <li>Upload data from my workstation</li>
+          </ul>          
+          <div style="float:right;"><a id="more_manage" href="#">more</a></div>
+          </div>
+          
+          <div class="divider"><!-- FFBug --></div> 
+          
+          <div id="advertise_data" class="data">
+          <h2 class="home"><img src="../images/icon_advertise.gif" class="icon" />Advertise Data</h2>
+          <ul>
+          <li>Describe my data</li>
+
+          <li>Send a description of my data to the Australian Research Data Commons so that its existence becomes publicly visible on <a href="http://services.ands.org.au/home/orca/rda/" target="_blank">Research Data Australia</a></li>
+          </ul>
+          <div style="float:right;"><a id="more_advertise" href="#">more</a></div>
+          </div>
+        </div>  
+  		<div style="display:none;" id="about_ingest">
+  		Some instruments require user intervention to start the ingest process.
+  		Use <b>Location</b> &gt; <i>New</i> to browse both the instrument storage and the ACMM storage and click <i>Ingest</i> button to configure your data capture job.
+  		Please ask your instrument scientist for details.
+  		</div>
+  		<div style="display:none;" id="about_manage">
+  		Copy, upload and download are performe through the <b>Location</b> module.
+  		Use <b>Location</b> &gt; <i>New</i> to connect and browse storage locations and use <i>Copy</i> button to configure your data copy job.
+  		Upload and download are done by <i>connecting</i> to your PC or workstation and issuing a copy from or to your PC. This will create a new
+  		window where the copying is performed. You wil need the java plugin installed in your browser and need to authorise it to access your local hard drive. 
+  		</div>
+  		<div style="display:none;" id="about_advertise">
+  		Once the data has been ingested, it appears in your <b>Catalogue</b>. Use this module to browse your datasets,
+  		edit the metadata prior to publishing and publish a dataset record to ANDS Research Data Australia federated catalogue.
+  		The location module also shows metadata while browsing the storage repository if the selected location is catalogued.
+  		</div>
+</div>

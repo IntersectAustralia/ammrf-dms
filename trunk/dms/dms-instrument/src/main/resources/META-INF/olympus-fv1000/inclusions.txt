@@ -1,0 +1,29 @@
+Acquisition Parameters Common.ImageCaputreDate
+Acquisition Parameters Common.ScanMode
+Acquisition Parameters Common.ScanDirection
+Acquisition Parameters Common.SequentialMode
+Acquisition Parameters Common.ZoomValue
+Axis \d Parameters Common.AxisCode
+Axis \d Parameters Common.AxisName
+Axis \d Parameters Common.EndPosition
+Axis \d Parameters Common.MaxSize
+Axis \d Parameters Common.PixUnit
+Axis 6 Parameters Common.CH Number
+Axis 6 Parameters Common.StartPosition
+Axis 6 Parameters Common.Stop Absolute Position
+Axis 6 Parameters Common.UnitName
+Axis Parameter Common.AxisOrder
+Bleach Laser  \d parameters.Laser Enable
+Bleach Laser  \d parameters.LaserTransmissivity
+Bleach Laser  \d parameters.LaserWavelength
+Laser \d Parameters.Laser Enable
+Laser \d Parameters.LaserTransmissivity
+Laser \d Parameters.LaserWavelength
+Channel \d Parameters.AnalogPMTVoltage
+Channel \d Parameters.DyeName
+Channel \d Parameters.EmissionDM Name
+Channel \d Parameters.ExcitationDM Name
+Channel \d Parameters.BF Position
+Channel \d Parameters.BF Range
+File Info.DataName
+Reference Image Parameter.ValidBitCounts

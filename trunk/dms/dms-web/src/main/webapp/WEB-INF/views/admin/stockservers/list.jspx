@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_au_org_intersect_dms_webapp_domain_StockServer" items="${stockservers}" z="user-managed">
+        <table:table data="${stockservers}" id="l_au_org_intersect_dms_webapp_domain_StockServer" path="/admin/stockservers" z="user-managed">
+            <table:column id="c_au_org_intersect_dms_webapp_domain_StockServer_description" maxLength="-1" property="description" z="user-managed"/>
+            <table:column id="c_au_org_intersect_dms_webapp_domain_StockServer_protocol" maxLength="-1" property="protocol" z="user-managed"/>
+            <table:column id="c_au_org_intersect_dms_webapp_domain_StockServer_server" maxLength="-1" property="server" z="user-managed"/>
+            <table:column id="c_au_org_intersect_dms_webapp_domain_StockServer_credentialsOption" maxLength="-1" property="credentialsOption" z="user-managed"/>
+            <table:column id="c_au_org_intersect_dms_webapp_domain_StockServer_type" maxLength="-1" property="type" z="user-managed"/>
+            <table:column id="c_au_org_intersect_dms_webapp_domain_StockServer_instrumentProfile" maxLength="-1" property="instrumentProfile" z="user-managed"/>
+            <table:column id="c_au_org_intersect_dms_webapp_domain_StockServer_instrumentId" maxLength="-1" property="instrumentId" z="user-managed"/>
+        <table:column id="c_au_org_intersect_dms_webapp_domain_StockServer_username" property="username" z="2U38JXEWW5QMh6QBxuq9a1egaZk="/>
+            <table:column id="c_au_org_intersect_dms_webapp_domain_StockServer_password" property="password" z="K6Jf9PrRwrC1Y6wldig+um1Qzqs="/>
+        </table:table>
+    </page:list>
+</div>

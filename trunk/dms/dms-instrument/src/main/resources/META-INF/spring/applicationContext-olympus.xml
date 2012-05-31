@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+            ">
+    <import resource="classpath:/META-INF/spring/applicationContext-bookinggw.xml"/>
+    
+    <context:property-placeholder  ignore-unresolvable="true"
+        properties-ref="olympusProperties" />
+
+    <util:properties id="olympusProperties"
+        location="file://${dms.config.home}/olympus.properties" />
+                
+	<context:spring-configured />
+    
+    <bean id="scheduledExecutorService" class="java.util.concurrent.Executors" factory-method="newScheduledThreadPool">
+        <constructor-arg value="1"/>
+     </bean>
+    
+    <bean id="repositoryServerPoller" class="au.org.intersect.dms.instrument.olympus.RepositoryServerPoller" abstract="true">
+        <property name="repository" value="${dms.olympus.repo.serverId}"/>
+    </bean>
+     
+	<bean id="fv1000Poller" class="au.org.intersect.dms.instrument.olympus.FV1000Poller" parent="repositoryServerPoller">
+        <property name="rootDirectory" value="${dms.olympus.fv1000.repo.rootDir}"/>
+        <property name="jobCreator" ref="fv1000JobCreator"/>
+    </bean>
+	
+    <bean id="tirfPoller" class="au.org.intersect.dms.instrument.olympus.TIRFPoller" parent="repositoryServerPoller">
+        <property name="rootDirectory" value="${dms.olympus.tirf.repo.rootDir}"/>
+        <property name="jobCreator" ref="tirfJobCreator"/>
+    </bean>
+    
+    <bean id="inplaceIngestionJobCreator" class="au.org.intersect.dms.instrument.olympus.InplaceIngestionJobCreator" abstract="true">
+        <property name="repository" value="${dms.olympus.repo.serverId}"/>
+    </bean>
+    
+	<bean id="fv1000JobCreator" class="au.org.intersect.dms.instrument.olympus.InplaceIngestionJobCreator" parent="inplaceIngestionJobCreator">
+        <property name="instrumentProfile" value="OLYMPUS_FV1000"/>
+        <property name="instrumentId" value="${dms.olympus.fv1000.instrumentId}"/>
+	</bean>
+    
+    <bean id="tirfJobCreator" class="au.org.intersect.dms.instrument.olympus.InplaceIngestionJobCreator" parent="inplaceIngestionJobCreator">
+        <property name="instrumentProfile" value="OLYMPUS_TIRF"/>
+        <property name="instrumentId" value="${dms.olympus.tirf.instrumentId}"/>
+    </bean>
+	
+    <!-- beans looked-up by the ServiceLocatorFactoryBean -->
+    <bean id="OLYMPUS_FV1000" class="au.org.intersect.dms.instrument.harvester.FV1000Harvester" scope="prototype"/>
+    <bean id="OLYMPUS_CELL_R" class="au.org.intersect.dms.instrument.harvester.CellRHarvester" scope="prototype"/>
+    <bean id="OLYMPUS_TIRF" class="au.org.intersect.dms.instrument.harvester.TirfHarvester" scope="prototype"/>
+    
+    <bean id="olympusFV1000Ingestor" class="au.org.intersect.dms.instrument.ingest.InPlaceIngestor">
+        <property name="delaySeconds" value="${dms.olympus.fv1000.delaySeconds}"/>
+    </bean>
+    
+    <bean id="olympusTIRFIngestor" class="au.org.intersect.dms.instrument.ingest.InPlaceIngestor">
+        <property name="delaySeconds" value="${dms.olympus.tirf.delaySeconds}"/>
+    </bean>
+    
+    <bean id="olympusCellRIngestor" class="au.org.intersect.dms.instrument.ingest.CellRIngestor">
+        <property name="workstationId" value="${dms.olympus.cellR.workstation.id}"/>
+        <property name="workstationTargetDir" value="${dms.olympus.cellR.workstation.targetDir}"/>
+        <property name="repositoryId" value="${dms.olympus.repo.serverId}"/>
+    </bean>
+    
+</beans>

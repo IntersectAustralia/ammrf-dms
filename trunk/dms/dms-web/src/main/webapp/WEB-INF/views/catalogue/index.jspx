@@ -1,0 +1,32 @@
+<div xmlns:spring="http://www.springframework.org/tags" 
+	 xmlns:jsp="http://java.sun.com/JSP/Page"
+	 xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" 
+	 version="2.0">
+	<jsp:output omit-xml-declaration="yes"/>
+	
+    <util:load-dataTables />
+          
+    <spring:url value="/resources/js/catalogue/search.js" var="catalogue_search_js"/>
+    <script src="${catalogue_search_js}" type="text/javascript" ><!-- //required for FF3 and Opera --></script>
+    
+    <h3 style="float: left; margin-right: 5px;">My Datasets</h3>
+    <form id="searchForm" class="simple">
+        <input id="fullTextQuery" type='text' name="fullTextQuery" style="width:190px"/>
+        <input id="query" type="hidden" name="query"/>
+        <input id="proceed" type="submit" value="Search" style="margin: 0 0 5px 5px;"/>
+        <span style="margin-left: 10px;"><a href="advancedSearch">Advanced search</a></span>
+    </form>
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="datasets" width="100%">
+        <thead>
+            <tr>
+                <th class="ui-state-default">ID</th>
+                <th class="ui-state-default">Location</th>
+                <th class="ui-state-default">Advertised</th>
+                <th class="ui-state-default">Owner</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

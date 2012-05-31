@@ -1,0 +1,17 @@
+#!/bin/bash
+# copy-properties <source> <target> <mode>
+SOURCE=$1
+TARGET=$2
+MODE=$3
+if [ "$MODE" = "known" ]; then
+   echo "Copying $SOURCE to $TARGET"
+   cp $SOURCE $TARGET
+   exit 0
+fi
+if [ ! -f "$TARGET" ]; then
+   echo "Copying $SOURCE to $TARGET - YOU NEED TO REVIEW THIS FILE AND RUN THE INSTALLER AGAIN"
+   cp $SOURCE $TARGET
+   exit 1
+fi
+exit 0
+

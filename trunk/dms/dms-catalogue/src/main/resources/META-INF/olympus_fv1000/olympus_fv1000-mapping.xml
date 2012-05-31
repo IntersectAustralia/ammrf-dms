@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+	<property xml-field="Acquisition Parameters Common/ImageCaputreDate" index-field="fv1000_capture_date_dt" display-name="Image caputre date" type="date" />
+    <property xml-field="Acquisition Parameters Common/LaserWavelength01" index-field="fv1000_laser_wave_length_d" display-name="Laser wavelength" type="number" />
+    <property xml-field="Acquisition Parameters Common/ScanMode" index-field="fv1000_scan_mode_t" display-name="Scan mode" type="text" />
+    <property xml-field="Axis 0 Parameters Common/MaxSize" index-field="fv1000_axis_0_max_size_i" display-name="X axis max size" type="number" />
+    <property xml-field="Axis 1 Parameters Common/MaxSize" index-field="fv1000_axis_1_max_size_i" display-name="Y axis max size" type="number" />
+    <property xml-field="Axis 2 Parameters Common/MaxSize" index-field="fv1000_axis_2_max_size_i" display-name="Ch axis max size" type="number" />
+    <property xml-field="Axis 3 Parameters Common/MaxSize" index-field="fv1000_axis_3_max_size_i" display-name="Z axis max size" type="number" />
+    <property xml-field="Axis 4 Parameters Common/MaxSize" index-field="fv1000_axis_4_max_size_i" display-name="T axis max size" type="number" />
+    <property xml-field="Axis 5 Parameters Common/MaxSize" index-field="fv1000_axis_5_max_size_i" display-name="Angle axis max size" type="number" />
+    <property xml-field="Axis 6 Parameters Common/MaxSize" index-field="fv1000_axis_6_max_size_i" display-name="Lambda axis max size" type="number" />
+    <property xml-field="Axis 7 Parameters Common/MaxSize" index-field="fv1000_axis_7_max_size_i" display-name="Point axis max size" type="number" />
+    <property xml-field="Axis 8 Parameters Common/MaxSize" index-field="fv1000_axis_8_max_size_i" display-name="Q axis max size" type="number" />
+    <property xml-field="Bleach Laser 6 parameters/Laser Enable" index-field="fv1000_bleach_laser_enable_i" display-name="Bleach laser 6 enabled" type="number" />
+    <property xml-field="Bleach Laser  6 parameters/LaserWavelength" index-field="fv1000_bleach_laser_wave_length_i" display-name="Bleach laser 6 wavelength" type="number" />    
+    <property xml-field="Laser 1 Parameters/Laser Enable" index-field="fv1000_laser_1_laser_enable_i" display-name="Laser 1 enabled" type="number" />
+    <property xml-field="Laser 1 Parameters/LaserTransmissivity" index-field="fv1000_laser_1_laser_transmissivity_i" display-name="Laser 1 transmissivity" type="number" />
+    <property xml-field="Laser 1 Parameters/LaserWavelength" index-field="fv1000_laser_1_laser_wave_length_i" display-name="Laser 1 wavelength" type="number" />  
+    <property xml-field="Laser 3 Parameters/Laser Enable" index-field="fv1000_laser_3_laser_enable_i" display-name="Laser 3 enabled" type="number" />
+    <property xml-field="Laser 3 Parameters/LaserTransmissivity" index-field="fv1000_laser_3_laser_transmissivity_i" display-name="Laser 3 transmissivity" type="number" />
+    <property xml-field="Laser 3 Parameters/LaserWavelength" index-field="fv1000_laser_3_laser_wave_length_i" display-name="Laser 3 wavelength" type="number" />    
+    <property xml-field="Channel 1 Parameters/DyeName" index-field="fv1000_dye_name_t" display-name="Dye name" type="text" />   
+    <property xml-field="File Info/DataName" index-field="fv1000_data_name_t" display-name="Data name" type="text" />
+</mapping>

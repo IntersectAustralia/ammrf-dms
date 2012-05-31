@@ -1,0 +1,61 @@
+#!/bin/bash
+#
+# activemq       Starts ActiveMQ.
+#
+#
+# chkconfig: 345 88 12
+# description: ActiveMQ is a JMS Messaging Queue Server.
+### BEGIN INIT INFO
+# Provides: $activemq
+### END INIT INFO
+
+# Source function library.
+
+if [ -f /etc/init.d/functions ]; then
+# redhat based
+. /etc/init.d/functions
+else
+# assume debian
+. /lib/lsb/init-functions
+fi
+
+[ -f _ACTIVEMQ_USER_DIR_/activemq-start.sh ] || exit 0
+[ -f _ACTIVEMQ_USER_DIR_/activemq-stop.sh ] || exit 0
+
+RETVAL=0
+
+umask 077
+
+start() {
+       echo -n $"Starting ActiveMQ: "
+       daemon --user=_DMS_USER_ _ACTIVEMQ_USER_DIR_/activemq-start.sh
+       echo
+       return $RETVAL
+}
+stop() {
+       echo -n $"Shutting down ActiveMQ: "
+       su -c _ACTIVEMQ_USER_DIR_/activemq-stop.sh _DMS_USER_
+       echo
+       return $RETVAL
+}
+restart() {
+       stop
+       start
+}
+case "$1" in
+ start)
+       start
+       ;;
+ stop)
+       stop
+       ;;
+ restart|reload)
+       restart
+       ;;
+ *)
+       echo $"Usage: $0 {start|stop|restart}"
+       exit 1
+esac
+
+exit $?
+

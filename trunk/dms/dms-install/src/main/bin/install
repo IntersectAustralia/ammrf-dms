@@ -1,0 +1,473 @@
+#!/bin/bash
+# DMS Installation script
+# (c) Intersect Pty Ltd
+# (a) Carlos Aya
+#
+# -----------------------------------------------------------------------
+# documentation template for functions/procedures
+# procedure_name parameters ... :> global variables set/modified
+# a text describing the function/procedure if method name is not obvious
+# or procedure is complex.
+# -----------------------------------------------------------------------
+
+# configure_activemq <source_dir> <activemq_home>
+# global: $SETUP_TYPE
+# dev notes:
+# - see sed trick mentioned in install_activemq
+# - we use ping to check if the main server is visible from the worker
+function configure_activemq {
+   local source_dir=$CURRENT_DIR
+   local install_dir=$ACTIVEMQ_HOME
+   echo "Configuring ActiveMQ"
+   cp $source_dir/activemq_conf/server/* $install_dir/conf
+   case $SETUP_TYPE in
+   server|single)
+      # removes the text between _INTERNAL_START_ and _INTERNAL_END_ and does
+      # token substitutions
+      awk -v broker_name="broker1" -v credentials_location="$USER_DIR/.ammrf/dms" '
+	/_INTERNAL_START_/{f=1;next}
+	/_INTERNAL_END_/{f=0;next}
+	!f{gsub("_BROKER_NAME_",broker_name);
+	   gsub("_CREDENTIALS_LOCATION_",credentials_location);
+	   print}' $source_dir/activemq_conf/server/activemq.xml > $install_dir/conf/activemq.xml
+      ;;
+   worker) 
+      if [ -z "$MAIN_SERVER" ]; then
+         echo "Please configure MAIN_SERVER in ~/.dmsrc with IP or Hostname of main server"
+         exit 1
+      fi
+      # keeps the text between _INTERNAL_START_ and _INTERNAL_END_ (but removes those lines) and does
+      # token substitutions
+      awk -v broker_name="broker2"  -v credentials_location="$USER_DIR/.ammrf/dms" -v main_server="$MAIN_SERVER" '
+	/_INTERNAL_START_/{next;}
+	/_INTERNAL_END_/{next;}
+	{gsub("_BROKER_NAME_",broker_name);
+	 gsub("_CREDENTIALS_LOCATION_",credentials_location);
+	 gsub("_MAIN_SERVER_",main_server);
+	 print}' $source_dir/activemq_conf/server/activemq.xml > $install_dir/conf/activemq.xml
+      ;;
+   esac
+}
+
+# get_jdk_home :> JAVA_HOME
+function get_jdk_home {
+   local current=`pwd`
+   if ! which javac 1>/dev/null; then
+      echo "ERROR: Cannot find a JDK (looking for javac)"
+      exit 1
+   fi
+   local javac=`which javac`
+   javac=`readlink -fq $javac`
+   local d=`dirname $javac`
+   JAVA_HOME=`cd $d/.. && pwd`
+   cd $current
+}
+
+# create_user <user> :> USER_DIR
+# checks if user exists and creates with home directory
+function check_or_create_user {
+   local username=$DMS_USER
+   if eval test ! -d ~$username; then
+      if ! useradd -m $username; then
+         echo "Cannot create user $username"
+         exit 1
+      else
+         echo "User $username created"
+      fi
+   else
+      echo "found $username in system"
+   fi
+   USER_DIR=`eval ls -d ~$username`
+}
+
+#
+# get_provided_version <targz base filename> <variable>
+# returns in variable the provided directory name for package
+function get_provided_version {
+   case $3 in
+   zip)
+      local fname=`unzip -l $CURRENT_DIR/lib/$1-* | head -n 4 | tail -1 | awk '{print $4}'`
+      fname=`basename $fname`
+      ;;
+   tar)
+      local fname=`tar -tzf $CURRENT_DIR/lib/$1-* | tail -1`
+      fname=${fname%%/*}
+      ;;
+   *)
+      echo ">> get_provided_version unknown format '$3'"
+      exit 1
+      ;;
+   esac
+   eval $2="$fname"
+}
+
+#
+# unpack <root name> <type=tar or zip>
+#
+function unpack_provided {
+   echo "Unpacking $1 to $INSTALL_DIR (format $2)"
+   case $2 in
+   zip)
+      unzip -ob $CURRENT_DIR/lib/$1-* -d $INSTALL_DIR | tail -n +2 | while read _ignore fname; do
+            chown $DMS_USER:$DMS_USER $fname
+         done
+      ;;
+   tar)
+      tar -xvzf $CURRENT_DIR/lib/$1-* -C $INSTALL_DIR | while read fname; do
+            chown $DMS_USER:$DMS_USER $INSTALL_DIR/$fname
+         done
+      ;;
+   *)
+      echo ">>> Unpack error format"
+      exit 1
+      ;;
+   esac
+}
+
+#
+#
+#
+function get_installed_version {
+   local fname=`ls -1d $INSTALL_DIR/$1*`
+   echo $fname
+   fname=`basename $fname`
+   eval $2="$fname"
+}
+
+#
+#
+#
+function remove_installed_version {
+   if [ -z "$1" ]; then
+      return
+   fi
+   if [ -d $INSTALL_DIR/$1 ]; then
+      echo "Removing $INSTALL_DIR/$1"
+      rm -rf $INSTALL_DIR/$1
+   fi
+}
+
+#
+# stop <service>
+#
+function stop {
+   if [ -f /etc/init.d/$1 ]; then
+      echo "stopping $1"
+      /etc/init.d/$1 stop
+   else
+      echo $1 not a service in init.d
+   fi
+}
+
+#
+# creates the activemq script with the user
+#
+function initd_activemq {
+   local activemq_user_dir=$USER_DIR
+   for sname in $CURRENT_DIR/activemq_user/*.sh; do
+      tname=`basename $sname`
+      sed -e "s\$_JAVA_HOME_\$$JAVA_HOME\$" -e "s\$_ACTIVEMQ_HOME_\$$ACTIVEMQ_HOME\$" $sname > $activemq_user_dir/$tname
+   done
+   chown $DMS_USER:$DMS_USER $activemq_user_dir/*.sh
+   chmod a+x $activemq_user_dir/*.sh
+   sed -e "s\$_ACTIVEMQ_USER_DIR_\$$activemq_user_dir\$" -e "s\$_DMS_USER_\$$DMS_USER\$" $CURRENT_DIR/init_d/activemq > /etc/init.d/activemq
+   chmod a+x /etc/init.d/activemq
+   $ACTIVEMQ_HOME/bin/activemq setup $USER_DIR/.activemqrc
+   chown -R $DMS_USER:$DMS_USER $ACTIVEMQ_HOME/data
+}
+
+function initd_worker {
+   sed -e "s\$_WORKER_HOME_\$$WORKER_HOME\$" -e "s\$_DMS_USER_\$$DMS_USER\$" $CURRENT_DIR/init_d/worker > /etc/init.d/worker
+   chmod a+x /etc/init.d/worker
+}
+
+function initd_tomcat {
+   sed -e "s\$_JAVA_HOME_\$$JAVA_HOME\$" -e "s\$_TOMCAT_HOME_\$$TOMCAT_HOME\$" -e "s\$_DMS_USER_\$$DMS_USER\$" $CURRENT_DIR/init_d/tomcat > /etc/init.d/tomcat
+   sed -e "s\$_DMS_CONFIG_HOME_\$$USER_DIR/.ammrf/dms\$g" -e "s\$_DMS_KEYSTORE_FILE_\$$DMS_KEYSTORE_FILE\$g" -e "s\$_DMS_KEYSTORE_PASS_\$$DMS_KEYSTORE_PASS\$g" -e "s\$_DMS_KEY_ALIAS_\$$DMS_KEY_ALIAS\$g" $CURRENT_DIR/init_d/setenv.sh > $TOMCAT_HOME/bin/setenv.sh
+   chmod a+x /etc/init.d/tomcat
+   chmod a+x $TOMCAT_HOME/bin/setenv.sh
+}
+
+#
+# installs_or_set_activemq :> ACTIVEMQ_HOME
+# 
+function install_or_set_activemq {
+   echo "*** ACTIVE MQ INSTALLATION: BEGIN"
+   get_provided_version apache-activemq APACHE_ACTIVEMQ_VERSION tar
+   if [ -f /etc/init.d/activemq ]; then
+      stop activemq
+      get_installed_version apache-activemq APACHE_ACTIVEMQ_CURRENT
+      echo "Found activemq installed: $APACHE_ACTIVEMQ_CURRENT"
+   else
+      APACHE_ACTIVEMQ_CURRENT=""
+   fi
+   ACTIVEMQ_HOME=$INSTALL_DIR/$APACHE_ACTIVEMQ_VERSION
+   if [ "$APACHE_ACTIVEMQ_VERSION" != "$APACHE_ACTIVEMQ_CURRENT" ]; then
+      remove_installed_version $APACHE_ACTIVEMQ_CURRENT
+      unpack_provided apache-activemq tar
+      initd_activemq $APACHE_ACTIVEMQ_VERSION
+   else
+      echo "ActiveMQ software is Ok"
+   fi
+   configure_activemq
+   echo "*** ACTIVE MQ INSTALLATION: END"
+}
+
+#
+# installs_or_set_activemq :> ACTIVEMQ_HOME
+# 
+function install_or_set_tomcat {
+   echo "*** TOMCAT INSTALLATION: BEGIN"
+   get_provided_version apache-tomcat APACHE_TOMCAT_VERSION tar
+   if [ -f /etc/init.d/tomcat ]; then
+      stop tomcat
+      get_installed_version apache-tomcat APACHE_TOMCAT_CURRENT
+      echo "Found tomcat installed: $APACHE_TOMCAT_CURRENT"
+   else
+      APACHE_TOMCAT_CURRENT=""
+   fi
+   TOMCAT_HOME=$INSTALL_DIR/$APACHE_TOMCAT_VERSION
+   if [ "$APACHE_TOMCAT_VERSION" != "$APACHE_TOMCAT_CURRENT" ]; then
+      remove_installed_version $APACHE_TOMCAT_CURRENT
+      unpack_provided apache-tomcat tar
+      initd_tomcat
+   else
+      echo "Tomcat software is Ok"
+   fi
+   echo "*** TOMCAT INSTALLATION: END"
+}
+
+#
+# install_or_set_worker
+# 
+function install_or_set_worker {
+   echo "*** DMS WORKER INSTALLATION: BEGIN"
+   get_provided_version dms-worker DMS_WORKER_VERSION zip
+   if [ -f /etc/init.d/worker ]; then
+      stop worker
+      get_installed_version dms-worker DMS_WORKER_CURRENT
+      echo "Found worker installed: $DMS_WORKER_CURRENT"
+   else
+      DMS_WORKER_CURRENT=""
+   fi
+   WORKER_HOME=$INSTALL_DIR/$DMS_WORKER_VERSION
+   remove_installed_version $DMS_WORKER_CURRENT
+   unpack_provided dms-worker zip
+   initd_worker $DMS_WORKER_VERSION
+   echo "*** DMS WORKER INSTALLATION: END"
+}
+
+# install_war <app-name>
+# app-name doesn't include version or extension, etc.
+# uses TOMCAT_HOME, CURRENT_DIR and assumes webapps is the tomcat auto-deploy directory
+function install_war {
+   APP_NAME=$1
+   if [ -d "$TOMCAT_HOME/webapps/$APP_NAME" ]; then
+      rm -rf "$TOMCAT_HOME/webapps/$APP_NAME"
+   fi
+   cp -f $CURRENT_DIR/lib/$APP_NAME*.war $TOMCAT_HOME/webapps/$APP_NAME.war
+   echo "Web application $APP_NAME has been installed in $TOMCAT_HOME/webapps"
+}
+
+function sign_applet {
+	echo "Unzipping dms-applet"
+	cd /var/tmp
+	jar xf $TOMCAT_HOME/webapps/dms-web.war applets/dms-applet.jar
+		
+	APPLET=/var/tmp/applets/dms-applet.jar
+
+	install_applet_key $APPLET
+	echo "Signing dms applet <$APPLET> using keystore <$DMS_KEYSTORE_FILE> and alias <$DMS_APPLET_KEY_ALIAS>"
+	$JAVA_HOME/bin/jarsigner -keystore $DMS_KEYSTORE_FILE -storepass $DMS_KEYSTORE_PASS $APPLET $DMS_APPLET_KEY_ALIAS
+	
+	echo "Putting signed applet back to war"
+	jar uf $TOMCAT_HOME/webapps/dms-web.war applets/dms-applet.jar
+	rm -f $APPLET 
+}
+
+function install_applet_key {
+	APPLET=$1
+	KEY=keys/pubTunnelApplet.der
+	
+	echo "Installing public key into dms-applet. Path $APPLET. Key $USER_DIR/.ammrf/dms/$KEY"
+	jar uf $APPLET -C $USER_DIR/.ammrf/dms $KEY 
+}
+
+function install_solr {
+   local solr_app=`find $TOMCAT_HOME/webapps -name "apache-solr*" -type d`
+   if [ ! -z "$solr_app" ]; then
+      rm -rf $solr_app
+   fi
+   local fname=`tar -tzf $CURRENT_DIR/lib/apache-solr* | egrep '/dist/.*war'`
+   if [ -z "$fname" ]; then
+      echo "Cannot find solr war in distribution"
+      exit 1
+   fi
+   tar -xzf $CURRENT_DIR/lib/apache-solr* $fname -C $CURRENT_DIR
+   cp -f $CURRENT_DIR/apache-solr*/dist/*.war $TOMCAT_HOME/webapps
+   mkdir -p $USER_DIR/.ammrf/dms/solr/conf
+   cp $CURRENT_DIR/solr_conf/* $USER_DIR/.ammrf/dms/solr/conf
+   
+   chown -R $DMS_USER:$DMS_USER $USER_DIR/.ammrf/dms/solr
+   echo "Web application apache-solr has been installed in $TOMCAT_HOME/webapps"
+   echo "and the solr home is $USER_DIR/.ammrf/dms/solr"
+}
+
+# install_worker :> WORKER_HOME (install dir), WORKER_CONFIG_DIR (where .ammrf lives)
+function install_worker {
+   echo "Unpacking Worker to $INSTALL_DIR"
+   if ! unzip -o $CURRENT_DIR/lib/dms-worker* -d $INSTALL_DIR; then
+      echo Error unzipping dms-workernode in $CURRENT_DIR/lib
+   fi
+   WORKER_HOME=`ls -d $INSTALL_DIR/dms-workernode* 2>/dev/null`   
+   echo "DMS Worker home $WORKER_HOME"
+   WORKER_CONFIG_DIR=$CREATE_USER_DIR
+   sed -e "s\$_WORKER_HOME_\$$WORKER_HOME\$" $CURRENT_DIR/init_d/worker > /etc/init.d/worker
+   chmod a+x /etc/init.d/worker
+   echo "Created dmsworker user and /etc/init.d/worker script"
+   echo "You should be able to get the service configured in your system (see chkconfig)"
+}
+
+# install_properties <propfile> <target-file>
+function install_properties {
+   local prop_file="$CURRENT_DIR/profiles/$1/$2"
+   local target_file=$USER_DIR/.ammrf/dms/$2
+   local target_dir=`dirname $target_file`
+   local mode=$3
+   if [ ! -d $target_dir ]; then
+      mkdir -p $target_dir
+   fi
+   if ! $CURRENT_DIR/copy-properties $prop_file $target_file $mode; then
+      exit 1
+   else
+      # checks against the default.dir
+      if ! $CURRENT_DIR/check-properties "$CURRENT_DIR/profiles/default.dir/$2" $target_file; then
+         exit 1
+      fi
+   fi
+   chmod a+r $target_file
+}
+
+# install profile
+# uses WORKER_CONFIG_DIR, TOMCAT_CONFIG_DIR
+function install_profile {
+   local host=`hostname`
+   local mode=''
+   if [ -d $CURRENT_DIR/profiles/$host.dir ]; then
+      mode='known'
+      profile=$host.dir
+      echo "FOUND PROFILE FOR YOUR MACHINE"
+   else
+      echo "PROFILE FOR YOUR MACHINE NOT FOUND, IF YOUR CURRENT ENVIRONMENT IS FOUND OUT-OF-DATE"
+      echo "INSTALLATION WILL FAIL AND YOU HAVE TO FIX YOUR ENVIRONMENT MANUALLY. HOWEVER,"
+      echo "YOU CAN RE-RUN THE INSTALLER AS MANY TIMES AS YOU WANT"
+      profile=default.dir
+   fi
+
+   if [ ! -f $USER_DIR/.workerrc ]; then
+      cp $CURRENT_DIR/profiles/$profile/_workerrc $USER_DIR/.workerrc
+      chmod a+x $USER_DIR/.workerrc
+   fi
+
+   if [ ! -d $USER_DIR/.ammrf/dms/keys ]; then
+      cp -r $CURRENT_DIR/profiles/$profile/keys $USER_DIR/.ammrf/dms
+      chmod 700 $USER_DIR/.ammrf/dms/keys
+   fi
+   
+   if [ ! -d $USER_DIR/.ammrf/dms/keystore ]; then
+      cp -r $CURRENT_DIR/profiles/$profile/keystore $USER_DIR/.ammrf/dms
+      chmod 700 $USER_DIR/.ammrf/dms/keystore
+   fi
+
+   case $SETUP_TYPE in
+   server)
+      install_properties $profile bookinggw.properties $mode
+      install_properties $profile dms.properties $mode
+      install_properties $profile tunnel.properties $mode
+      install_properties $profile dms_routing.properties $mode
+      install_properties $profile worker.properties $mode
+      install_properties $profile activemq.properties $mode
+      ;;
+   worker)
+      install_properties $profile worker.properties $mode
+      install_properties $profile atomprobe.properties $mode
+      install_properties $profile activemq.properties $mode
+      ;;
+   single)
+      install_properties $profile bookinggw.properties $mode
+      install_properties $profile dms.properties $mode
+      install_properties $profile tunnel.properties $mode
+      install_properties $profile dms_routing.properties $mode
+      install_properties $profile worker.properties $mode
+      install_properties $profile atomprobe.properties $mode
+      install_properties $profile activemq.properties $mode
+      install_properties $profile olympus.properties $mode
+      ;;
+   esac
+   chown -R $DMS_USER:$DMS_USER $USER_DIR/.ammrf
+}
+
+function public_server {
+   install_or_set_activemq
+   install_or_set_tomcat
+   install_war dms-web
+   install_war dms-httptunnel
+   install_solr
+   install_or_set_worker
+   install_profile
+   sign_applet
+}
+
+function private_server {
+   install_or_set_activemq
+   install_or_set_worker
+   install_profile
+}
+
+function single_server {
+   install_or_set_activemq
+   install_or_set_tomcat
+   install_war dms-web
+   install_war dms-httptunnel
+   install_solr
+   install_or_set_worker
+   install_profile
+   sign_applet
+}
+
+# ----------
+# -- MAIN --
+# ----------
+
+get_jdk_home
+echo "Found JAVA_HOME=$JAVA_HOME"
+# grab current directory
+if [ ! -f ~/.dmsrc ]; then
+    echo "Please provide a ~/.dmsrc settings file; see _dmsrc in the conf folder for an example"
+    exit 1
+fi
+. ~/.dmsrc
+
+CURRENT_DIR=`dirname $0`
+CURRENT_DIR=`cd $CURRENT_DIR && pwd`
+
+echo "=== DMS INSTALLATION BEGINS ==="
+check_or_create_user
+
+# welcome
+case $SETUP_TYPE in
+server) 
+   public_server
+   ;;
+worker)
+   private_server
+   ;;
+single) 
+   single_server
+   ;;
+*)
+   echo "Wrong SETUP_TYPE, please configure ~/.dmsrc properly"
+   exit 1
+esac
+echo "=== DMS INSTALLATION ENDS ==="
+#

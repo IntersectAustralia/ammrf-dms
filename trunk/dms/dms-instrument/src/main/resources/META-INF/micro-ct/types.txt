@@ -1,0 +1,2 @@
+Acquisition.Study Date and Time=date
+Reconstruction.Time and Date=date

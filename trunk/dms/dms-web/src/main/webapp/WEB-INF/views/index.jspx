@@ -1,0 +1,4 @@
+<div xmlns:spring="http://www.springframework.org/tags" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+	<jsp:output omit-xml-declaration="yes"/>	
+    <jsp:forward page="/home/index"/>
+</div>
