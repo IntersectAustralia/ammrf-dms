@@ -1,0 +1,34 @@
+#!/bin/bash
+# check-properties <target>
+SOURCE=$1
+TARGET=$2
+if [ ! -f "$TARGET" ]; then
+   echo "Analysing $TARGET but not found!"
+   exit 1
+fi
+if [ `basename $TARGET` = "dms_routing.properties" ]; then
+   exit 0
+fi
+echo -n "Analysing $TARGET..."
+awk -v target="$TARGET" '
+BEGIN {error=0}
+/^#/ {next}
+/.+=/ {
+   pos = index($0, "=");
+   key = substr($0, 0, pos-1);
+   defval = substr($0, pos+1);
+   cmd = "awk \"/^" key "/\" < " target
+   what="";
+   cmd | getline what;
+   if (length(what) == 0) {
+      print ""
+      print key " NOT FOUND IN " target
+      error=1
+   }
+   close(cmd);
+   next;
+   }
+{next}
+END {if (error == 0) {print "OK"} else {print "!!! PLEASE FIX ERRORS TO FINISH INSTALLATION !!!"; exit 1}}' $SOURCE
+exit $?
+

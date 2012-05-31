@@ -1,0 +1,1 @@
+Acquisition Parameters Common.ImageCaputreDate=date

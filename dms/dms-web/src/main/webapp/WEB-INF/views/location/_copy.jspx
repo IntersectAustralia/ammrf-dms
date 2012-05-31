@@ -1,0 +1,54 @@
+<div style="display:none;" id="copyDialog" title="Copy">
+    <div class="wizard-navigation" id="stage_container">
+    	
+        <div class="wizard-navigation-step one_stage">
+            	<div class="dot dot_inactive"><!-- FF3 bug --></div>
+        		<div class="stage_description stage_inactive"><p><strong>1.</strong> Select locations</p></div>
+        </div>
+        
+        
+        <div class="wizard-navigation-step one_stage">
+        	<div class="dot dot_inactive"><!-- FF3 bug --></div>
+        	<div class="stage_description stage_inactive"><p><strong>2.</strong> Browse file(s) to copy</p></div>
+        </div>
+        
+        	
+        <div class="wizard-navigation-step one_stage">
+        	<div class="dot dot_inactive"><!-- FF3 bug --></div>
+        	<div class="stage_description stage_inactive"><p><strong>3.</strong> Browse directory to copy to</p></div>
+        </div>
+        
+        <div class="wizard-navigation-step end">
+        	<div class="dot dot_inactive"><!-- FF3 bug --></div>
+        	<div class="stage_description end stage_inactive"><p><strong>4.</strong> Confirm copy</p></div>
+        </div>
+        
+    
+    </div> <!-- /stage_container -->
+
+   <form id="copyWizard" action="copyJob" method="POST"> 
+       <div class="step step-1" style="height:250px;">
+       <div style="border-bottom:1px solid black;">Select locations to copy from and copy to:</div>
+       <div class="input_group"><label for="copyFrom">From:</label><select style="width:40%;" id="copyFrom"><!-- FFX --></select></div>
+       <div class="input_group"><label for="copyTo">To:</label><select  style="width:40%;" id="copyTo"><!-- FFX --></select></div>
+       </div>
+       <div class="step step-2" style="height:250px;">
+       <div style="border-bottom:1px solid black;">Select file(s) to copy:</div>
+       <div id="treeFrom" style="height:220px;overflow:auto;"><!-- required for FF3 and Opera --></div>
+       </div>
+       <div class="step">
+       <div style="border-bottom:1px solid black;">Select directory to copy to:</div>
+       <div id="treeTo" style="height:220px;overflow:auto;"><!-- required for FF3 and Opera --></div>
+       </div>
+       <div class="step">
+       <div style="border-bottom:1px solid black;">Confirm files to be copied:</div>
+       <div style="margin:5px;"><div>From: <span id="fromServerLabel"><!-- FF3 --></span></div><ul id="confirmFrom" style="border:1px solid gray;height:180px;overflow:auto;"><!-- FF3 --></ul></div>
+       <div style="margin:5px;"><div>To be copied to: <span id="toServerLabel"><!-- FF3 --></span></div><ul id="confirmTo" style="border:1px solid gray;height:1.2em;overflow:auto;"><!-- FF3 --></ul></div>
+       </div>
+       <div class="wizard-buttons" style="margin-top:5px;">
+            <button id="copyFrom_back" value="Back" class="wizard_back">Back</button>
+            <button id="copyFrom_next" value="Next" class="wizard_next">Next</button>
+            <button id="copyFrom_cancel" style="float:right;">Cancel</button>
+       </div>
+   </form>
+</div>

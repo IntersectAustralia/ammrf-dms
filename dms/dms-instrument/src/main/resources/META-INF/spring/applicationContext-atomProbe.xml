@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+            ">
+    
+    <context:property-placeholder  ignore-unresolvable="true"
+        properties-ref="atomProbeProperties" />
+
+    <util:properties id="atomProbeProperties"
+        location="file://${dms.config.home}/atomprobe.properties" />
+                
+	<context:spring-configured />
+    
+	<!-- NOTE: these beans use the web database -->
+	
+    <bean class="com.mchange.v2.c3p0.ComboPooledDataSource" id="atomProbeDataSource">
+        <property name="driverClass" value="${dms.atomProbe.database.driverClassName}" />
+        <property name="jdbcUrl" value="${dms.atomProbe.database.url}" />
+        <property name="user" value="${dms.atomProbe.database.username}" />
+        <property name="password" value="${dms.atomProbe.database.password}" />
+        <property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}" />
+        <property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+    </bean>
+    
+	<bean id="atomProbePollerDingo" class="au.org.intersect.dms.instrument.atomprobe.AtomProbePoller">
+		<property name="dataSource" ref="atomProbeDataSource"/>
+		<property name="instrument" value="${dms.atomProbe.dingo.stockServerId}"/>
+		<property name="machineId" value="${dms.atomProbe.dingo.machineId}"/>
+        <property name="jobCreator" ref="atomProbeJobCreatorDingo"/>
+	</bean>
+	
+	<bean id="atomProbePollerRedback" class="au.org.intersect.dms.instrument.atomprobe.AtomProbePoller">
+		<property name="dataSource" ref="atomProbeDataSource"/>
+		<property name="instrument" value="${dms.atomProbe.redback.stockServerId}"/>
+		<property name="machineId" value="${dms.atomProbe.redback.machineId}"/>
+        <property name="jobCreator" ref="atomProbeJobCreatorRedback"/>
+	</bean>
+	
+	<bean id="atomProbeJobCreatorDingo" class="au.org.intersect.dms.instrument.atomprobe.AtomProbeJobCreator">
+		<property name="instrument" value="${dms.atomProbe.dingo.stockServerId}"/>
+		<property name="repository" value="${dms.atomProbe.repo.stockServerId}"/>
+		<property name="fileExtension" value="${dms.atomProbe.fileExtension}"/>
+		<property name="defaultUsername" value="${dms.atomProbe.dingo.defaultUsername}"/>
+		<property name="targetRootPath" value="${dms.atomProbe.dingo.targetRootPath}"/>
+	</bean>
+	
+	<bean id="atomProbeJobCreatorRedback" class="au.org.intersect.dms.instrument.atomprobe.AtomProbeJobCreator">
+		<property name="instrument" value="${dms.atomProbe.redback.stockServerId}"/>
+		<property name="repository" value="${dms.atomProbe.repo.stockServerId}"/>
+		<property name="fileExtension" value="${dms.atomProbe.fileExtension}"/>
+		<property name="defaultUsername" value="${dms.atomProbe.redback.defaultUsername}"/>
+		<property name="targetRootPath" value="${dms.atomProbe.redback.targetRootPath}"/>
+	</bean>
+	
+    <!-- beans looked-up by the ServiceLocatorFactoryBean -->
+    <bean id="ATOM_PROBE" class="au.org.intersect.dms.instrument.harvester.AtomProbeHarvester" scope="prototype">
+        <property name="dataSource" ref="atomProbeDataSource"/>
+    </bean>
+    
+    <bean id="atomProbeIngestor" class="au.org.intersect.dms.instrument.ingest.ImmediateCopyIngestor"/>
+    
+</beans>

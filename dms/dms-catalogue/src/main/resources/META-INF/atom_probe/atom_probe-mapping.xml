@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+	<property xml-field="experiment/Name" index-field="atomprobe_experiment_name_t" display-name="Experiment name" type="text" />
+	<property xml-field="experiment/ExperimentDATE" index-field="atomprobe_date_dt" display-name="Experiment date" type="date" />
+	<property xml-field="experiment/Comment" index-field="atomprobe_comment_t" display-name="Comments" type="text" />
+	<property xml-field="experiment/GoodHits" index-field="atomprobe_good_hits_t" display-name="Good hits" type="number" />
+	<property xml-field="experiment/Temp" index-field="atomprobe_temperature_d" display-name="Temperature" type="number" />
+	<property xml-field="experiment/Vacuum" index-field="atomprobe_vacuum_d" display-name="Vacuum" type="number" />
+	<property xml-field="experiment/StopVoltage" index-field="atomprobe_stop_voltage_d" display-name="Stop voltage" type="number" />
+	<property xml-field="experiment/FlightPathLength" index-field="atomprobe_flight_path_length_d" display-name="Flight path length" type="number" />
+	<property xml-field="experiment/PulseFrequency" index-field="atomprobe_pulse_frequency_d" display-name="Pulse frequency" type="number" />
+	<property xml-field="experiment/PulseFraction" index-field="atomprobe_pulse_fraction_d" display-name="Pulse fraction" type="number" />
+	<property xml-field="experiment/PerCentGoodHits" index-field="atomprobe_percent_good_hits_d" display-name="Good hits percentage" type="number" />
+	<property xml-field="experiment/LaserPower" index-field="atomprobe_laser_power_d" display-name="Laser power" type="number" />
+	<property xml-field="specimen/Name" index-field="atomprobe_specimen_name_tws" display-name="Specimen" type="text" />
+	<property xml-field="machine/Name" index-field="atomprobe_machine_name_tws" display-name="Instrument" type="text" />
+	<property xml-field="operator/First" index-field="atomprobe_operator_first_name_tws" display-name="Operator first name" type="text" />
+	<property xml-field="operator/Last" index-field="atomprobe_operator_last_name_tws" display-name="Operator last name" type="text" />
+</mapping>

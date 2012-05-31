@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>dms</artifactId>
+		<groupId>au.org.intersect.dms</groupId>
+		<version>1.3.3</version>
+	</parent>
+	<groupId>au.org.intersect.dms</groupId>
+	<artifactId>dms-applet</artifactId>
+	<name>DMS-APPLET</name>
+	<packaging>jar</packaging>
+
+	<properties>
+		<topLevelDir>${project.parent.basedir}</topLevelDir>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>au.org.intersect.dms</groupId>
+			<artifactId>dms-tunnel</artifactId>
+			<version>${dms.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>au.org.intersect.dms</groupId>
+			<artifactId>dms-fileinfo</artifactId>
+			<version>${dms.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>au.org.intersect.dms</groupId>
+            <artifactId>dms-encrypt</artifactId>
+            <version>${dms.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>au.org.intersect.dms</groupId>
+            <artifactId>dms-test</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>netscape</groupId>
+			<artifactId>javascript</artifactId>
+			<version>1.6.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+		</dependency>
+        <!-- Spring Roo dependencies -->
+        <dependency>
+            <groupId>org.springframework.roo</groupId>
+            <artifactId>org.springframework.roo.annotations</artifactId>
+            <version>${roo.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <configuration>
+                	<outxml>false</outxml>
+                </configuration>
+            </plugin>
+            <!-- IDE -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <configuration>
+                    <additionalBuildcommands>
+                        <buildCommand>
+                            <name>org.eclipse.ajdt.core.ajbuilder</name>
+                            <arguments>
+                                <aspectPath>org.springframework.aspects</aspectPath>
+                            </arguments>
+                        </buildCommand>
+                        <buildCommand>
+                            <name>org.springframework.ide.eclipse.core.springbuilder</name>
+                        </buildCommand>
+                    </additionalBuildcommands>
+                    <additionalProjectnatures>
+                        <projectnature>org.eclipse.ajdt.ui.ajnature</projectnature>
+                        <projectnature>com.springsource.sts.roo.core.nature</projectnature>
+                        <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>                        
+                    </additionalProjectnatures>
+                </configuration>
+            </plugin>
+		  
+            <plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<appendAssemblyId>false</appendAssemblyId>
+                    <archive>
+                        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>sign</id>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<keystore>keystore/keystore</keystore>
+					<alias>DmsApplet</alias>
+					<storepass>dms-applet</storepass>
+					<keypass>dms-applet</keypass>
+				</configuration>
+			</plugin-->
+
+		</plugins>
+	</build>
+
+</project>

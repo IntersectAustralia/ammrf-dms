@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_au_org_intersect_dms_webapp_domain_DmsUser" items="${dmsusers}" z="+7nuP7XxAuyvLcA8Mz0xMZWNBmU=">
+        <table:table data="${dmsusers}" id="l_au_org_intersect_dms_webapp_domain_DmsUser" path="/admin/dmsusers" z="Hr/nTTufYtd3huoHHsvIs4OYUE0=">
+            <table:column id="c_au_org_intersect_dms_webapp_domain_DmsUser_username" property="username" z="0PTh7IVvFKZxINIoFwjpv/PrWdQ="/>
+            <table:column id="c_au_org_intersect_dms_webapp_domain_DmsUser_admin" property="admin" z="b9wJn7oPi2JWjmVRU2AHsAb6Hus="/>
+        </table:table>
+    </page:list>
+</div>

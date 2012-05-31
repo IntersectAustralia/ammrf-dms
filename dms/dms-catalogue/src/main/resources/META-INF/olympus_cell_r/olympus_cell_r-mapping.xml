@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+	<property xml-field="Document Creation Date" index-field="cell_r_creation_date_dt" display-name="Document creation date" type="date" />
+    <property xml-field="Image type(s)" index-field="cell_r_image_types_t" display-name="Image type(s)" type="text" />
+</mapping>
