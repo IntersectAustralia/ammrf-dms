@@ -1,0 +1,604 @@
+[INFO] Scanning for projects...
+[INFO] Reactor build order: 
+[INFO]   DMS
+[INFO]   BUILD-TOOLS
+[INFO]   DMS-TEST
+[INFO]   DMS-TUNNEL
+[INFO]   DMS-ENCRYPT
+[INFO]   DMS-JSON
+[INFO]   DMS-FILEINFO
+[INFO]   DMS-CORE
+[INFO]   DMS-HTTPTUNNEL
+[INFO]   DMS-SERVICE-CORE
+[INFO]   DMS-WORKER
+[INFO]   DMS-SERVICE
+[INFO]   DMS-APPLET
+[INFO]   DMS-TUNNEL-TEST
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    none
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building BUILD-TOOLS
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    none
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-TEST
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    org.dbunit:dbunit:jar:2.4.8:compile
+[INFO]    junit:junit:jar:4.8.1:compile
+[INFO]    org.springframework:spring-jdbc:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-test:jar:3.0.5.RELEASE:compile
+[INFO]    org.slf4j:slf4j-api:jar:1.6.1:compile
+[INFO]    org.springframework:spring-tx:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-beans:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-aop:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-expression:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-core:jar:3.0.5.RELEASE:compile
+[INFO]    aopalliance:aopalliance:jar:1.0:compile
+[INFO]    commons-collections:commons-collections:jar:3.2.1:compile
+[INFO]    org.springframework:spring-context:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-asm:jar:3.0.5.RELEASE:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-TUNNEL
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    none
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-ENCRYPT
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    org.springframework:spring-jdbc:jar:3.0.5.RELEASE:test
+[INFO]    junit:junit:jar:4.8.1:test
+[INFO]    org.springframework:spring-tx:jar:3.0.5.RELEASE:test
+[INFO]    org.unitils:unitils-core:jar:3.1:test
+[INFO]    org.powermock:powermock-reflect:jar:1.4.6:test
+[INFO]    log4j:log4j:jar:1.2.16:compile
+[INFO]    org.springframework:spring-expression:jar:3.0.5.RELEASE:test
+[INFO]    commons-collections:commons-collections:jar:3.2:test
+[INFO]    org.powermock:powermock-api-mockito:jar:1.4.6:test
+[INFO]    org.springframework:spring-context:jar:3.0.5.RELEASE:test
+[INFO]    au.org.intersect.dms:dms-test:jar:1.5.2:test
+[INFO]    ognl:ognl:jar:2.6.9:test
+[INFO]    org.dbunit:dbunit:jar:2.4.8:test
+[INFO]    commons-logging:commons-logging:jar:1.1:test
+[INFO]    org.powermock:powermock-module-junit4-common:jar:1.4.6:test
+[INFO]    org.objenesis:objenesis:jar:1.2:test
+[INFO]    org.powermock:powermock-core:jar:1.4.6:test
+[INFO]    org.springframework:spring-test:jar:3.0.5.RELEASE:test
+[INFO]    org.slf4j:slf4j-api:jar:1.6.1:compile
+[INFO]    commons-lang:commons-lang:jar:2.5:test
+[INFO]    org.slf4j:slf4j-log4j12:jar:1.6.1:compile
+[INFO]    org.springframework:spring-beans:jar:3.0.5.RELEASE:test
+[INFO]    org.springframework:spring-aop:jar:3.0.5.RELEASE:test
+[INFO]    org.javassist:javassist:jar:3.13.0-GA:test
+[INFO]    org.springframework:spring-core:jar:3.0.5.RELEASE:test
+[INFO]    aopalliance:aopalliance:jar:1.0:test
+[INFO]    org.mockito:mockito-all:jar:1.8.5:test
+[INFO]    org.slf4j:jcl-over-slf4j:jar:1.6.1:compile
+[INFO]    org.springframework:spring-asm:jar:3.0.5.RELEASE:test
+[INFO]    au.org.intersect.dms:dms-tunnel:jar:1.5.2:compile
+[INFO]    org.powermock:powermock-module-junit4:jar:1.4.6:test
+[INFO]    org.powermock:powermock-api-support:jar:1.4.6:test
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-JSON
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    none
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-FILEINFO
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    au.org.intersect.dms:dms-json:jar:1.5.2:compile
+[INFO]    org.aspectj:aspectjrt:jar:1.6.10:compile
+[INFO]    org.springframework.roo:org.springframework.roo.annotations:jar:1.1.0.RELEASE:provided
+[INFO]    joda-time:joda-time:jar:1.6.2:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-CORE
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    org.springframework:spring-jdbc:jar:3.0.5.RELEASE:test
+[INFO]    junit:junit:jar:4.8.1:test
+[INFO]    org.springframework:spring-tx:jar:3.0.5.RELEASE:test
+[INFO]    org.powermock:powermock-reflect:jar:1.4.6:test
+[INFO]    net.sf.flexjson:flexjson:jar:2.0:compile
+[INFO]    log4j:log4j:jar:1.2.16:compile
+[INFO]    org.springframework:spring-expression:jar:3.0.5.RELEASE:test
+[INFO]    org.powermock:powermock-api-mockito:jar:1.4.6:test
+[INFO]    commons-collections:commons-collections:jar:3.2.1:test
+[INFO]    org.springframework:spring-context:jar:3.0.5.RELEASE:test
+[INFO]    au.org.intersect.dms:dms-test:jar:1.5.2:test
+[INFO]    de.saxsys.roo:de.saxsys.roo.equals.annotations:jar:1.2.0:provided
+[INFO]    joda-time:joda-time:jar:1.6.2:compile
+[INFO]    org.dbunit:dbunit:jar:2.4.8:test
+[INFO]    org.powermock:powermock-module-junit4-common:jar:1.4.6:test
+[INFO]    org.objenesis:objenesis:jar:1.2:test
+[INFO]    org.powermock:powermock-core:jar:1.4.6:test
+[INFO]    org.springframework:spring-test:jar:3.0.5.RELEASE:test
+[INFO]    org.slf4j:slf4j-api:jar:1.6.1:compile
+[INFO]    org.aspectj:aspectjrt:jar:1.6.10:compile
+[INFO]    commons-lang:commons-lang:jar:2.5:compile
+[INFO]    org.slf4j:slf4j-log4j12:jar:1.6.1:compile
+[INFO]    org.springframework:spring-beans:jar:3.0.5.RELEASE:test
+[INFO]    org.springframework:spring-aop:jar:3.0.5.RELEASE:test
+[INFO]    au.org.intersect.dms:dms-fileinfo:jar:1.5.2:compile
+[INFO]    org.javassist:javassist:jar:3.13.0-GA:test
+[INFO]    org.springframework:spring-core:jar:3.0.5.RELEASE:test
+[INFO]    aopalliance:aopalliance:jar:1.0:test
+[INFO]    au.org.intersect.dms:dms-json:jar:1.5.2:compile
+[INFO]    org.mockito:mockito-all:jar:1.8.5:test
+[INFO]    org.slf4j:jcl-over-slf4j:jar:1.6.1:compile
+[INFO]    org.springframework:spring-asm:jar:3.0.5.RELEASE:test
+[INFO]    org.powermock:powermock-module-junit4:jar:1.4.6:test
+[INFO]    org.springframework.roo:org.springframework.roo.annotations:jar:1.1.0.RELEASE:provided
+[INFO]    org.powermock:powermock-api-support:jar:1.4.6:test
+[INFO]    org.aspectj:aspectjweaver:jar:1.6.10:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-HTTPTUNNEL
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    junit:junit:jar:4.8.1:test
+[INFO]    org.powermock:powermock-reflect:jar:1.4.6:test
+[INFO]    log4j:log4j:jar:1.2.16:compile
+[INFO]    org.springframework:spring-expression:jar:3.0.5.RELEASE:compile
+[INFO]    javax.servlet:servlet-api:jar:2.5:provided
+[INFO]    xmlunit:xmlunit:jar:1.3:test
+[INFO]    org.powermock:powermock-api-mockito:jar:1.4.6:test
+[INFO]    org.springframework:spring-context-support:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-context:jar:3.0.5.RELEASE:compile
+[INFO]    org.powermock:powermock-module-junit4-common:jar:1.4.6:test
+[INFO]    org.objenesis:objenesis:jar:1.2:test
+[INFO]    org.springframework:spring-aspects:jar:3.0.5.RELEASE:compile
+[INFO]    au.org.intersect.dms:dms-encrypt:jar:1.5.2:compile
+[INFO]    org.powermock:powermock-core:jar:1.4.6:test
+[INFO]    org.springframework:spring-test:jar:3.0.5.RELEASE:test
+[INFO]    org.slf4j:slf4j-api:jar:1.6.1:compile
+[INFO]    org.springframework:spring-webmvc:jar:3.0.5.RELEASE:compile
+[INFO]    org.aspectj:aspectjrt:jar:1.6.10:compile
+[INFO]    org.springframework:spring-beans:jar:3.0.5.RELEASE:compile
+[INFO]    org.slf4j:slf4j-log4j12:jar:1.6.1:compile
+[INFO]    org.springframework:spring-aop:jar:3.0.5.RELEASE:compile
+[INFO]    org.javassist:javassist:jar:3.13.0-GA:test
+[INFO]    org.springframework:spring-core:jar:3.0.5.RELEASE:compile
+[INFO]    aopalliance:aopalliance:jar:1.0:compile
+[INFO]    org.mockito:mockito-all:jar:1.8.5:test
+[INFO]    org.slf4j:jcl-over-slf4j:jar:1.6.1:compile
+[INFO]    org.springframework:spring-web:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-asm:jar:3.0.5.RELEASE:compile
+[INFO]    au.org.intersect.dms:dms-tunnel:jar:1.5.2:compile
+[INFO]    org.powermock:powermock-module-junit4:jar:1.4.6:test
+[INFO]    org.powermock:powermock-api-support:jar:1.4.6:test
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-SERVICE-CORE
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    org.hibernate.javax.persistence:hibernate-jpa-2.0-api:jar:1.0.0.Final:compile
+[INFO]    org.hibernate:hibernate-entitymanager:jar:3.5.5-Final:compile
+[INFO]    org.springframework:spring-jdbc:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-tx:jar:3.0.5.RELEASE:compile
+[INFO]    net.sf.flexjson:flexjson:jar:2.0:compile
+[INFO]    org.springframework:spring-expression:jar:3.0.5.RELEASE:compile
+[INFO]    org.powermock:powermock-api-mockito:jar:1.4.6:test
+[INFO]    org.springframework:spring-context:jar:3.0.5.RELEASE:compile
+[INFO]    au.org.intersect.dms:dms-test:jar:1.5.2:test
+[INFO]    org.hibernate:hibernate-validator:jar:4.1.0.Final:compile
+[INFO]    joda-time:joda-time:jar:1.6.2:compile
+[INFO]    org.powermock:powermock-module-junit4-common:jar:1.4.6:test
+[INFO]    org.objenesis:objenesis:jar:1.2:test
+[INFO]    org.springframework:spring-aspects:jar:3.0.5.RELEASE:compile
+[INFO]    xml-apis:xml-apis:jar:1.0.b2:compile
+[INFO]    commons-lang:commons-lang:jar:2.5:compile
+[INFO]    au.org.intersect.dms:dms-fileinfo:jar:1.5.2:compile
+[INFO]    org.javassist:javassist:jar:3.13.0-GA:test
+[INFO]    javassist:javassist:jar:3.11.0.GA:compile
+[INFO]    aopalliance:aopalliance:jar:1.0:compile
+[INFO]    javax.transaction:jta:jar:1.1:compile
+[INFO]    org.slf4j:jcl-over-slf4j:jar:1.6.1:compile
+[INFO]    org.springframework:spring-asm:jar:3.0.5.RELEASE:compile
+[INFO]    org.powermock:powermock-module-junit4:jar:1.4.6:test
+[INFO]    org.hibernate:hibernate-commons-annotations:jar:3.2.0.Final:compile
+[INFO]    org.springframework.roo:org.springframework.roo.annotations:jar:1.1.0.RELEASE:provided
+[INFO]    hsqldb:hsqldb:jar:1.8.0.10:test
+[INFO]    org.aspectj:aspectjweaver:jar:1.6.10:compile
+[INFO]    c3p0:c3p0:jar:0.9.1.2:compile
+[INFO]    junit:junit:jar:4.8.1:test
+[INFO]    org.powermock:powermock-reflect:jar:1.4.6:test
+[INFO]    log4j:log4j:jar:1.2.16:compile
+[INFO]    antlr:antlr:jar:2.7.6:compile
+[INFO]    commons-collections:commons-collections:jar:3.1:compile
+[INFO]    org.hibernate:hibernate-core:jar:3.5.5-Final:compile
+[INFO]    cglib:cglib-nodep:jar:2.2:compile
+[INFO]    org.hibernate:hibernate-annotations:jar:3.5.5-Final:compile
+[INFO]    mysql:mysql-connector-java:jar:5.1.12:compile
+[INFO]    org.springframework:spring-context-support:jar:3.0.5.RELEASE:compile
+[INFO]    org.dbunit:dbunit:jar:2.4.8:test
+[INFO]    org.powermock:powermock-core:jar:1.4.6:test
+[INFO]    org.springframework:spring-test:jar:3.0.5.RELEASE:compile
+[INFO]    org.slf4j:slf4j-api:jar:1.6.1:compile
+[INFO]    org.aspectj:aspectjrt:jar:1.6.10:compile
+[INFO]    dom4j:dom4j:jar:1.6.1:compile
+[INFO]    org.springframework:spring-beans:jar:3.0.5.RELEASE:compile
+[INFO]    org.slf4j:slf4j-log4j12:jar:1.6.1:compile
+[INFO]    org.springframework:spring-aop:jar:3.0.5.RELEASE:compile
+[INFO]    commons-pool:commons-pool:jar:1.5.4:compile
+[INFO]    org.springframework:spring-core:jar:3.0.5.RELEASE:compile
+[INFO]    javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO]    au.org.intersect.dms:dms-json:jar:1.5.2:compile
+[INFO]    org.mockito:mockito-all:jar:1.8.5:test
+[INFO]    au.org.intersect.dms:dms-core:jar:1.5.2:compile
+[INFO]    org.powermock:powermock-api-support:jar:1.4.6:test
+[INFO]    org.springframework:spring-orm:jar:3.0.5.RELEASE:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-WORKER
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    org.hibernate.javax.persistence:hibernate-jpa-2.0-api:jar:1.0.0.Final:compile
+[INFO]    org.hibernate:hibernate-entitymanager:jar:3.5.5-Final:compile
+[INFO]    org.springframework:spring-jdbc:jar:3.0.5.RELEASE:compile
+[INFO]    org.unitils:unitils-core:jar:3.1:test
+[INFO]    org.springframework:spring-tx:jar:3.0.5.RELEASE:compile
+[INFO]    net.sf.flexjson:flexjson:jar:2.0:compile
+[INFO]    au.org.intersect.dms:dms-httptunnel:jar:1.5.2:compile
+[INFO]    org.springframework:spring-expression:jar:3.0.5.RELEASE:compile
+[INFO]    net.schmizz:sshj:jar:0.6.1:compile
+[INFO]    org.powermock:powermock-api-mockito:jar:1.4.6:test
+[INFO]    au.org.intersect.dms:dms-test:jar:1.5.2:test
+[INFO]    org.springframework:spring-context:jar:3.0.5.RELEASE:compile
+[INFO]    commons-beanutils:commons-beanutils:jar:1.7.0:compile
+[INFO]    org.hibernate:hibernate-validator:jar:4.1.0.Final:compile
+[INFO]    joda-time:joda-time:jar:1.6.2:compile
+[INFO]    org.powermock:powermock-module-junit4-common:jar:1.4.6:test
+[INFO]    org.objenesis:objenesis:jar:1.2:test
+[INFO]    org.springframework:spring-aspects:jar:3.0.5.RELEASE:compile
+[INFO]    au.org.intersect.dms:dms-encrypt:jar:1.5.2:compile
+[INFO]    xml-apis:xml-apis:jar:1.0.b2:compile
+[INFO]    commons-digester:commons-digester:jar:1.8:compile
+[INFO]    commons-lang:commons-lang:jar:2.5:compile
+[INFO]    org.javassist:javassist:jar:3.13.0-GA:test
+[INFO]    au.org.intersect.dms:dms-fileinfo:jar:1.5.2:compile
+[INFO]    commons-beanutils:commons-beanutils-core:jar:1.8.0:compile
+[INFO]    antlr:antlr:jar:2.7.7:compile
+[INFO]    javassist:javassist:jar:3.11.0.GA:compile
+[INFO]    aopalliance:aopalliance:jar:1.0:compile
+[INFO]    org.bouncycastle:bcprov-jdk16:jar:1.46:compile
+[INFO]    javax.transaction:jta:jar:1.1:compile
+[INFO]    org.slf4j:jcl-over-slf4j:jar:1.6.1:compile
+[INFO]    org.antlr:stringtemplate:jar:3.2.1:compile
+[INFO]    org.powermock:powermock-module-junit4:jar:1.4.6:test
+[INFO]    org.springframework:spring-asm:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-web:jar:3.0.5.RELEASE:compile
+[INFO]    org.hibernate:hibernate-commons-annotations:jar:3.2.0.Final:compile
+[INFO]    hsqldb:hsqldb:jar:1.8.0.10:test
+[INFO]    org.aspectj:aspectjweaver:jar:1.6.10:compile
+[INFO]    org.apache.commons:commons-compress:jar:1.1:compile
+[INFO]    c3p0:c3p0:jar:0.9.1.2:compile
+[INFO]    junit:junit:jar:4.8.1:test
+[INFO]    org.powermock:powermock-reflect:jar:1.4.6:test
+[INFO]    log4j:log4j:jar:1.2.16:compile
+[INFO]    com.jcraft:jzlib:jar:1.0.7:compile
+[INFO]    org.hibernate:hibernate-core:jar:3.5.5-Final:compile
+[INFO]    cglib:cglib-nodep:jar:2.2:compile
+[INFO]    org.hibernate:hibernate-annotations:jar:3.5.5-Final:compile
+[INFO]    mysql:mysql-connector-java:jar:5.1.12:compile
+[INFO]    xmlunit:xmlunit:jar:1.3:test
+[INFO]    org.springframework:spring-context-support:jar:3.0.5.RELEASE:compile
+[INFO]    commons-collections:commons-collections:jar:3.2.1:compile
+[INFO]    commons-io:commons-io:jar:2.0.1:compile
+[INFO]    ognl:ognl:jar:2.6.9:test
+[INFO]    org.dbunit:dbunit:jar:2.4.8:test
+[INFO]    commons-logging:commons-logging:jar:1.1:compile
+[INFO]    org.powermock:powermock-core:jar:1.4.6:test
+[INFO]    commons-configuration:commons-configuration:jar:1.6:compile
+[INFO]    org.springframework:spring-test:jar:3.0.5.RELEASE:compile
+[INFO]    org.slf4j:slf4j-api:jar:1.6.1:compile
+[INFO]    org.springframework:spring-webmvc:jar:3.0.5.RELEASE:compile
+[INFO]    org.aspectj:aspectjrt:jar:1.6.10:compile
+[INFO]    dom4j:dom4j:jar:1.6.1:compile
+[INFO]    org.springframework:spring-beans:jar:3.0.5.RELEASE:compile
+[INFO]    org.slf4j:slf4j-log4j12:jar:1.6.1:compile
+[INFO]    org.springframework:spring-aop:jar:3.0.5.RELEASE:compile
+[INFO]    commons-pool:commons-pool:jar:1.5.4:compile
+[INFO]    org.springframework:spring-core:jar:3.0.5.RELEASE:compile
+[INFO]    javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO]    au.org.intersect.dms:dms-json:jar:1.5.2:compile
+[INFO]    net.sf.ehcache:ehcache-core:jar:2.2.0:compile
+[INFO]    commons-net:commons-net:jar:2.1:compile
+[INFO]    org.mockito:mockito-all:jar:1.8.5:test
+[INFO]    au.org.intersect.dms:dms-core:jar:1.5.2:compile
+[INFO]    au.org.intersect.dms:dms-tunnel:jar:1.5.2:compile
+[INFO]    org.powermock:powermock-api-support:jar:1.4.6:test
+[INFO]    au.org.intersect.dms:dms-service-core:jar:1.5.2:compile
+[INFO]    org.springframework:spring-orm:jar:3.0.5.RELEASE:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-SERVICE
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    org.hibernate.javax.persistence:hibernate-jpa-2.0-api:jar:1.0.0.Final:compile
+[INFO]    org.hibernate:hibernate-entitymanager:jar:3.5.5-Final:compile
+[INFO]    org.springframework:spring-jdbc:jar:3.0.5.RELEASE:compile
+[INFO]    org.unitils:unitils-core:jar:3.1:test
+[INFO]    org.springframework:spring-tx:jar:3.0.5.RELEASE:compile
+[INFO]    net.sf.flexjson:flexjson:jar:2.0:compile
+[INFO]    au.org.intersect.dms:dms-httptunnel:jar:1.5.2:compile
+[INFO]    org.jvnet.staxex:stax-ex:jar:1.7.1:compile
+[INFO]    com.sun.xml.stream.buffer:streambuffer:jar:0.8:compile
+[INFO]    org.springframework:spring-expression:jar:3.0.5.RELEASE:compile
+[INFO]    javax.mail:mail:jar:1.4:test
+[INFO]    au.org.intersect.dms:dms-worker:jar:1.5.2:compile
+[INFO]    net.schmizz:sshj:jar:0.6.1:compile
+[INFO]    org.powermock:powermock-api-mockito:jar:1.4.6:test
+[INFO]    au.org.intersect.dms:dms-test:jar:1.5.2:test
+[INFO]    org.springframework:spring-context:jar:3.0.5.RELEASE:compile
+[INFO]    commons-beanutils:commons-beanutils:jar:1.7.0:compile
+[INFO]    org.hibernate:hibernate-validator:jar:4.1.0.Final:compile
+[INFO]    joda-time:joda-time:jar:1.6.2:compile
+[INFO]    org.powermock:powermock-module-junit4-common:jar:1.4.6:test
+[INFO]    org.objenesis:objenesis:jar:1.2:test
+[INFO]    org.springframework:spring-aspects:jar:3.0.5.RELEASE:compile
+[INFO]    au.org.intersect.dms:dms-encrypt:jar:1.5.2:compile
+[INFO]    xml-apis:xml-apis:jar:1.0.b2:compile
+[INFO]    commons-digester:commons-digester:jar:1.8:compile
+[INFO]    javax.activation:activation:jar:1.1:compile
+[INFO]    org.javassist:javassist:jar:3.13.0-GA:test
+[INFO]    au.org.intersect.dms:dms-fileinfo:jar:1.5.2:compile
+[INFO]    commons-beanutils:commons-beanutils-core:jar:1.8.0:compile
+[INFO]    javassist:javassist:jar:3.11.0.GA:compile
+[INFO]    antlr:antlr:jar:2.7.7:compile
+[INFO]    aopalliance:aopalliance:jar:1.0:compile
+[INFO]    javax.transaction:jta:jar:1.1:compile
+[INFO]    org.bouncycastle:bcprov-jdk16:jar:1.46:compile
+[INFO]    org.slf4j:jcl-over-slf4j:jar:1.6.1:compile
+[INFO]    org.powermock:powermock-module-junit4:jar:1.4.6:test
+[INFO]    org.antlr:stringtemplate:jar:3.2.1:compile
+[INFO]    org.springframework:spring-web:jar:3.0.5.RELEASE:compile
+[INFO]    org.hibernate:hibernate-commons-annotations:jar:3.2.0.Final:compile
+[INFO]    org.springframework:spring-asm:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework.roo:org.springframework.roo.annotations:jar:1.1.0.RELEASE:provided
+[INFO]    javax.xml.stream:stax-api:jar:1.0-2:compile
+[INFO]    org.aspectj:aspectjweaver:jar:1.6.10:compile
+[INFO]    com.h2database:h2:jar:1.2.144:test
+[INFO]    org.apache.commons:commons-compress:jar:1.1:compile
+[INFO]    c3p0:c3p0:jar:0.9.1.2:compile
+[INFO]    junit:junit:jar:4.8.1:test
+[INFO]    org.powermock:powermock-reflect:jar:1.4.6:test
+[INFO]    log4j:log4j:jar:1.2.16:compile
+[INFO]    com.jcraft:jzlib:jar:1.0.7:compile
+[INFO]    org.hibernate:hibernate-core:jar:3.5.5-Final:compile
+[INFO]    cglib:cglib-nodep:jar:2.2:compile
+[INFO]    org.hibernate:hibernate-annotations:jar:3.5.5-Final:compile
+[INFO]    org.jvnet.mock-javamail:mock-javamail:jar:1.7:test
+[INFO]    mysql:mysql-connector-java:jar:5.1.12:compile
+[INFO]    xmlunit:xmlunit:jar:1.3:test
+[INFO]    commons-collections:commons-collections:jar:3.2.1:compile
+[INFO]    org.springframework:spring-context-support:jar:3.0.5.RELEASE:compile
+[INFO]    ognl:ognl:jar:2.6.9:test
+[INFO]    commons-io:commons-io:jar:2.0.1:compile
+[INFO]    org.dbunit:dbunit:jar:2.4.8:test
+[INFO]    commons-logging:commons-logging:jar:1.1:compile
+[INFO]    org.powermock:powermock-core:jar:1.4.6:test
+[INFO]    commons-configuration:commons-configuration:jar:1.6:compile
+[INFO]    org.springframework:spring-test:jar:3.0.5.RELEASE:compile
+[INFO]    org.slf4j:slf4j-api:jar:1.6.1:compile
+[INFO]    org.springframework:spring-webmvc:jar:3.0.5.RELEASE:compile
+[INFO]    org.aspectj:aspectjrt:jar:1.6.10:compile
+[INFO]    dom4j:dom4j:jar:1.6.1:compile
+[INFO]    org.slf4j:slf4j-log4j12:jar:1.6.1:compile
+[INFO]    org.springframework:spring-beans:jar:3.0.5.RELEASE:compile
+[INFO]    org.springframework:spring-aop:jar:3.0.5.RELEASE:compile
+[INFO]    commons-pool:commons-pool:jar:1.5.4:compile
+[INFO]    org.springframework:spring-core:jar:3.0.5.RELEASE:compile
+[INFO]    javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO]    au.org.intersect.dms:dms-json:jar:1.5.2:compile
+[INFO]    commons-codec:commons-codec:jar:1.3:compile
+[INFO]    net.sf.ehcache:ehcache-core:jar:2.2.0:compile
+[INFO]    commons-net:commons-net:jar:2.1:compile
+[INFO]    org.mockito:mockito-all:jar:1.8.5:test
+[INFO]    au.org.intersect.dms:dms-core:jar:1.5.2:compile
+[INFO]    au.org.intersect.dms:dms-tunnel:jar:1.5.2:compile
+[INFO]    org.powermock:powermock-api-support:jar:1.4.6:test
+[INFO]    au.org.intersect.dms:dms-service-core:jar:1.5.2:compile
+[INFO]    org.springframework:spring-orm:jar:3.0.5.RELEASE:compile
+[INFO]    commons-lang:commons-lang:jar:2.3:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-APPLET
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    org.springframework:spring-jdbc:jar:3.0.5.RELEASE:test
+[INFO]    junit:junit:jar:4.8.1:test
+[INFO]    org.powermock:powermock-reflect:jar:1.4.6:test
+[INFO]    org.springframework:spring-tx:jar:3.0.5.RELEASE:test
+[INFO]    netscape:javascript:jar:1.6.0:provided
+[INFO]    org.springframework:spring-expression:jar:3.0.5.RELEASE:test
+[INFO]    org.slf4j:slf4j-simple:jar:1.6.1:compile
+[INFO]    org.powermock:powermock-api-mockito:jar:1.4.6:test
+[INFO]    commons-collections:commons-collections:jar:3.2.1:test
+[INFO]    au.org.intersect.dms:dms-test:jar:1.5.2:test
+[INFO]    org.springframework:spring-context:jar:3.0.5.RELEASE:test
+[INFO]    joda-time:joda-time:jar:1.6.2:compile
+[INFO]    org.dbunit:dbunit:jar:2.4.8:test
+[INFO]    org.powermock:powermock-module-junit4-common:jar:1.4.6:test
+[INFO]    org.objenesis:objenesis:jar:1.2:test
+[INFO]    org.powermock:powermock-core:jar:1.4.6:test
+[INFO]    au.org.intersect.dms:dms-encrypt:jar:1.5.2:compile
+[INFO]    org.springframework:spring-test:jar:3.0.5.RELEASE:test
+[INFO]    org.slf4j:slf4j-api:jar:1.6.1:compile
+[INFO]    org.aspectj:aspectjrt:jar:1.6.10:compile
+[INFO]    org.springframework:spring-beans:jar:3.0.5.RELEASE:test
+[INFO]    org.springframework:spring-aop:jar:3.0.5.RELEASE:test
+[INFO]    org.javassist:javassist:jar:3.13.0-GA:test
+[INFO]    au.org.intersect.dms:dms-fileinfo:jar:1.5.2:compile
+[INFO]    org.springframework:spring-core:jar:3.0.5.RELEASE:test
+[INFO]    aopalliance:aopalliance:jar:1.0:test
+[INFO]    au.org.intersect.dms:dms-json:jar:1.5.2:compile
+[INFO]    org.mockito:mockito-all:jar:1.8.5:test
+[INFO]    au.org.intersect.dms:dms-tunnel:jar:1.5.2:compile
+[INFO]    org.springframework:spring-asm:jar:3.0.5.RELEASE:test
+[INFO]    org.powermock:powermock-module-junit4:jar:1.4.6:test
+[INFO]    org.springframework.roo:org.springframework.roo.annotations:jar:1.1.0.RELEASE:provided
+[INFO]    org.powermock:powermock-api-support:jar:1.4.6:test
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DMS-TUNNEL-TEST
+[INFO]    task-segment: [dependency:resolve]
+[INFO] ------------------------------------------------------------------------
+[INFO] [dependency:resolve {execution: default-cli}]
+[INFO] 
+[INFO] The following files have been resolved:
+[INFO]    org.hibernate.javax.persistence:hibernate-jpa-2.0-api:jar:1.0.0.Final:test
+[INFO]    org.eclipse.jetty:jetty-server:jar:7.4.2.v20110526:test
+[INFO]    org.hibernate:hibernate-entitymanager:jar:3.5.5-Final:test
+[INFO]    org.eclipse.jetty:jetty-webapp:jar:7.4.2.v20110526:test
+[INFO]    org.springframework:spring-jdbc:jar:3.0.5.RELEASE:test
+[INFO]    org.springframework:spring-tx:jar:3.0.5.RELEASE:test
+[INFO]    net.sf.flexjson:flexjson:jar:2.0:test
+[INFO]    au.org.intersect.dms:dms-httptunnel:jar:1.5.2:test
+[INFO]    au.org.intersect.dms:dms-applet:jar:1.5.2:test
+[INFO]    org.springframework:spring-expression:jar:3.0.5.RELEASE:test
+[INFO]    commons-logging:commons-logging:jar:1.1.1:test
+[INFO]    au.org.intersect.dms:dms-worker:jar:1.5.2:test
+[INFO]    net.schmizz:sshj:jar:0.6.1:test
+[INFO]    org.eclipse.jetty:jetty-servlet:jar:7.4.2.v20110526:test
+[INFO]    org.springframework:spring-context:jar:3.0.5.RELEASE:test
+[INFO]    au.org.intersect.dms:dms-test:jar:1.5.2:test
+[INFO]    commons-beanutils:commons-beanutils:jar:1.7.0:test
+[INFO]    org.hibernate:hibernate-validator:jar:4.1.0.Final:test
+[INFO]    joda-time:joda-time:jar:1.6.2:test
+[INFO]    org.springframework:spring-aspects:jar:3.0.5.RELEASE:test
+[INFO]    au.org.intersect.dms:dms-encrypt:jar:1.5.2:test
+[INFO]    xml-apis:xml-apis:jar:1.0.b2:test
+[INFO]    commons-digester:commons-digester:jar:1.8:test
+[INFO]    org.eclipse.jetty:jetty-security:jar:7.4.2.v20110526:test
+[INFO]    commons-lang:commons-lang:jar:2.5:test
+[INFO]    org.eclipse.jetty:jetty-io:jar:7.4.2.v20110526:test
+[INFO]    au.org.intersect.dms:dms-fileinfo:jar:1.5.2:test
+[INFO]    commons-beanutils:commons-beanutils-core:jar:1.8.0:test
+[INFO]    antlr:antlr:jar:2.7.7:test
+[INFO]    javassist:javassist:jar:3.11.0.GA:test
+[INFO]    org.eclipse.jetty:jetty-continuation:jar:7.4.2.v20110526:test
+[INFO]    aopalliance:aopalliance:jar:1.0:test
+[INFO]    org.bouncycastle:bcprov-jdk16:jar:1.46:test
+[INFO]    javax.transaction:jta:jar:1.1:test
+[INFO]    org.slf4j:jcl-over-slf4j:jar:1.6.1:test
+[INFO]    org.antlr:stringtemplate:jar:3.2.1:test
+[INFO]    org.springframework:spring-asm:jar:3.0.5.RELEASE:test
+[INFO]    org.springframework:spring-web:jar:3.0.5.RELEASE:test
+[INFO]    org.hibernate:hibernate-commons-annotations:jar:3.2.0.Final:test
+[INFO]    org.aspectj:aspectjweaver:jar:1.6.10:test
+[INFO]    org.eclipse.jetty:jetty-util:jar:7.4.2.v20110526:test
+[INFO]    org.apache.commons:commons-compress:jar:1.1:test
+[INFO]    c3p0:c3p0:jar:0.9.1.2:test
+[INFO]    junit:junit:jar:4.8.1:test
+[INFO]    log4j:log4j:jar:1.2.16:test
+[INFO]    com.jcraft:jzlib:jar:1.0.7:test
+[INFO]    org.hibernate:hibernate-core:jar:3.5.5-Final:test
+[INFO]    cglib:cglib-nodep:jar:2.2:test
+[INFO]    org.eclipse.jetty:jetty-http:jar:7.4.2.v20110526:test
+[INFO]    org.hibernate:hibernate-annotations:jar:3.5.5-Final:test
+[INFO]    mysql:mysql-connector-java:jar:5.1.12:test
+[INFO]    javax.servlet:servlet-api:jar:2.5:test
+[INFO]    org.springframework:spring-context-support:jar:3.0.5.RELEASE:test
+[INFO]    commons-collections:commons-collections:jar:3.2.1:test
+[INFO]    commons-io:commons-io:jar:2.0.1:test
+[INFO]    org.dbunit:dbunit:jar:2.4.8:test
+[INFO]    commons-configuration:commons-configuration:jar:1.6:test
+[INFO]    org.springframework:spring-test:jar:3.0.5.RELEASE:test
+[INFO]    org.slf4j:slf4j-api:jar:1.6.1:test
+[INFO]    org.springframework:spring-webmvc:jar:3.0.5.RELEASE:test
+[INFO]    org.aspectj:aspectjrt:jar:1.6.10:test
+[INFO]    dom4j:dom4j:jar:1.6.1:test
+[INFO]    org.springframework:spring-beans:jar:3.0.5.RELEASE:test
+[INFO]    org.slf4j:slf4j-log4j12:jar:1.6.1:test
+[INFO]    org.springframework:spring-aop:jar:3.0.5.RELEASE:test
+[INFO]    commons-pool:commons-pool:jar:1.5.4:test
+[INFO]    org.eclipse.jetty:jetty-xml:jar:7.4.2.v20110526:test
+[INFO]    org.springframework:spring-core:jar:3.0.5.RELEASE:test
+[INFO]    javax.validation:validation-api:jar:1.0.0.GA:test
+[INFO]    au.org.intersect.dms:dms-json:jar:1.5.2:test
+[INFO]    net.sf.ehcache:ehcache-core:jar:2.2.0:test
+[INFO]    commons-net:commons-net:jar:2.1:test
+[INFO]    au.org.intersect.dms:dms-core:jar:1.5.2:test
+[INFO]    au.org.intersect.dms:dms-tunnel:jar:1.5.2:test
+[INFO]    au.org.intersect.dms:dms-service-core:jar:1.5.2:test
+[INFO]    org.springframework:spring-orm:jar:3.0.5.RELEASE:test
+[INFO] 
+[INFO] 
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] ------------------------------------------------------------------------
+[INFO] DMS ................................................... SUCCESS [2.007s]
+[INFO] BUILD-TOOLS ........................................... SUCCESS [0.004s]
+[INFO] DMS-TEST .............................................. SUCCESS [0.125s]
+[INFO] DMS-TUNNEL ............................................ SUCCESS [0.006s]
+[INFO] DMS-ENCRYPT ........................................... SUCCESS [0.129s]
+[INFO] DMS-JSON .............................................. SUCCESS [0.003s]
+[INFO] DMS-FILEINFO .......................................... SUCCESS [0.014s]
+[INFO] DMS-CORE .............................................. SUCCESS [0.024s]
+[INFO] DMS-HTTPTUNNEL ........................................ SUCCESS [0.053s]
+[INFO] DMS-SERVICE-CORE ...................................... SUCCESS [0.145s]
+[INFO] DMS-WORKER ............................................ SUCCESS [0.224s]
+[INFO] DMS-SERVICE ........................................... SUCCESS [0.162s]
+[INFO] DMS-APPLET ............................................ SUCCESS [0.050s]
+[INFO] DMS-TUNNEL-TEST ....................................... SUCCESS [0.206s]
+[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 4 seconds
+[INFO] Finished at: Thu Sep 20 16:52:19 EST 2012
+[INFO] Final Memory: 27M/81M
+[INFO] ------------------------------------------------------------------------

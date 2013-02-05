@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       ">
+       
+    <context:property-placeholder properties-ref="workerProperties" ignore-unresolvable="true" system-properties-mode="OVERRIDE"/>
+    <context:property-placeholder properties-ref="tunnelProperties" ignore-unresolvable="true" system-properties-mode="OVERRIDE"/>
+
+    <context:component-scan base-package="au.org.intersect.dms.wn" />
+    
+    <!-- worker beans here -->
+
+    <bean id="dmsWorkerNode" class="au.org.intersect.dms.wn.impl.WorkerNodeImpl">
+        <property name="protoMapping">
+            <map>
+                <entry key="ftp">
+                    <bean class="org.apache.commons.pool.impl.GenericKeyedObjectPool">
+                        <constructor-arg ref="ftpFactory" />
+                        <property name="minEvictableIdleTimeMillis" value="${dms.wn.pool.minEvictableIdleTimeMillis}" />
+                        <property name="timeBetweenEvictionRunsMillis" value="${dms.wn.pool.timeBetweenEvictionRunsMillis}" />
+                    </bean>
+                </entry>
+                <entry key="local">
+                    <bean class="org.apache.commons.pool.impl.GenericKeyedObjectPool">
+                        <constructor-arg ref="localFactory" />
+                        <property name="minEvictableIdleTimeMillis" value="${dms.wn.pool.minEvictableIdleTimeMillis}" />
+                        <property name="timeBetweenEvictionRunsMillis" value="${dms.wn.pool.timeBetweenEvictionRunsMillis}" />
+                    </bean>
+                </entry>
+                <entry key="hdd">
+                    <bean class="org.apache.commons.pool.impl.GenericKeyedObjectPool">
+                        <constructor-arg ref="hddFactory" />
+                        <property name="minEvictableIdleTimeMillis" value="${dms.wn.pool.minEvictableIdleTimeMillis}" />
+                        <property name="timeBetweenEvictionRunsMillis" value="${dms.wn.pool.timeBetweenEvictionRunsMillis}" />
+                    </bean>
+                </entry>
+                <entry key="sftp">
+                    <bean class="org.apache.commons.pool.impl.GenericKeyedObjectPool">
+                        <constructor-arg ref="sftpFactory" />
+                    </bean>
+                </entry>
+            </map>
+        </property>
+        <property name="activeConnectionsCache" ref="cacheWrapper" />
+        <property name="copyStrategy" ref="copier" />
+    </bean>
+    
+    
+    <bean id="copier" class="au.org.intersect.dms.wn.impl.WorkerNodeCopyStrategy" />
+    
+    <bean id="executorService"
+      class="java.util.concurrent.Executors"
+      factory-method="newCachedThreadPool"/>
+     
+    <bean id="ftpFactory" class="au.org.intersect.dms.wn.transports.impl.FtpTransportFactory" />
+
+    <bean id="hddFactory" class="au.org.intersect.dms.wn.transports.impl.HddTransportFactory" />
+
+    <bean id="sftpFactory" class="au.org.intersect.dms.wn.transports.impl.SftpTransportFactory">
+	    <property name="sshKey" value="${dms.wn.sftp.ssh.key}"/>
+	    <property name="knownHosts" value="${dms.wn.sftp.ssh.hosts}"/>
+    </bean>
+
+    <bean id="localFactory" class="au.org.intersect.dms.wn.transports.impl.LocalTransportFactory">
+        <property name="rootPath" value="${dms.wn.localRootPath}" />
+     </bean>
+     
+	<bean id="publicAgent" class="au.org.intersect.dms.encrypt.impl.PublicEncryptAgent">
+	    <constructor-arg value="${dms.wn.key.filename}"/>
+	</bean>     
+
+</beans>
