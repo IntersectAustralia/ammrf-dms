@@ -27,21 +27,26 @@ package au.org.intersect.dms.wn.transports.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.sftp.OpenMode;
-import net.schmizz.sshj.sftp.RemoteFile;
-import net.schmizz.sshj.sftp.RemoteResourceInfo;
-import net.schmizz.sshj.sftp.SFTPClient;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.UserInfo;
 
 import au.org.intersect.dms.core.domain.FileInfo;
 import au.org.intersect.dms.core.domain.FileType;
@@ -58,27 +63,34 @@ public class SftpConnection implements TransportConnection
 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SftpConnection.class);
-
-    private SFTPClient sftpClient;
+    private Session session;
+    private ChannelSftp channel;
     private ConnectionParams params;
 
     public SftpConnection(String server, String username, String sshKey, String knownHosts)
     {
-        LOGGER.debug("sftp connect to server:{} using username:{}", new String[] {server, username});
-        final SSHClient ssh = new SSHClient();
+        JSch.setLogger(new JschLogger());
+        final JSch jsch=new JSch();
         boolean ok = false;
         params = new ConnectionParams("sftp", server, username, null);
 
         try
         {
-            ssh.loadKnownHosts(new File(knownHosts));
-            ssh.connect(server);
-            ssh.authPublickey(username, sshKey);
-            sftpClient = ssh.newSFTPClient();
+            LOGGER.debug("sftp setup");
+            jsch.setKnownHosts(knownHosts);
+            jsch.addIdentity(sshKey);
+            LOGGER.debug("starting ssh session to server:{} using username:{}", new String[] {server, username});
+            session = jsch.getSession(username, server);
+            session.setUserInfo(new DummyUserInfo());
+            session.connect();
+            LOGGER.debug("request sftp channel");
+            channel = (ChannelSftp) session.openChannel("sftp");
+            channel.connect();
             ok = true;
         }
-        catch (IOException e)
+        catch (Exception e)
         {
+            if (e instanceof RuntimeException) throw (RuntimeException) e;
             LOGGER.error("SftpConnection cannot establish connection to SFTP server", e);
             throw new TransportError(e);
         }
@@ -86,19 +98,14 @@ public class SftpConnection implements TransportConnection
         {
             try
             {
-                if (!ok && sftpClient != null)
+                if (!ok && channel != null)
                 {
-                    sftpClient.close();
-                }
-                if (!ok && ssh.isConnected())
-                {
-                    ssh.disconnect();
+                    channel.disconnect();
                 }
 
             }
-            catch (IOException e)
+            catch (Exception e)
             {
-                // Transport exception already thrown
                 LOGGER.error("Could not close SFTP connection", e);
             }
         }
@@ -107,15 +114,26 @@ public class SftpConnection implements TransportConnection
     @Override
     public List<FileInfo> getList(String path) throws IOException
     {
-        LOGGER.debug("SftpConnection.getList(path)");
-        assert sftpClient != null;
-        List<FileInfo> resp = new ArrayList<FileInfo>();
-
-        for (RemoteResourceInfo file : sftpClient.ls(path))
+        try
         {
-            resp.add(makeFileInfo(path, file));
+            LOGGER.debug("SftpConnection.getList({})", new String[]{path});
+            String newPath = PathUtils.isRoot(path) ? "." : path.substring(1);
+            
+            if (!isDir(newPath)) throw new IOException(path + " not a directory");
+
+            List<FileInfo> resp = new ArrayList<FileInfo>();
+            for (Object obj : channel.ls(newPath)) {
+                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) obj;
+                if (".".equals(entry.getFilename()) || "..".equals(entry.getFilename())) continue;
+                resp.add(makeFileInfo(path, entry));
+            }
+
+            return resp; 
         }
-        return resp;
+        catch(SftpException e)
+        {
+            throw new IOException(e);
+        }
     }
 
     @Override
@@ -133,24 +151,45 @@ public class SftpConnection implements TransportConnection
         {
             return FileInfo.createRootFileInfo();
         }
-        String parentPath = PathUtils.getParent(path);
-        String namePart = PathUtils.getName(path);
-        for (RemoteResourceInfo file : sftpClient.ls(parentPath))
+        try
         {
-            if (file.getName().equals(namePart))
-            {
-                return makeFileInfo(parentPath, file);
-            }
+            String parent = PathUtils.getParent(path);
+            String name = PathUtils.getName(path);
+            SftpATTRS attrs = channel.stat(path.substring(1));
+            return makeFileInfo(parent, name, attrs);
         }
-        throw new PathNotFoundException("Couldn't retrieve information for '" + path + "'");
+        catch (SftpException e)
+        {
+            throw new PathNotFoundException("Couldn't retrieve information for '" + path + "'");
+        }
     }
 
-    private FileInfo makeFileInfo(String parentPath, RemoteResourceInfo info)
+    private boolean isDir(String path) throws IOException
     {
-        Date date = new Date(info.getAttributes().getMtime());
-        FileType type = info.isDirectory() ? FileType.DIRECTORY : FileType.FILE;
-        FileInfo item = new FileInfo(type, PathUtils.joinPath(parentPath, info.getName()), info.getName(), info
-                .getAttributes().getSize(), date);
+        try
+        {
+            return channel.stat(path).isDir();
+        }
+        catch (SftpException e)
+        {
+            throw new IOException("Can't stat " + path + " or doesn't exist"); 
+        }
+    } 
+
+    private FileInfo makeFileInfo(String parentPath, ChannelSftp.LsEntry info)
+    {
+        SftpATTRS attrs = info.getAttrs();
+        Date date = new Date(attrs.getMTime());
+        FileType type = attrs.isDir() ? FileType.DIRECTORY : FileType.FILE;
+        FileInfo item = new FileInfo(type, PathUtils.joinPath(parentPath, info.getFilename()), info.getFilename(), attrs.getSize(), date);
+        return item;
+    }
+
+    private FileInfo makeFileInfo(String parent, String name, SftpATTRS attrs)
+    {
+        Date date = new Date(attrs.getMTime());
+        FileType type = attrs.isDir() ? FileType.DIRECTORY : FileType.FILE;
+        FileInfo item = new FileInfo(type, PathUtils.joinPath(parent, name), name, attrs.getSize(), date);
         return item;
     }
 
@@ -159,12 +198,14 @@ public class SftpConnection implements TransportConnection
     {
         try
         {
-            sftpClient.rename(directory + from, directory + to);
+            String newDir = PathUtils.isRoot(directory) ? "." : directory.substring(1);
+            if (!isDir(newDir)) throw new IOException(directory + " not a directory");
+            channel.rename(PathUtils.joinPath(newDir, from), PathUtils.joinPath(newDir,to));
             return true;
         }
-        catch (IOException e)
+        catch (SftpException e)
         {
-            LOGGER.error("Cannot move {} in directory {} to {}", new String[] {from, directory, to}, e);
+            LOGGER.error("Cannot rename " + directory + "/" + from + " to " + directory + "/" + to, e);
             return false;
         }
     }
@@ -172,23 +213,22 @@ public class SftpConnection implements TransportConnection
     @Override
     public boolean delete(FileInfo file) throws IOException
     {
+        String path = file.getAbsolutePath();
+        if (PathUtils.isRoot(path)) return false;
+        path = path.substring(1);
         try
         {
-            if (FileType.FILE == file.getFileType())
-            {
-                LOGGER.debug("Removing sftp file", file.getAbsolutePath());
-                sftpClient.rm(file.getAbsolutePath());
-            }
-            else
-            {
-                LOGGER.debug("Removing sftp directory", file.getAbsolutePath());
-                sftpClient.rmdir(file.getAbsolutePath());
+            SftpATTRS attrs = channel.stat(path);
+            if (attrs.isDir()) {
+                channel.rmdir(path);
+            } else {
+                channel.rm(path);
             }
             return true;
         }
-        catch (IOException e)
+        catch (SftpException e)
         {
-            LOGGER.info("Cannot delete entry " + file.getAbsolutePath(), e);
+            LOGGER.error("Cannot delete " + file.getAbsolutePath(), e);
             return false;
         }
     }
@@ -198,13 +238,14 @@ public class SftpConnection implements TransportConnection
     {
         try
         {
-            LOGGER.debug("Creating directory", parent + name);
-            sftpClient.mkdir(parent + "/" + name);
+            String newDir = PathUtils.isRoot(parent) ? "." : parent.substring(1);
+            if (!isDir(newDir)) throw new IOException(parent + " not a directory");
+            channel.mkdir(PathUtils.joinPath(newDir, name));
             return true;
         }
-        catch (IOException e)
+        catch (SftpException e)
         {
-            LOGGER.info("Cannot create directory {} under {}", new String[] {parent, name}, e);
+            LOGGER.error("Cannot mkdir "+ parent + "/" + name, e);
             return false;
         }
     }
@@ -212,8 +253,15 @@ public class SftpConnection implements TransportConnection
     @Override
     public InputStream openInputStream(String from) throws IOException
     {
-        RemoteFile remoteFile = sftpClient.open(from, EnumSet.of(OpenMode.READ));
-        return remoteFile.getInputStream();
+        try
+        {
+            if (isDir(from.substring(1))) throw new IOException(from + " is a directory");
+            return channel.get(from.substring(1));
+        }
+        catch (SftpException e)
+        {
+            throw new IOException("Cannot open input " + from, e);
+        }
     }
 
     @Override
@@ -226,14 +274,22 @@ public class SftpConnection implements TransportConnection
     @Override
     public OutputStream openOutputStream(String to, long size) throws IOException
     {
-        RemoteFile remoteFile = sftpClient.open(to, EnumSet.of(OpenMode.CREAT, OpenMode.WRITE));
-        return remoteFile.getOutputStream();
+        try
+        {
+            String parent = PathUtils.getParent(to);
+            parent = PathUtils.isRoot(parent) ? "." : parent.substring(1);
+            if (!isDir(parent)) throw new IOException(parent + " is not a directory");
+            return channel.put(to.substring(1));
+        }
+        catch (SftpException e)
+        {
+            throw new IOException("Cannot open output " + to, e);
+        }
     }
 
     @Override
     public boolean closeOutputStream(String to, OutputStream os) throws IOException
     {
-        // TODO Auto-generated method stub
         os.close();
         return true;
     }
@@ -246,8 +302,38 @@ public class SftpConnection implements TransportConnection
 
     public void close() throws IOException
     {
-        sftpClient.close();
-        sftpClient = null;
+        channel.disconnect();
+        session.disconnect();
+    }
+
+    private static class DummyUserInfo implements UserInfo
+    {
+        public String getPassphrase() { throw new RuntimeException("sftp: requested pass phrase"); }
+        public String getPassword() { throw new RuntimeException("sftp: requested password"); }
+        public boolean promptPassword(String message) { throw new RuntimeException("sftp: requested prompt password"); }
+        public boolean promptPassphrase(String message) { throw new RuntimeException("sftp: requested prompt passphrase"); }
+        public boolean promptYesNo(String message) { throw new RuntimeException("stfp: requested yes/no"); }
+        public void showMessage(String message) { throw new RuntimeException("sftp: requested show message " + message); }
+    }
+
+    private static class JschLogger implements com.jcraft.jsch.Logger
+    {
+        public boolean isEnabled(int level) {
+            switch (level) {
+            case com.jcraft.jsch.Logger.DEBUG: return LOGGER.isDebugEnabled();
+            case com.jcraft.jsch.Logger.INFO: return LOGGER.isInfoEnabled();
+            case com.jcraft.jsch.Logger.WARN: return LOGGER.isWarnEnabled();
+            }
+            return LOGGER.isErrorEnabled();
+        }
+        public void log(int level, String message){
+            switch (level) {
+            case com.jcraft.jsch.Logger.DEBUG: if (LOGGER.isDebugEnabled()) { LOGGER.debug(message); return; }
+            case com.jcraft.jsch.Logger.INFO: if (LOGGER.isInfoEnabled()) { LOGGER.info(message); return; }
+            case com.jcraft.jsch.Logger.WARN: if (LOGGER.isWarnEnabled()) { LOGGER.warn(message); return; }
+            }
+            if (LOGGER.isErrorEnabled()) { LOGGER.error(message); return; }
+        }
     }
 
 }

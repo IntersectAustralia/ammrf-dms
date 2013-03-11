@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>dms</artifactId>
 		<groupId>au.org.intersect.dms</groupId>
-		<version>1.5.3</version>
+		<version>1.5.5</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -18,26 +18,24 @@
 		<topLevelDir>${project.parent.basedir}</topLevelDir>
 		<commons-net.version>2.2</commons-net.version>
 		<ehcache.version>2.2.0</ehcache.version>
+                <servlet-api.version>2.5</servlet-api.version>
 	</properties>
 
 	<dependencies>
 		<!-- SSH -->
 		<dependency>
-			<groupId>net.schmizz</groupId>
-			<artifactId>sshj</artifactId>
-			<version>0.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk16</artifactId>
-			<version>1.46</version>
-		</dependency>
-		<dependency>
 			<groupId>com.jcraft</groupId>
-			<artifactId>jzlib</artifactId>
-			<version>1.0.7</version>
+			<artifactId>jsch</artifactId>
+			<version>0.1.49</version>
 		</dependency>
+                <dependency>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                    <version>${servlet-api.version}</version>
+                    <scope>provided</scope>
+                </dependency>
 		<!-- End of SSH -->
+
 		<dependency>
 			<groupId>au.org.intersect.dms</groupId>
 			<artifactId>dms-core</artifactId>

@@ -6,7 +6,7 @@
 	<artifactId>dms</artifactId>
 	<packaging>pom</packaging>
 	<name>DMS</name>
-	<version>1.5.3</version>
+	<version>1.5.5</version>
 	<description>DMS Application</description>
 	<modules>
 		<module>build-tools</module>
@@ -40,7 +40,7 @@
 		<checkstyle_config_dir>${topLevelDir}/build-tools/src/main/resources/checkstyle</checkstyle_config_dir>
 		<topLevelDir>${basedir}</topLevelDir>
 
-		<dms.version>1.5.3</dms.version>
+		<dms.version>1.5.5</dms.version>
 
 		<roo.version>1.1.0.RELEASE</roo.version>
 		<roo-equals.version>1.2.0</roo-equals.version>
@@ -72,7 +72,7 @@
 		<hibernate-validator.version>4.1.0.Final</hibernate-validator.version>
 		<hibernate-jpa.version>1.0.0.Final</hibernate-jpa.version>
 		<apache.solr.version>1.5.2</apache.solr.version>
-        <jackson.version>1.5.3</jackson.version>
+        <jackson.version>1.5.5</jackson.version>
 
 		<build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
 		<maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>

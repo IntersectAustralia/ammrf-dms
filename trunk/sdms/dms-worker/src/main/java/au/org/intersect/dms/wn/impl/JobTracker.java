@@ -80,6 +80,10 @@ public class JobTracker
         this.jobListener = jobListener;
         this.jobId = jobId;
         this.thread = thread;
+        if (this.jobListener == null)
+        {
+            this.jobListener = new DummyJobListener();
+        }
     }
 
     public Long getJobId()
@@ -197,5 +201,16 @@ public class JobTracker
 				deltaNumberOfFiles != (totalNumberOfFiles - currentNumberOfFiles) || 
 						deltaNumberOfDirectories != (totalNumberOfDirectories - currentNumberOfDirectories);
 	}
+
+    private static class DummyJobListener implements JobListener
+    {
+        public void jobStatusUpdate(JobStatusUpdateEvent details) { }
+
+        public void jobBegin(JobScoped details) { }
+
+        public void jobProgress(JobUpdate details) { }
+
+        public void jobEnd(JobFinished details) { }
+    }
 
 }

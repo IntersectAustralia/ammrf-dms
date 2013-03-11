@@ -42,21 +42,23 @@ import au.org.intersect.dms.wn.ConnectionParams;
 import au.org.intersect.dms.wn.TransportConnection;
 import au.org.intersect.dms.wn.TransportFactory;
 
-public class HddConnectionIntegrationTester
+public class ConnectionIntegrationTester
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HddConnectionIntegrationTester.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionIntegrationTester.class);
 
     private static final String[] CONFIG_FILES = {"classpath*:META-INF/spring/applicationContext-workernode*.xml"};
 
     public static void main(String[] args)
     {
-        ExecutorService executor = Executors.newCachedThreadPool();
+
         final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(CONFIG_FILES);
         context.registerShutdownHook();
         context.start();
 
         try
         {
+            System.out.println("running");
+            /*
             Callable<Boolean> call1 = new Callable<Boolean>()
             {
                 @Override
@@ -86,6 +88,7 @@ public class HddConnectionIntegrationTester
             };
             Future<Boolean> fut1 = executor.submit(call1);
             fut1.get();
+            */
         }
         catch (Exception e)
         {

@@ -80,7 +80,7 @@ public class WorkerNodeImpl implements WorkerNode
 
     private final Map<Long, JobTracker> trackers = new HashMap<Long, JobTracker>();
 
-    @Autowired
+    @Autowired(required = false)
     private JobListener jobListener;
 
     private TriggerHelper trigger = new TriggerHelper();
