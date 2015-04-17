@@ -1,0 +1,96 @@
+# Introduction #
+
+The DMS is a multi-tier distributed system based on Java EE frameworks. It uses the Spring framework, particularly [Spring Roo](http://www.springsource.org/roo) and [Spring MVC](http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/mvc.html) on the web layer; application integration through [Apache Camel](http://camel.apache.org/) and [Apache ActiveMQ](http://activemq.apache.org/) as JMS messaging middle-ware; a custom built data transfer API -including HTTP tunneling to the browser via Java Applets-; and custom metadata ingestion API with a [Apache Solr](http://lucene.apache.org/solr/) indexing back-end.
+
+# Main components #
+
+Although it may be deployed in several ways, with minor or major changes, the overall picture of the DMS can be illustrated by the following diagram
+
+![http://ammrf-dms.googlecode.com/svn/wiki/images/generic_architecture.png](http://ammrf-dms.googlecode.com/svn/wiki/images/generic_architecture.png)
+
+(It is worth noticing that the SVN repository code actually contains a particular instantiation of this configuration; names in italic will correspond to name maven modules in the source when appropriate;  hopefully this document will show developers how to change it to fit other requirements.)
+
+As shown, the main components of the DMS are:
+  1. The web application _(dms-web)_ : contains the views, controllers and all classes that make up the web interface, including the authentication extension to Spring security. The web layer interacts with the DMS service and Catalogue to offer a unified feature set to the user.
+  1. Applet _(dms-applet)_ : to access a user's PC, the DMS uses Java, which requires the Java browser plugin installed. The applet interacts with the web application and the Http tunnel.
+  1. The dms service _(dms-service)_ : the component in charge of persisting jobs and handling worker routing. It could be run independently, but it is being deployed as a Spring bean in the web application, so it runs inside Tomcat.
+  1. Solr _(dms-catalogue)_: deployed by the installation script and used in catalogue module to provide high-performance indexing functionality. The catalogue _bean_ interacts with Solr via a REST interface.
+  1. Http tunnel _(dms-httptunnel)_ : a separate micro web application, run by the same Tomcat instance that provides data transfer to the user's PC using an applet and via http
+  1. JMS Broker : The DMS uses ActiveMQ as JMS broker. It can run on the same machine as the web or in another one. The DMS links to it via Camel and makes use of several queues that are mentioned below.
+  1. Worker _(dms-worker)_
+  1. Instruments _(dms-instrument)_
+  1. Data protocols
+
+# Integration #
+
+The DMS uses several protocols to communicate with other systems and services. When possible, links have been abstracted via Apache Camel and defined in the corresponding _application context_, facilitating re-wiring of the components if required.
+
+## JMS ##
+
+JMS is used to communicate between the DMS service and the Worker(s). As the DMS service is being deployed as part of the web layer, the link there is just a JVM java call (some may say that there is no need to link.)
+
+It is worth saying that JMS is not used to transfer data. Although the messages between the Worker and the DMS service do contain metadata.
+
+## HTTP/HTTPS ##
+
+HTTP/HTTPS is used in a number of places. Of course, the web layer relies on it. But also Solr is accessed via its REST interface and the Applet uses the HTTP protocol to tunnel data from or to the user's PC.
+
+## Database access ##
+
+The web component requires a datasource to store configuration and basic user handling. The service component, stores job information into the database. The catalogue as well. All these components have independent datasource configurations, although underneath they all access the same database depicted in the diagram.
+
+Also, there is a custom authentication component that uses a different datasource, which gives it back-end access to the database used by the ACMM booking system. One should be able to easily change that authenticator to use other procedure.
+
+## Data transport access ##
+
+The DMS uses its own data transport API (see below)
+
+# Authentication #
+
+Authentication is performed via [BookingSystemGatewayImpl](http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-web/src/main/java/au/org/intersect/dms/webapp/impl/BookingSystemGatewayImpl.java) which implements `AuthenticationProvider` as required by [Spring security](http://static.springsource.org/spring-security/site/). It uses a service interface called [BookingGatewayInterface](http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-bookinggw/src/main/java/au/org/intersect/dms/bookinggw/BookingGatewayInterface.java) defined in module dms-bookinggw.
+
+# Implemented transport protocols #
+
+The dms-worker module implements access to data storage via custome [TransportFactory](http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/TransportFactory.java) and [TransportConnection](http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/TransportConnection.java).
+
+The _factory_ is just an extension to one of Apache object pool classes: the worker implements connection pooling. A _TransportConnection_ represents an actual connection, which should implement methods to listing a directory and getting resource information (_getList_ and _getInfo_); rename, delete and create directory (_createDir_); and opening IO streams for reading or writing (_openInputStream_ and _openOutputStream_). The DMS comes with three implementations which are explained below.
+
+## Local ##
+
+This _transport connection_ provides access to local resources in the file system where the worker is running. In the overall architecture diagram it is mentioned that instrument resources are accessed via SMB/CIFS protocol. This is achieved at the moment by mounting shared folders in the file system using Linux smbmount.
+
+A root directory is specified (see [here](http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/transports/impl/LocalConnection.java))and folders inside this directory become _server names_ for the purpose of the protocol. For example: if the root is /var/dms and there is a subdirectory called 'instrument-a' then the open connection request will say protocol=local, server=instrument-a and username and password as configured in the local transport factory.
+
+## FTP ##
+
+This _transport connection_ provides access to an FTP server. It uses the Apache Commons net implementation. The username and password are passed through the server for authentication. Note how the [implementation](http://code.google.com/p/ammrf-dms/source/browse/trunk/dms/dms-worker/src/main/java/au/org/intersect/dms/wn/transports/impl/FtpConnection.java) is able to to handle _linked_ directories.
+
+## HDD ##
+
+This _transport connection_ is the back-ed of the tunnelling mechanism to the applet. This tunnelling is the most complex piece of the DMS as it requires three different components from the worker, the web server and the user interface to coordinate; effectively allowing data to travel from and to the user interface to the bottom tier of the system.
+
+The basic idea is that all the _TransportConnection_ methods trigger an HTTP request where the command is sent in the headers to an special web application (dms-httptunnel), flagged with a _jobId_, also in the headers. In there, requests are received from the applet -also marked with that _jobId_- and therefore the two byte streams are synchronised and copied from one socket to the other enabling the communication between the worker and the applet. The protocol actually works in two phases but its details are beyond the scope of this document.
+
+# Implemented instruments #
+
+The AMMRF-DMS has at the moment five implemented instruments. Instruments are implemented at two levels: a _trigger_ defines when data is copied and a _harvester_ allows attaching metadata while the files are being transferred. Of course, particular implementations differ greatly and below there is a short explanation of the ones included.
+
+## Skyscan ##
+
+The !Skyscan trigger is started when a job is scheduled. It waits for the appearance of a .log file which is generated by the control software when the scan terminates. The harvester parses the log file, which is in [windows ini](http://en.wikipedia.org/wiki/INI_file) format and attaches metadata to the parent directory.
+
+## Atom Probe ##
+
+Imago's atom probe comes with an experiment database. Every time a new experiment is saved, a new entry is generated in the database in corresponding tables. The trigger is a task in [quartz scheduler](http://www.quartz-scheduler.org/) which polls the database and grabs newly created experiments, copies the data into the repository and attaches metadata available from the database. To simply the implementation, the metadata schema is the same as the !Skyscan.
+
+## Olympus Confocal (FV1000) ##
+
+Olympus FV1000 instrument is configured to save data directly to main ftp server through network drive (windows net share). At the end of experiment user saves data onto main ftp server in his directory. After some time (by schedule) system finds new data and performs in-place ingestion. During this process system parses .oif and .pty log files to extract instrument settings. These files are in windows ini format.
+
+## Olympus Total Internal Reflection Fluorescence (TIRF) ##
+
+Olympus TIRF instrument is included into the system the same way as FV1000. No instrument specific metadata is extracted.
+
+## Olympus Live-Cell (Cell^R) ##
+
+Olympus Live-Cell instrument uses "manual" ingestion. User runs experiment and saves data to local drive on the controlling computer. Then user logs into the system and uses "ingestion wizard" to ingest data. Live-Cell instrument saves metadata in MS Access DB file format. This file is parsed during ingestion and instrument settings are extracted.
