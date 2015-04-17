@@ -8,4 +8,4 @@ Basic data management: It allows users to browse storage locaitons (instruments,
 Data advertisement: the metadata catalogue has been configured with RIF-CS, [ANDS](http://www.ands.org.au/), so users can advertise collections in the [Research Data Australia](http://services.ands.org.au/home/orca/rda/) federated catalogue.
 Please read the [wiki](https://github.com/vincentt143/ammrf-dms/wiki/) for further information on architecture, build from source, installation and deployment.
 
-The User manual is available [here](https://confluence.intersect.org.au/download/attachments/3737216/UserManual.docx?api=v2)
+The User manual is available [here](https://github.com/vincentt143/ammrf-dms/blob/master/UserManual.docx)
